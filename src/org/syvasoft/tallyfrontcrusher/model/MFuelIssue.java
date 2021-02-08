@@ -140,6 +140,15 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		mStatement.saveEx();
 	}
 	
+	@Override
+	public int getAccount_ID() {
+		int account_id = super.getAccount_ID();
+		if(account_id == 0) {
+			account_id = MSysConfig.getIntValue("InventoryConsumptionAccount_ID", 1000330);
+		}
+		return account_id;
+	}
+	
 	private void createInternalUseInventory(String docAction) {
 		setCost();
 		
@@ -167,8 +176,10 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		
 		//Inventory Use Line
 		MInventoryLine line = new MInventoryLine(inv, wh.getDefaultLocator().get_ID(), getM_Product_ID(), 0, null, null, getQty());
+		
 		TF_MCharge chrg = TF_MCharge.createChargeFromAccount(getCtx(), getAccount_ID(), get_TrxName());
 		line.setC_Charge_ID(chrg.getC_Charge_ID());
+		
 		line.setDescription(desc);
 		//line.setCurrentCostPrice(getRate());
 		line.saveEx();
@@ -194,7 +205,10 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		cost = MCost.get(prod, 0,
 				as, getAD_Org_ID(),M_CostElement_ID , get_TrxName());
 		cost.saveEx();
-				
+		
+		if(getRate().doubleValue() ==0)
+			return;
+		
 		//Cost Adjustment Header
 		MWarehouse[] whs = MWarehouse.getForOrg(getCtx(), getAD_Org_ID());
 		if(whs.length==0)
@@ -244,6 +258,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			bp = new TF_MBPartner(getCtx(), bPartnerID, get_TrxName());
 		
 		//Debit Note Header
+		//if(getRate().doubleValue() > 0) {
 		TF_MInvoice invoice = new TF_MInvoice(getCtx(), 0, get_TrxName());
 		invoice.setClientOrg(getAD_Client_ID(), getAD_Org_ID());
 		invoice.setC_DocTypeTarget_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getDebitNote_DocType_ID());			
