@@ -33,7 +33,7 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200612L;
+	private static final long serialVersionUID = 20210208L;
 
     /** Standard Constructor */
     public X_TF_Fuel_Issue (Properties ctx, int TF_Fuel_Issue_ID, String trxName)
@@ -332,6 +332,12 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	public static final String DOCSTATUS_Activated = "AC";
 	/** Canceled = CA */
 	public static final String DOCSTATUS_Canceled = "CA";
+	/** Overdue = OD */
+	public static final String DOCSTATUS_Overdue = "OD";
+	/** Due = DU */
+	public static final String DOCSTATUS_Due = "DU";
+	/** Upcoming = UP */
+	public static final String DOCSTATUS_Upcoming = "UP";
 	/** Set Document Status.
 		@param DocStatus 
 		The current status of the document
@@ -419,6 +425,23 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		return false;
 	}
 
+	/** Set Issued Meter.
+		@param IssueMeter Issued Meter	  */
+	public void setIssueMeter (BigDecimal IssueMeter)
+	{
+		set_Value (COLUMNNAME_IssueMeter, IssueMeter);
+	}
+
+	/** Get Issued Meter.
+		@return Issued Meter	  */
+	public BigDecimal getIssueMeter () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_IssueMeter);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Own Expense = E */
 	public static final String ISSUETYPE_OwnExpense = "E";
 	/** Payment = P */
@@ -494,6 +517,11 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		return ii.intValue();
 	}
 
+	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException
+    {
+		return (org.compiere.model.I_M_Product)MTable.get(getCtx(), org.compiere.model.I_M_Product.Table_Name)
+			.getPO(getM_Product_ID(), get_TrxName());	}
+
 	/** Set Product.
 		@param M_Product_ID 
 		Product, Service, Item
@@ -545,6 +573,31 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		return ii.intValue();
 	}
 
+	public I_PM_Job getPM_Job() throws RuntimeException
+    {
+		return (I_PM_Job)MTable.get(getCtx(), I_PM_Job.Table_Name)
+			.getPO(getPM_Job_ID(), get_TrxName());	}
+
+	/** Set Maintenance Job.
+		@param PM_Job_ID Maintenance Job	  */
+	public void setPM_Job_ID (int PM_Job_ID)
+	{
+		if (PM_Job_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_PM_Job_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_PM_Job_ID, Integer.valueOf(PM_Job_ID));
+	}
+
+	/** Get Maintenance Job.
+		@return Maintenance Job	  */
+	public int getPM_Job_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_PM_Job_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public I_PM_Machinery getPM_Machinery() throws RuntimeException
     {
 		return (I_PM_Machinery)MTable.get(getCtx(), I_PM_Machinery.Table_Name)
@@ -568,6 +621,23 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Previous Issue Meter.
+		@param PrevIssueMeter Previous Issue Meter	  */
+	public void setPrevIssueMeter (BigDecimal PrevIssueMeter)
+	{
+		set_Value (COLUMNNAME_PrevIssueMeter, PrevIssueMeter);
+	}
+
+	/** Get Previous Issue Meter.
+		@return Previous Issue Meter	  */
+	public BigDecimal getPrevIssueMeter () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_PrevIssueMeter);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Processed.
@@ -734,24 +804,6 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	public int getVehicle_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Vehicle_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-	
-	public static final String  COLUMNNAME_PM_Job_ID = "PM_Job_ID";
-	
-	public void setPM_Job_ID (int PM_Job_ID)
-	{
-		if (PM_Job_ID < 1) 
-			set_ValueNoCheck (COLUMNNAME_PM_Job_ID, null);
-		else 
-			set_ValueNoCheck (COLUMNNAME_PM_Job_ID, Integer.valueOf(PM_Job_ID));
-	}
-
-	public int getPM_Job_ID () 
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_PM_Job_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

@@ -3,6 +3,7 @@ package org.syvasoft.tallyfrontcrusher.model;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -400,5 +401,13 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		setQty(BigDecimal.ZERO);			
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);
+	}
+	
+	public static BigDecimal getPreviousMeter(Properties ctx, int AD_Org_ID, Timestamp dateAcct, int Vehicle_ID, int M_Product_ID) {
+		String sql = "SELECT IssueMeter  FROM TF_Fuel_Issue WHERE AD_Org_ID = ? AND DateAcct < ? "
+				+ " AND M_Product_ID = ? AND Vehicle_ID = ? AND DocStatus='CO' ORDER BY DateAcct DESC, TF_Fuel_Issue_ID DESC";
+		BigDecimal prevIssuedMeter = DB.getSQLValueBDEx(null, sql, AD_Org_ID, dateAcct, M_Product_ID, Vehicle_ID);
+						
+		return prevIssuedMeter;
 	}
 }

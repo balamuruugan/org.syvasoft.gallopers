@@ -272,6 +272,15 @@ public interface I_TF_Fuel_Issue
 	  */
 	public boolean isCalculated();
 
+    /** Column name IssueMeter */
+    public static final String COLUMNNAME_IssueMeter = "IssueMeter";
+
+	/** Set Issued Meter	  */
+	public void setIssueMeter (BigDecimal IssueMeter);
+
+	/** Get Issued Meter	  */
+	public BigDecimal getIssueMeter();
+
     /** Column name IssueType */
     public static final String COLUMNNAME_IssueType = "IssueType";
 
@@ -324,6 +333,8 @@ public interface I_TF_Fuel_Issue
 	  */
 	public int getM_Product_ID();
 
+	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException;
+
     /** Column name M_Warehouse_ID */
     public static final String COLUMNNAME_M_Warehouse_ID = "M_Warehouse_ID";
 
@@ -339,6 +350,17 @@ public interface I_TF_Fuel_Issue
 
 	public org.compiere.model.I_M_Warehouse getM_Warehouse() throws RuntimeException;
 
+    /** Column name PM_Job_ID */
+    public static final String COLUMNNAME_PM_Job_ID = "PM_Job_ID";
+
+	/** Set Maintenance Job	  */
+	public void setPM_Job_ID (int PM_Job_ID);
+
+	/** Get Maintenance Job	  */
+	public int getPM_Job_ID();
+
+	public I_PM_Job getPM_Job() throws RuntimeException;
+
     /** Column name PM_Machinery_ID */
     public static final String COLUMNNAME_PM_Machinery_ID = "PM_Machinery_ID";
 
@@ -349,6 +371,15 @@ public interface I_TF_Fuel_Issue
 	public int getPM_Machinery_ID();
 
 	public I_PM_Machinery getPM_Machinery() throws RuntimeException;
+
+    /** Column name PrevIssueMeter */
+    public static final String COLUMNNAME_PrevIssueMeter = "PrevIssueMeter";
+
+	/** Set Previous Issue Meter	  */
+	public void setPrevIssueMeter (BigDecimal PrevIssueMeter);
+
+	/** Get Previous Issue Meter	  */
+	public BigDecimal getPrevIssueMeter();
 
     /** Column name Processed */
     public static final String COLUMNNAME_Processed = "Processed";
