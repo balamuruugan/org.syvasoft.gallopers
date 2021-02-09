@@ -416,8 +416,10 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				list.add(new CalloutFuelIssue_TypeChange());
 			if(columnName.equals(MFuelIssue.COLUMNNAME_IssueType))
 				list.add(new CalloutFuelIssue_IssueType());
-			if(columnName.equals(MFuelIssue.COLUMNNAME_Vehicle_ID))
+			if(columnName.equals(MFuelIssue.COLUMNNAME_Vehicle_ID)) {
 				list.add(new CalloutFuelIssue_Vehicle());
+				list.add(new CalloutFuelIssue_SetPrice());
+			}
 			if(columnName.equals(MFuelIssue.COLUMNNAME_M_Product_ID))
 				list.add(new CalloutFuelIssue_SetPrice());
 		}

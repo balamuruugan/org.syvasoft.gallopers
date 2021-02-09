@@ -7,7 +7,9 @@ import java.sql.Timestamp;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.compiere.acct.Doc;
 import org.compiere.model.MAcctSchema;
+import org.compiere.model.MAllocationHdr;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MClient;
 import org.compiere.model.MCost;
@@ -244,6 +246,12 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		//inv.processIt(DocAction.ACTION_Prepare);
 		inv.processIt(DocAction.ACTION_Complete);
 		inv.saveEx();
+		
+		MClient client = MClient.get(getCtx());
+		MAcctSchema[] ass= new MAcctSchema[1];
+		ass[0] =  client.getAcctSchema();
+		Doc.postImmediate(ass, MInventory.Table_ID, inv.get_ID(), true, get_TrxName());
+		
 	}
 	private void createDebitNote(MRentedVehicle rv, TF_MProject proj,TF_MBPartner bp) {	
 		int bPartnerID = 0;
