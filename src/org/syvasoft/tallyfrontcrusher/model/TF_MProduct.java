@@ -424,4 +424,8 @@ public class TF_MProduct extends MProduct {
 		MRentedVehicle rv = getTF_RentedVehicle();
 		return rv != null;
 	}
+	
+	public boolean IsIssuedMeterRequired() {
+		return get_ValueAsBoolean("IssuedMeterRequired");
+	}
 }

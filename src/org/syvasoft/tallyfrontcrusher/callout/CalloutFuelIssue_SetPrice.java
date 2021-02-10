@@ -7,7 +7,6 @@ import java.util.Properties;
 import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
-import org.compiere.model.MSysConfig;
 import org.syvasoft.tallyfrontcrusher.model.MFuelIssue;
 import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
 import org.syvasoft.tallyfrontcrusher.model.TF_MProductCategory;
@@ -46,9 +45,8 @@ public class CalloutFuelIssue_SetPrice implements IColumnCallout {
 		if(mTab.getValue(MFuelIssue.COLUMNNAME_Vehicle_ID) != null)
 			Vehicle_ID = (int) mTab.getValue(MFuelIssue.COLUMNNAME_Vehicle_ID);
 		
-		//Set Previous Issue Meter
-		int Diesel_ID = MSysConfig.getIntValue("DIESEL_ID", 1000086);
-		if(Diesel_ID == M_Product_ID) {
+		//Set Previous Issue Meter		
+		if(prod.IsIssuedMeterRequired()) {
 			BigDecimal prevIssuedMeter = MFuelIssue.getPreviousMeter(ctx, AD_Org_ID, dateAcct, Vehicle_ID, M_Product_ID);
 			mTab.setValue(MFuelIssue.COLUMNNAME_PrevIssueMeter, prevIssuedMeter);
 		}

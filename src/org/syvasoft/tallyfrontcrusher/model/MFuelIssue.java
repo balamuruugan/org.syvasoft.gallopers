@@ -85,7 +85,14 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		//}
 			
 		TF_MCharge.createChargeFromAccount(getCtx(), getAccount_ID(), get_TrxName());
-			
+		
+		if(getIssueType().equals(ISSUETYPE_OwnExpense)) {
+			TF_MProduct p = new TF_MProduct(getCtx(), getM_Product_ID(), get_TrxName());
+			if(p.IsIssuedMeterRequired() && getIssueMeter().doubleValue() == 0) {
+				throw new AdempiereException("Required Issue Meter!");
+			}
+		}
+		
 		return super.beforeSave(newRecord);
 	}
 	
