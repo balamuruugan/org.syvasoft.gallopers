@@ -309,6 +309,10 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 	}
 	
 	public String processIt(String DocAction) {
+		MWeighmentEntry entry = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+		if(entry.getWeighmentEntryType().equals(MWeighmentEntry.WEIGHMENTENTRYTYPE_StockToCrusher))
+				return null;
+		
 		String m_processMsg = null;
 		TF_MProject proj = new TF_MProject(getCtx(), getC_Project_ID(), get_TrxName());		
 		if(MBoulderReceipt.DOCACTION_Prepare.equals(DocAction)) {
@@ -425,6 +429,12 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 			setDocStatus(DOCSTATUS_Completed);
 			setProcessed(true);
 			
+			createSubcontractMovement();
+			
+			entry.setStatus(MWeighmentEntry.STATUS_Billed);
+			entry.setProcessed(true);
+			entry.saveEx();	
+			
 			if(TF_SEND_TO_Production.equals(getTF_Send_To())) {
 				m_processMsg = postCrusherProduction();
 			}			
@@ -527,7 +537,11 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 			DB.executeUpdate(sql, get_TrxName());
 			rent.deleteEx(true);
 		}
-		MBoulderMovement.deleteBoulderMovement(getTF_WeighmentEntry_ID(), get_TrxName());				
+		MBoulderMovement.deleteBoulderMovement(getTF_WeighmentEntry_ID(), get_TrxName());
+		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+		we.setProcessed(false);
+		we.setStatus(MWeighmentEntry.STATUS_Unbilled);
+		we.saveEx();
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);		
 	}
