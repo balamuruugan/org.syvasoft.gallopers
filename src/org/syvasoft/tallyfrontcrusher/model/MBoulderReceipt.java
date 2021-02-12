@@ -191,6 +191,7 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		invoice.setC_DocTypeTarget_ID(config.getTransporterInvoiceDocType_ID());	// AP Invoice		
 		invoice.setDateInvoiced(getDateReceipt());
 		invoice.setDateAcct(getDateAcct());
+		invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
 		//
@@ -265,6 +266,7 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		invoice.setDateAcct(getDateAcct());
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
+		invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
 		//
 		
 		invoice.setBPartner(bp);
