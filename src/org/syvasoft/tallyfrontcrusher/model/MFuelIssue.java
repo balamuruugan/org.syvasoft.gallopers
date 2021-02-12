@@ -120,7 +120,10 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			
 			
 			if(ISSUETYPE_Payment.equals(getIssueType())  && (rv != null || proj != null || bp!=null)) {
-				createDebitNote(rv, proj,bp);
+				if(getRate().doubleValue() > 0)
+					createDebitNote(rv, proj,bp);
+				else
+					VendorIssue(rv, proj, bp);
 			}
 			else if(ISSUETYPE_OwnExpense.equals(getIssueType())) {
 				createInternalUseInventory(docAction);
@@ -378,6 +381,52 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		
 		setDebitNote_Invoice_ID(invoice.getC_Invoice_ID());		
 		
+	}
+	
+	private void VendorIssue(MRentedVehicle rv, TF_MProject proj,TF_MBPartner bp) {
+		int bPartnerID = 0;
+
+		if(bp != null)
+			bPartnerID = bp.getC_BPartner_ID();
+		else if(rv != null)
+			bPartnerID = rv.getC_BPartner_ID();
+		else
+			bPartnerID = proj.getC_BPartner_ID();
+		
+		if(bp == null)
+			bp = new TF_MBPartner(getCtx(), bPartnerID, get_TrxName());
+		
+		//Material Issue
+		MInOut inout = new MInOut(getCtx(), 0, get_TrxName()); 
+				//new MInOut(invoice, MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialIssue_DocType_ID(), getDateAcct(), getM_Warehouse_ID());
+		inout.setIsSOTrx(false);
+		inout.setC_DocType_ID( MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialIssue_DocType_ID());
+		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
+		inout.setDateAcct(getDateAcct());		
+		inout.setC_BPartner_ID(bPartnerID);
+		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
+		inout.setAD_User_ID(bp.getAD_User_ID());
+		inout.setM_Warehouse_ID(getM_Warehouse_ID());
+		inout.setPriorityRule(TF_MInOut.PRIORITYRULE_Medium);
+		inout.setFreightCostRule(TF_MInOut.FREIGHTCOSTRULE_FreightIncluded);		
+		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReturns);
+		inout.saveEx(get_TrxName());
+		
+		//Material Issue Line
+		MInOutLine ioLine = new MInOutLine(inout);
+		MWarehouse wh = (MWarehouse) getM_Warehouse();
+		ioLine.setM_Locator_ID(wh.getDefaultLocator().getM_Locator_ID());
+		ioLine.setM_Product_ID(getM_Product_ID(), true);		
+		ioLine.setQty(getQty());
+		ioLine.saveEx(get_TrxName());
+		
+		//Material Issue DocAction
+		if (!inout.processIt(DocAction.ACTION_Complete))
+			throw new AdempiereException("Failed when processing document - " + inout.getProcessMsg());
+		inout.saveEx();
+		//End DocAction
+				
+		setM_InOut_ID(inout.getM_InOut_ID());
 	}
 	
 	public void reverseIt() {
