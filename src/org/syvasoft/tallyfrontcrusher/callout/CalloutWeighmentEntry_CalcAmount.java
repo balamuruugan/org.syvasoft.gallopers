@@ -1,6 +1,7 @@
 package org.syvasoft.tallyfrontcrusher.callout;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
@@ -16,9 +17,14 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		BigDecimal price = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_Price);
 		BigDecimal Amount = qty.multiply(price);
 		BigDecimal GstAmt = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_GSTAmount);
-		BigDecimal driverTips = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_DriverTips);
+		BigDecimal driverTips = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_DriverTips);		
+		Boolean ApplyTax = mTab.getValueAsBoolean(MWeighmentEntry.COLUMNNAME_IsPermitSales);
+		if(ApplyTax)
+			GstAmt = Amount.multiply(new BigDecimal(1.05)).setScale(2, RoundingMode.HALF_EVEN);
+		else
+			GstAmt = BigDecimal.ZERO;
 		BigDecimal TotalAmt = Amount.add(GstAmt).subtract(driverTips);
-		
+		mTab.setValue(MWeighmentEntry.COLUMNNAME_GSTAmount, GstAmt);		
 		mTab.setValue(MWeighmentEntry.COLUMNNAME_Amount, Amount);
 		mTab.setValue(MWeighmentEntry.COLUMNNAME_TotalAmt, TotalAmt);
 		return null;
