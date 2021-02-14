@@ -30,7 +30,7 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200618L;
+	private static final long serialVersionUID = 20210214L;
 
     /** Standard Constructor */
     public X_PM_MachineryType (Properties ctx, int PM_MachineryType_ID, String trxName)
@@ -38,6 +38,8 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
       super (ctx, PM_MachineryType_ID, trxName);
       /** if (PM_MachineryType_ID == 0)
         {
+			setIssuedMeterRequired (true);
+// Y
 			setMileageType (null);
 // K
 			setName (null);
@@ -116,6 +118,27 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
 	public String getDescription () 
 	{
 		return (String)get_Value(COLUMNNAME_Description);
+	}
+
+	/** Set Issued Meter Required.
+		@param IssuedMeterRequired Issued Meter Required	  */
+	public void setIssuedMeterRequired (boolean IssuedMeterRequired)
+	{
+		set_Value (COLUMNNAME_IssuedMeterRequired, Boolean.valueOf(IssuedMeterRequired));
+	}
+
+	/** Get Issued Meter Required.
+		@return Issued Meter Required	  */
+	public boolean issuedMeterRequired () 
+	{
+		Object oo = get_Value(COLUMNNAME_IssuedMeterRequired);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException

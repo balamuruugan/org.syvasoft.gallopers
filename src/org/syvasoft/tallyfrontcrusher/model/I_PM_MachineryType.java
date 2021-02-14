@@ -121,6 +121,15 @@ public interface I_PM_MachineryType
 	  */
 	public boolean isActive();
 
+    /** Column name IssuedMeterRequired */
+    public static final String COLUMNNAME_IssuedMeterRequired = "IssuedMeterRequired";
+
+	/** Set Issued Meter Required	  */
+	public void setIssuedMeterRequired (boolean IssuedMeterRequired);
+
+	/** Get Issued Meter Required	  */
+	public boolean issuedMeterRequired();
+
     /** Column name M_Product_Category_ID */
     public static final String COLUMNNAME_M_Product_Category_ID = "M_Product_Category_ID";
 
