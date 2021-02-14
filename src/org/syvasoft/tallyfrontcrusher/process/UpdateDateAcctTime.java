@@ -15,6 +15,7 @@ import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
+import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MWeighmentEntry;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInOut;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInvoice;
@@ -101,11 +102,47 @@ public class UpdateDateAcctTime extends SvrProcess {
 				}
 			}
 			
+
+			//Boulder Receipt
+			List<MBoulderReceipt> receipts = new Query(getCtx(), MBoulderReceipt.Table_Name, wh, get_TrxName())			
+					.setClient_ID()
+					.setParameters(wEntry.getTF_WeighmentEntry_ID())
+					.list();
+			
+			for(MBoulderReceipt br : receipts) {
+				br.setDateReceipt(wEntry.getGrossWeightTime());
+				br.setDateAcct(wEntry.getGrossWeightTime());
+				br.saveEx();
+				
+				//update Aggregate material movements
+				String sql = "UPDATE TF_RMSubcon_Movement SET MovementDate = ? WHERE TF_WeighmentEntry_ID = ? ";
+				ArrayList<Object> Params = new ArrayList<Object>();
+				Params.add(wEntry.getGrossWeightTime());
+				Params.add(wEntry.getTF_WeighmentEntry_ID());
+				
+				DB.executeUpdateEx(sql, Params.toArray(), get_TrxName());
+				
+				//update Boulder Movement
+				sql = "UPDATE TF_Boulder_Movement SET MovementDate = ? WHERE TF_WeighmentEntry_ID = ? ";
+				DB.executeUpdateEx(sql, Params.toArray(), get_TrxName());
+				
+				
+				//Subcontractor Invoice
+				TF_MInvoice inv = new TF_MInvoice(getCtx(), br.getSubcon_Invoice_ID(), get_TrxName());
+				inv.setDateAcct(wEntry.getGrossWeightTime());
+				inv.setDateInvoiced(inv.getDateAcct());
+				inv.setDateOrdered(inv.getDateAcct());				
+				inv.saveEx();
+				Doc.postImmediate(ass, TF_MInvoice.Table_ID, inv.get_ID(), true, get_TrxName());
+				
+			}
+			
 			//Invoice Table
 			List<TF_MInvoice> invoices = new Query(getCtx(), TF_MInvoice.Table_Name, wh, get_TrxName())
 					.setClient_ID()
 					.setParameters(wEntry.getTF_WeighmentEntry_ID())
 					.list();
+			
 			for(TF_MInvoice inv: invoices) {
 				inv.setDateAcct(wEntry.getGrossWeightTime());
 				inv.setDateInvoiced(inv.getDateAcct());
