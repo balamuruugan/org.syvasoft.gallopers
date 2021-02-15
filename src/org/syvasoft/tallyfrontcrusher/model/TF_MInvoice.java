@@ -430,7 +430,9 @@ public class TF_MInvoice extends MInvoice {
 	protected boolean beforeSave(boolean newRecord) {		
 		boolean result = super.beforeSave(newRecord);
 		MBPartner bp = MBPartner.get(getCtx(), getC_BPartner_ID());
+		String paymentRule = getPaymentRule();
 		setBPartner(bp);
+		setPaymentRule(paymentRule);
 		if(newRecord) {
 			if(getPaymentRule() == null)
 				setPaymentRule(PAYMENTRULE_OnCredit);

@@ -2395,6 +2395,7 @@ public class TF_MOrder extends MOrder {
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
 		//
 		invoice.setBPartner(bp);
+		invoice.setPaymentRule(PAYMENTRULE_OnCredit);
 		invoice.setIsSOTrx(false);		
 		
 		//Price List
@@ -3407,11 +3408,13 @@ public class TF_MOrder extends MOrder {
 		invoice.setDateAcct(getDateAcct());
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		
+		invoice.setBPartner(bp);
 		invoice.setPaymentRule(getPaymentRule());
 		invoice.setC_PaymentTerm_ID(getC_PaymentTerm_ID());
 		//
 		
-		invoice.setBPartner(bp);				
+		invoice.setOrder(this);
+						
 		invoice.setVehicleNo(getVehicleNo());
 		invoice.setDescription(getDescription());
 		
