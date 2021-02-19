@@ -402,7 +402,8 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 				//new MInOut(invoice, MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialIssue_DocType_ID(), getDateAcct(), getM_Warehouse_ID());
 		inout.setIsSOTrx(false);
 		inout.setC_DocType_ID( MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialIssue_DocType_ID());
-		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
+		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);
+		inout.setMovementDate(getDateAcct());
 		inout.setDateAcct(getDateAcct());		
 		inout.setC_BPartner_ID(bPartnerID);
 		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());

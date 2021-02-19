@@ -1,4 +1,4 @@
-﻿DROP VIEW TF_Transaction_V;
+DROP VIEW TF_Transaction_V;
 
 CREATE OR REPLACE VIEW TF_Transaction_V AS
 
@@ -29,6 +29,10 @@ SELECT
 	w.M_Warehouse_ID,
 	w.Name warehouse_name,
 	mt.Name movementTypeName,
+	f.TF_Fuel_Issue_ID,
+	f.PrevIssueMeter,
+	F.IssueMeter,
+	F.IssueMeter - f.PrevIssueMeter as RunningMeter,
 	CASE 
 	  WHEN f.Rate IS NOT NULL THEN f.Rate
 	  WHEN io.DocumentNo IS NOT NULL THEN 
