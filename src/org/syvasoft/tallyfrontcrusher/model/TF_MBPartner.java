@@ -772,4 +772,15 @@ public class TF_MBPartner extends MBPartner {
 		}
 	}
 	
+	public boolean CreateTransportInvoice(int C_BParterTransporter_ID) {
+		
+		String sql = "SELECT COUNT(*) FROM TF_BPartner_Link WHERE C_BPartner_ID = ? AND "
+				+ "Linked_BPartner_ID = ? ";
+		
+		int count = DB.getSQLValue(get_TrxName(), sql, C_BParterTransporter_ID, getC_BPartner_ID());
+		
+		return count == 0;
+		
+	}
+	
 }

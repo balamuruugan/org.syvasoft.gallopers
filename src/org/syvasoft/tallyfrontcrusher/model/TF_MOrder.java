@@ -2375,7 +2375,7 @@ public class TF_MOrder extends MOrder {
 		//if(getTF_RentedVehicle_ID() > 0 && getRent_Amt().doubleValue() ==0)
 		//	throw new AdempiereException("Rent (Amount) should be greater ZERO!");
 		
-		if(!isSOTrx() && !isCreateTransportInvoice())
+		if(!isCreateTransportInvoice())
 			return;
 		
 		

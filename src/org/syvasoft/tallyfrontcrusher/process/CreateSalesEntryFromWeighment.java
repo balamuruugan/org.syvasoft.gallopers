@@ -136,7 +136,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 				ord.setItem1_Price(price);
 				ord.setItem1_UnitPrice(price);
 				ord.setItem1_Amt(ord.getItem1_Qty().multiply(ord.getItem1_Price()));
-	
+				
 				
 				//Item2
 				ord.setItem2_UOM_ID(ord.getItem2().getC_UOM_ID());
@@ -190,8 +190,9 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 					ord.setRent_Amt(RentAmt);										
 					ord.setRentMargin(BigDecimal.ZERO);
 					ord.setRentPayable(RentAmt);
-					
+					ord.setCreateTransporterInvoice(bp.CreateTransportInvoice(Vendor_ID));					
 				}
+				
 				ord.setIsRentBreakup(false);
 				ord.setIsRentInclusive(true);			
 				
