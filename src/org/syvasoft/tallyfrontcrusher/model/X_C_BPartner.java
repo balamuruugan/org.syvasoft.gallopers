@@ -34,7 +34,7 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20201214L;
+	private static final long serialVersionUID = 20210226L;
 
     /** Standard Constructor */
     public X_C_BPartner (Properties ctx, int C_BPartner_ID, String trxName)
@@ -103,6 +103,23 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
         .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	/** Set Account No.
+		@param AccountNo 
+		Account Number
+	  */
+	public void setAccountNo (String AccountNo)
+	{
+		set_Value (COLUMNNAME_AccountNo, AccountNo);
+	}
+
+	/** Get Account No.
+		@return Account Number
+	  */
+	public String getAccountNo () 
+	{
+		return (String)get_Value(COLUMNNAME_AccountNo);
+	}
 
 	/** Set Acquisition Cost.
 		@param AcqusitionCost 
@@ -277,6 +294,20 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 		return (String)get_Value(COLUMNNAME_Address4);
 	}
 
+	/** Set Bank Name.
+		@param BankName Bank Name	  */
+	public void setBankName (String BankName)
+	{
+		set_Value (COLUMNNAME_BankName, BankName);
+	}
+
+	/** Get Bank Name.
+		@return Bank Name	  */
+	public String getBankName () 
+	{
+		return (String)get_Value(COLUMNNAME_BankName);
+	}
+
 	/** Set Partner Parent.
 		@param BPartner_Parent_ID 
 		Business Partner Parent
@@ -298,6 +329,20 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Branch Name.
+		@param BranchName Branch Name	  */
+	public void setBranchName (String BranchName)
+	{
+		set_Value (COLUMNNAME_BranchName, BranchName);
+	}
+
+	/** Get Branch Name.
+		@return Branch Name	  */
+	public String getBranchName () 
+	{
+		return (String)get_Value(COLUMNNAME_BranchName);
 	}
 
 	public org.compiere.model.I_C_BP_Group getC_BP_Group() throws RuntimeException
@@ -665,6 +710,20 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 		return (String)get_Value(COLUMNNAME_CustomerProfileID);
 	}
 
+	/** Set Date of Joining.
+		@param DateJoining Date of Joining	  */
+	public void setDateJoining (Timestamp DateJoining)
+	{
+		set_Value (COLUMNNAME_DateJoining, DateJoining);
+	}
+
+	/** Get Date of Joining.
+		@return Date of Joining	  */
+	public Timestamp getDateJoining () 
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateJoining);
+	}
+
 	/** Set Debit Balance.
 		@param DebitBalance Debit Balance	  */
 	public void setDebitBalance (BigDecimal DebitBalance)
@@ -784,6 +843,20 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	/** Set Designation.
+		@param Designation Designation	  */
+	public void setDesignation (String Designation)
+	{
+		set_Value (COLUMNNAME_Designation, Designation);
+	}
+
+	/** Get Designation.
+		@return Designation	  */
+	public String getDesignation () 
+	{
+		return (String)get_Value(COLUMNNAME_Designation);
+	}
+
 	/** Set Document Copies.
 		@param DocumentCopies 
 		Number of copies to be printed
@@ -833,6 +906,25 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	public String getDUNS () 
 	{
 		return (String)get_Value(COLUMNNAME_DUNS);
+	}
+
+	/** PCS = PCS */
+	public static final String EMPLOYEETYPE_PCS = "PCS";
+	/** GEE = GEE */
+	public static final String EMPLOYEETYPE_GEE = "GEE";
+	/** Set Employee Type.
+		@param EmployeeType Employee Type	  */
+	public void setEmployeeType (String EmployeeType)
+	{
+
+		set_Value (COLUMNNAME_EmployeeType, EmployeeType);
+	}
+
+	/** Get Employee Type.
+		@return Employee Type	  */
+	public String getEmployeeType () 
+	{
+		return (String)get_Value(COLUMNNAME_EmployeeType);
 	}
 
 	/** Set First Sale.
@@ -898,6 +990,20 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	public String getFreightCostRule () 
 	{
 		return (String)get_Value(COLUMNNAME_FreightCostRule);
+	}
+
+	/** Set IFSC Code.
+		@param IFSCCode IFSC Code	  */
+	public void setIFSCCode (String IFSCCode)
+	{
+		set_Value (COLUMNNAME_IFSCCode, IFSCCode);
+	}
+
+	/** Get IFSC Code.
+		@return IFSC Code	  */
+	public String getIFSCCode () 
+	{
+		return (String)get_Value(COLUMNNAME_IFSCCode);
 	}
 
 	public org.compiere.model.I_AD_PrintFormat getInvoice_PrintFormat() throws RuntimeException
@@ -968,6 +1074,27 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	public boolean is1099Vendor () 
 	{
 		Object oo = get_Value(COLUMNNAME_Is1099Vendor);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Canara Bank.
+		@param IsCanaraBank Canara Bank	  */
+	public void setIsCanaraBank (boolean IsCanaraBank)
+	{
+		set_Value (COLUMNNAME_IsCanaraBank, Boolean.valueOf(IsCanaraBank));
+	}
+
+	/** Get Canara Bank.
+		@return Canara Bank	  */
+	public boolean isCanaraBank () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsCanaraBank);
 		if (oo != null) 
 		{
 			 if (oo instanceof Boolean) 
@@ -1491,6 +1618,23 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 		return ii.intValue();
 	}
 
+	/** Set Monthly Salary.
+		@param MonthlySalary Monthly Salary	  */
+	public void setMonthlySalary (BigDecimal MonthlySalary)
+	{
+		set_Value (COLUMNNAME_MonthlySalary, MonthlySalary);
+	}
+
+	/** Get Monthly Salary.
+		@return Monthly Salary	  */
+	public BigDecimal getMonthlySalary () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_MonthlySalary);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set NAICS/SIC.
 		@param NAICS 
 		Standard Industry Code or its successor NAIC - http://www.osha.gov/oshstats/sicser.html
@@ -1607,12 +1751,14 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	public static final String PAYMENTRULE_DirectDeposit = "T";
 	/** Check = S */
 	public static final String PAYMENTRULE_Check = "S";
-	/** On Credit = P */
-	public static final String PAYMENTRULE_OnCredit = "P";
+	/** Credit = P */
+	public static final String PAYMENTRULE_Credit = "P";
 	/** Direct Debit = D */
 	public static final String PAYMENTRULE_DirectDebit = "D";
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULE_MixedPOSPayment = "M";
+	/** Cash  = Z */
+	public static final String PAYMENTRULE_PrepaidCash = "Z";
 	/** Set Payment Rule.
 		@param PaymentRule 
 		How you pay the invoice
@@ -1641,12 +1787,14 @@ public class X_C_BPartner extends PO implements I_C_BPartner, I_Persistent
 	public static final String PAYMENTRULEPO_DirectDeposit = "T";
 	/** Check = S */
 	public static final String PAYMENTRULEPO_Check = "S";
-	/** On Credit = P */
-	public static final String PAYMENTRULEPO_OnCredit = "P";
+	/** Credit = P */
+	public static final String PAYMENTRULEPO_Credit = "P";
 	/** Direct Debit = D */
 	public static final String PAYMENTRULEPO_DirectDebit = "D";
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULEPO_MixedPOSPayment = "M";
+	/** Cash  = Z */
+	public static final String PAYMENTRULEPO_PrepaidCash = "Z";
 	/** Set Payment Rule.
 		@param PaymentRulePO 
 		Purchase payment option

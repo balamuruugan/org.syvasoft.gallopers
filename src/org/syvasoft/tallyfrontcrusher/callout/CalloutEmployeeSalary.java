@@ -9,7 +9,7 @@ import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.syvasoft.tallyfrontcrusher.model.MEmpSalaryConfig;
-import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalary;
+import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryOld;
 import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryAdvance;
 import org.syvasoft.tallyfrontcrusher.model.TF_MBPartner;
 
@@ -21,21 +21,21 @@ public class CalloutEmployeeSalary implements IColumnCallout {
 		BigDecimal stdDays = BigDecimal.ZERO;
 		BigDecimal stdWage = BigDecimal.ZERO;
 		BigDecimal presentDays = BigDecimal.ZERO;
-		boolean isCalculated = mTab.getValueAsBoolean(MEmployeeSalary.COLUMNNAME_IsCalculated);		
+		boolean isCalculated = mTab.getValueAsBoolean(MEmployeeSalaryOld.COLUMNNAME_IsCalculated);		
 		
-		if(mTab.getValue(MEmployeeSalary.COLUMNNAME_Present_Days) != null)
-			presentDays = (BigDecimal) mTab.getValue(MEmployeeSalary.COLUMNNAME_Present_Days);
+		if(mTab.getValue(MEmployeeSalaryOld.COLUMNNAME_Present_Days) != null)
+			presentDays = (BigDecimal) mTab.getValue(MEmployeeSalaryOld.COLUMNNAME_Present_Days);
 		
-		if(value == null || mTab.getValue(MEmployeeSalary.COLUMNNAME_DateAcct) == null || 
-				mTab.getValue(MEmployeeSalary.COLUMNNAME_C_BPartner_ID) == null) {
-			mTab.setValue(MEmployeeSalary.COLUMNNAME_Std_Days, stdDays);
-			mTab.setValue(MEmployeeSalary.COLUMNNAME_Std_Wage, stdWage);
-			mTab.setValue(MEmployeeSalary.COLUMNNAME_Salary_Amt, BigDecimal.ZERO);		
+		if(value == null || mTab.getValue(MEmployeeSalaryOld.COLUMNNAME_DateAcct) == null || 
+				mTab.getValue(MEmployeeSalaryOld.COLUMNNAME_C_BPartner_ID) == null) {
+			mTab.setValue(MEmployeeSalaryOld.COLUMNNAME_Std_Days, stdDays);
+			mTab.setValue(MEmployeeSalaryOld.COLUMNNAME_Std_Wage, stdWage);
+			mTab.setValue(MEmployeeSalaryOld.COLUMNNAME_Salary_Amt, BigDecimal.ZERO);		
 		}
 		else {
 			Timestamp dateAcct = null;
-			dateAcct = (Timestamp) mTab.getValue(MEmployeeSalary.COLUMNNAME_DateAcct);		
-			int bpartner_ID = (int)  mTab.getValue(MEmployeeSalary.COLUMNNAME_C_BPartner_ID);
+			dateAcct = (Timestamp) mTab.getValue(MEmployeeSalaryOld.COLUMNNAME_DateAcct);		
+			int bpartner_ID = (int)  mTab.getValue(MEmployeeSalaryOld.COLUMNNAME_C_BPartner_ID);
 			TF_MBPartner bp = new TF_MBPartner(ctx, bpartner_ID, null);
 			stdDays = bp.getStd_Days();
 			stdWage = bp.getStd_Wage();
@@ -47,15 +47,15 @@ public class CalloutEmployeeSalary implements IColumnCallout {
 			//	stdWage = salaryConfig.getStd_Wage();
 			//}
 			
-			BigDecimal earnedSalary = (BigDecimal) mTab.getValue(MEmployeeSalary.COLUMNNAME_Salary_Amt);
+			BigDecimal earnedSalary = (BigDecimal) mTab.getValue(MEmployeeSalaryOld.COLUMNNAME_Salary_Amt);
 			if(stdDays.doubleValue() !=0  && isCalculated)
 				earnedSalary = stdWage.multiply(presentDays.divide(stdDays, 2, RoundingMode.HALF_UP));
 			else if(isCalculated)
 				earnedSalary = BigDecimal.ZERO;				
 			
-			mTab.setValue(MEmployeeSalary.COLUMNNAME_Std_Days, stdDays);
-			mTab.setValue(MEmployeeSalary.COLUMNNAME_Std_Wage, stdWage);
-			mTab.setValue(MEmployeeSalary.COLUMNNAME_Salary_Amt, earnedSalary);
+			mTab.setValue(MEmployeeSalaryOld.COLUMNNAME_Std_Days, stdDays);
+			mTab.setValue(MEmployeeSalaryOld.COLUMNNAME_Std_Wage, stdWage);
+			mTab.setValue(MEmployeeSalaryOld.COLUMNNAME_Salary_Amt, earnedSalary);
 		}
 		return null;
 	}

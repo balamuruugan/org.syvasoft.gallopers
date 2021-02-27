@@ -43,6 +43,19 @@ public interface I_C_BPartner
 
     /** Load Meta Data */
 
+    /** Column name AccountNo */
+    public static final String COLUMNNAME_AccountNo = "AccountNo";
+
+	/** Set Account No.
+	  * Account Number
+	  */
+	public void setAccountNo (String AccountNo);
+
+	/** Get Account No.
+	  * Account Number
+	  */
+	public String getAccountNo();
+
     /** Column name AcqusitionCost */
     public static final String COLUMNNAME_AcqusitionCost = "AcqusitionCost";
 
@@ -183,6 +196,15 @@ public interface I_C_BPartner
 	  */
 	public String getAddress4();
 
+    /** Column name BankName */
+    public static final String COLUMNNAME_BankName = "BankName";
+
+	/** Set Bank Name	  */
+	public void setBankName (String BankName);
+
+	/** Get Bank Name	  */
+	public String getBankName();
+
     /** Column name BPartner_Parent_ID */
     public static final String COLUMNNAME_BPartner_Parent_ID = "BPartner_Parent_ID";
 
@@ -195,6 +217,15 @@ public interface I_C_BPartner
 	  * Business Partner Parent
 	  */
 	public int getBPartner_Parent_ID();
+
+    /** Column name BranchName */
+    public static final String COLUMNNAME_BranchName = "BranchName";
+
+	/** Set Branch Name	  */
+	public void setBranchName (String BranchName);
+
+	/** Get Branch Name	  */
+	public String getBranchName();
 
     /** Column name C_BP_Group_ID */
     public static final String COLUMNNAME_C_BP_Group_ID = "C_BP_Group_ID";
@@ -418,6 +449,15 @@ public interface I_C_BPartner
 	/** Get Customer Profile ID	  */
 	public String getCustomerProfileID();
 
+    /** Column name DateJoining */
+    public static final String COLUMNNAME_DateJoining = "DateJoining";
+
+	/** Set Date of Joining	  */
+	public void setDateJoining (Timestamp DateJoining);
+
+	/** Get Date of Joining	  */
+	public Timestamp getDateJoining();
+
     /** Column name DebitBalance */
     public static final String COLUMNNAME_DebitBalance = "DebitBalance";
 
@@ -477,6 +517,15 @@ public interface I_C_BPartner
 	  */
 	public String getDescription();
 
+    /** Column name Designation */
+    public static final String COLUMNNAME_Designation = "Designation";
+
+	/** Set Designation	  */
+	public void setDesignation (String Designation);
+
+	/** Get Designation	  */
+	public String getDesignation();
+
     /** Column name DocumentCopies */
     public static final String COLUMNNAME_DocumentCopies = "DocumentCopies";
 
@@ -511,6 +560,15 @@ public interface I_C_BPartner
 	  * Dun & Bradstreet Number
 	  */
 	public String getDUNS();
+
+    /** Column name EmployeeType */
+    public static final String COLUMNNAME_EmployeeType = "EmployeeType";
+
+	/** Set Employee Type	  */
+	public void setEmployeeType (String EmployeeType);
+
+	/** Get Employee Type	  */
+	public String getEmployeeType();
 
     /** Column name FirstSale */
     public static final String COLUMNNAME_FirstSale = "FirstSale";
@@ -550,6 +608,15 @@ public interface I_C_BPartner
 	  * Method for charging Freight
 	  */
 	public String getFreightCostRule();
+
+    /** Column name IFSCCode */
+    public static final String COLUMNNAME_IFSCCode = "IFSCCode";
+
+	/** Set IFSC Code	  */
+	public void setIFSCCode (String IFSCCode);
+
+	/** Get IFSC Code	  */
+	public String getIFSCCode();
 
     /** Column name Invoice_PrintFormat_ID */
     public static final String COLUMNNAME_Invoice_PrintFormat_ID = "Invoice_PrintFormat_ID";
@@ -600,6 +667,15 @@ public interface I_C_BPartner
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsCanaraBank */
+    public static final String COLUMNNAME_IsCanaraBank = "IsCanaraBank";
+
+	/** Set Canara Bank	  */
+	public void setIsCanaraBank (boolean IsCanaraBank);
+
+	/** Get Canara Bank	  */
+	public boolean isCanaraBank();
 
     /** Column name IsCustomer */
     public static final String COLUMNNAME_IsCustomer = "IsCustomer";
@@ -862,6 +938,15 @@ public interface I_C_BPartner
 	public int getM_PriceList_ID();
 
 	public org.compiere.model.I_M_PriceList getM_PriceList() throws RuntimeException;
+
+    /** Column name MonthlySalary */
+    public static final String COLUMNNAME_MonthlySalary = "MonthlySalary";
+
+	/** Set Monthly Salary	  */
+	public void setMonthlySalary (BigDecimal MonthlySalary);
+
+	/** Get Monthly Salary	  */
+	public BigDecimal getMonthlySalary();
 
     /** Column name NAICS */
     public static final String COLUMNNAME_NAICS = "NAICS";

@@ -16,7 +16,7 @@ import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MEmpSalaryConfig;
-import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalary;
+import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryOld;
 
 public class PostDriverSalary extends SvrProcess {
 	
@@ -79,7 +79,7 @@ public class PostDriverSalary extends SvrProcess {
 				BigDecimal presentDays = rs.getBigDecimal("PresentDays");
 				MEmpSalaryConfig salConfig = MEmpSalaryConfig.getEmpSalaryConfig(getCtx(), C_BPartner_ID, TF_VehicleType_ID, m_DateAcct);
 				//Create Employee Salary Entry
-				MEmployeeSalary salary = new MEmployeeSalary(getCtx(), 0, get_TrxName());								
+				MEmployeeSalaryOld salary = new MEmployeeSalaryOld(getCtx(), 0, get_TrxName());								
 				salary.setAD_Org_ID(m_AD_Org_ID);
 				salary.setDateAcct(m_DateAcct);				
 				salary.setC_BPartner_ID(C_BPartner_ID);
@@ -126,7 +126,7 @@ public class PostDriverSalary extends SvrProcess {
 								" | Present Days:" + salary.getPresent_Days().toString() +
 								" | Salary:" + salary.getSalary_Amt().toString();
 					
-					addLog(0, null,null, msg, MEmployeeSalary.Table_ID, salary.getTF_Employee_Salary_ID());
+					addLog(0, null,null, msg, MEmployeeSalaryOld.Table_ID, salary.getTF_Employee_Salary_ID());
 				} // End Create
 				else {
 					String msg = "Employee:" + salary.getC_BPartner().getName() + 

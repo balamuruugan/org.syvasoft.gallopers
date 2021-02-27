@@ -620,7 +620,178 @@ public class TF_MBPartner extends MBPartner {
 		return false;
 	}
 
+	/** Column name AccountNo */
+    public static final String COLUMNNAME_AccountNo = "AccountNo";
+    
+    /** Set Account No.
+	@param AccountNo 
+	Account Number
+  */
+	public void setAccountNo (String AccountNo)
+	{
+		set_Value (COLUMNNAME_AccountNo, AccountNo);
+	}
 	
+	/** Get Account No.
+		@return Account Number
+	  */
+	public String getAccountNo () 
+	{
+		return (String)get_Value(COLUMNNAME_AccountNo);
+	}
+
+    /** Column name BankName */
+    public static final String COLUMNNAME_BankName = "BankName";
+    
+    /** Set Bank Name.
+	@param BankName Bank Name	  */
+	public void setBankName (String BankName)
+	{
+		set_Value (COLUMNNAME_BankName, BankName);
+	}
+	
+	/** Get Bank Name.
+		@return Bank Name	  */
+	public String getBankName () 
+	{
+		return (String)get_Value(COLUMNNAME_BankName);
+	}
+    
+    /** Column name BranchName */
+    public static final String COLUMNNAME_BranchName = "BranchName";
+    
+    /** Set Branch Name.
+	@param BranchName Branch Name	  */
+	public void setBranchName (String BranchName)
+	{
+		set_Value (COLUMNNAME_BranchName, BranchName);
+	}
+	
+	/** Get Branch Name.
+		@return Branch Name	  */
+	public String getBranchName () 
+	{
+		return (String)get_Value(COLUMNNAME_BranchName);
+	}
+	
+
+    /** Column name DateJoining */
+    public static final String COLUMNNAME_DateJoining = "DateJoining";
+    
+    /** Set Date of Joining.
+	@param DateJoining Date of Joining	  */
+	public void setDateJoining (Timestamp DateJoining)
+	{
+		set_Value (COLUMNNAME_DateJoining, DateJoining);
+	}
+	
+	/** Get Date of Joining.
+		@return Date of Joining	  */
+	public Timestamp getDateJoining () 
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateJoining);
+	}
+
+    /** Column name Designation */
+    public static final String COLUMNNAME_Designation = "Designation";
+    
+    /** Set Designation.
+	@param Designation Designation	  */
+	public void setDesignation (String Designation)
+	{
+		set_Value (COLUMNNAME_Designation, Designation);
+	}
+	
+	/** Get Designation.
+		@return Designation	  */
+	public String getDesignation () 
+	{
+		return (String)get_Value(COLUMNNAME_Designation);
+	}
+	
+
+    /** Column name EmployeeType */
+    public static final String COLUMNNAME_EmployeeType = "EmployeeType";
+    
+    /** PCS = PCS */
+	public static final String EMPLOYEETYPE_PCS = "PCS";
+	/** GEE = GEE */
+	public static final String EMPLOYEETYPE_GEE = "GEE";
+	/** Set Employee Type.
+		@param EmployeeType Employee Type	  */
+	public void setEmployeeType (String EmployeeType)
+	{
+
+		set_Value (COLUMNNAME_EmployeeType, EmployeeType);
+	}
+
+	/** Get Employee Type.
+		@return Employee Type	  */
+	public String getEmployeeType () 
+	{
+		return (String)get_Value(COLUMNNAME_EmployeeType);
+	}
+	
+    /** Column name IFSCCode */
+    public static final String COLUMNNAME_IFSCCode = "IFSCCode";
+    
+    /** Set IFSC Code.
+	@param IFSCCode IFSC Code	  */
+	public void setIFSCCode (String IFSCCode)
+	{
+		set_Value (COLUMNNAME_IFSCCode, IFSCCode);
+	}
+	
+	/** Get IFSC Code.
+		@return IFSC Code	  */
+	public String getIFSCCode () 
+	{
+		return (String)get_Value(COLUMNNAME_IFSCCode);
+	}
+
+    /** Column name IsCanaraBank */
+    public static final String COLUMNNAME_IsCanaraBank = "IsCanaraBank";
+    
+    /** Set Canara Bank.
+	@param IsCanaraBank Canara Bank	  */
+	public void setIsCanaraBank (boolean IsCanaraBank)
+	{
+		set_Value (COLUMNNAME_IsCanaraBank, Boolean.valueOf(IsCanaraBank));
+	}
+	
+	/** Get Canara Bank.
+		@return Canara Bank	  */
+	public boolean isCanaraBank () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsCanaraBank);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+    /** Column name MonthlySalary */
+    public static final String COLUMNNAME_MonthlySalary = "MonthlySalary";
+    
+    /** Set Monthly Salary.
+	@param MonthlySalary Monthly Salary	  */
+	public void setMonthlySalary (BigDecimal MonthlySalary)
+	{
+		set_Value (COLUMNNAME_MonthlySalary, MonthlySalary);
+	}
+	
+	/** Get Monthly Salary.
+		@return Monthly Salary	  */
+	public BigDecimal getMonthlySalary () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_MonthlySalary);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		if(IsRequiredTaxInvoicePerLoad()) {

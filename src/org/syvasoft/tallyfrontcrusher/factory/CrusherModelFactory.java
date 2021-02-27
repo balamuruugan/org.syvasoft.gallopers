@@ -19,8 +19,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MQuarry.class;
 		else if (MEmpSalaryConfig.Table_Name.equals(tableName))
 			return MEmpSalaryConfig.class;
-		else if (MEmployeeSalary.Table_Name.equals(tableName))
-			return MEmployeeSalary.class;		
+		else if (MEmployeeSalaryOld.Table_Name.equals(tableName))
+			return MEmployeeSalaryOld.class;		
 		else if (MVehicleRent.Table_Name.equals(tableName))
 			return MVehicleRent.class;
 		else if (MQuarryRentConfig.Table_Name.equals(tableName))
@@ -267,6 +267,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return TF_MInOut.class;
 		else if(TF_MInOutLine.Table_Name.equals(tableName))			
 			return TF_MInOutLine.class;
+		else if(MEmployeeSalary.Table_Name.equals(tableName))
+			return MEmployeeSalary.class;
+		else if(MEmployeeSalaryDet.Table_Name.equals(tableName))
+			return MEmployeeSalaryDet.class;
 		return null;
 	}
 
@@ -279,8 +283,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MQuarry(ctx, Record_ID, trxName);
 		else if (MEmpSalaryConfig.Table_Name.equals(tableName))
 			return new MEmpSalaryConfig(ctx, Record_ID, trxName);
-		else if (MEmployeeSalary.Table_Name.equals(tableName))
-			return new MEmployeeSalary(ctx, Record_ID, trxName);		
+		else if (MEmployeeSalaryOld.Table_Name.equals(tableName))
+			return new MEmployeeSalaryOld(ctx, Record_ID, trxName);		
 		else if (MVehicleRent.Table_Name.equals(tableName))
 			return new MVehicleRent(ctx, Record_ID, trxName);
 		else if (MQuarryRentConfig.Table_Name.equals(tableName))
@@ -527,6 +531,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new TF_MInOut(ctx, Record_ID, trxName);
 		else if(TF_MInOutLine.Table_Name.equals(tableName))			
 			return new TF_MInOutLine(ctx, Record_ID, trxName);
+		else if(MEmployeeSalary.Table_Name.equals(tableName))
+			return new MEmployeeSalary(ctx, Record_ID, trxName);
+		else if(MEmployeeSalaryDet.Table_Name.equals(tableName))
+			return new MEmployeeSalaryDet(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -539,8 +547,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MQuarry(ctx, rs, trxName);
 		else if (MEmpSalaryConfig.Table_Name.equals(tableName))
 			return new MEmpSalaryConfig(ctx, rs, trxName);
-		else if (MEmployeeSalary.Table_Name.equals(tableName))
-			return new MEmployeeSalary(ctx, rs, trxName);		
+		else if (MEmployeeSalaryOld.Table_Name.equals(tableName))
+			return new MEmployeeSalaryOld(ctx, rs, trxName);		
 		else if (MVehicleRent.Table_Name.equals(tableName))
 			return new MVehicleRent(ctx, rs, trxName);
 		else if (MQuarryRentConfig.Table_Name.equals(tableName))
@@ -789,6 +797,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new TF_MInOut(ctx, rs, trxName);
 		else if(TF_MInOutLine.Table_Name.equals(tableName))			
 			return new TF_MInOutLine(ctx, rs, trxName);
+		else if(MEmployeeSalary.Table_Name.equals(tableName))			
+			return new MEmployeeSalary(ctx, rs, trxName);
+		else if(MEmployeeSalaryDet.Table_Name.equals(tableName))			
+			return new MEmployeeSalaryDet(ctx, rs, trxName);
 		return null;
 	}
 

@@ -21,6 +21,7 @@ import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalaryIssue_CalcBalanceAmts;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalaryIssue_SetOpenAmt;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_BPartner;
+import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_NetSalary;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutFuelIssue_CalcAmount;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutFuelIssue_IssueType;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutFuelIssue_SetPrice;
@@ -106,7 +107,8 @@ import org.syvasoft.tallyfrontcrusher.callout.CalloutOrder_PriceIncludesTax;
 import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MCrusherKatingEntry;
 import org.syvasoft.tallyfrontcrusher.model.MDrillingEntry;
-import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalary;
+import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryDet;
+import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryOld;
 import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryIssue;
 import org.syvasoft.tallyfrontcrusher.model.MFuelIssue;
 import org.syvasoft.tallyfrontcrusher.model.MGenerateTaxInvoice;
@@ -138,6 +140,7 @@ import org.syvasoft.tallyfrontcrusher.model.TF_MJournal;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
 import org.syvasoft.tallyfrontcrusher.model.TF_MPayment;
 import org.syvasoft.tallyfrontcrusher.model.TF_MRequisitionLine;
+import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_SalaryDue;
 
 public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 
@@ -228,15 +231,15 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				list.add(new CalloutPayment_FromToBankAccount());
 		}
 		//TF_Employee_Salary - Load Salary Config
-		if(tableName.equals(MEmployeeSalary.Table_Name)) {
-			if((columnName.equals(MEmployeeSalary.COLUMNNAME_C_BPartner_ID)
-				|| columnName.equals(MEmployeeSalary.COLUMNNAME_DateAcct) || columnName.equals(MEmployeeSalary.COLUMNNAME_Present_Days)
-				|| columnName.equals(MEmployeeSalary.COLUMNNAME_IsCalculated) 
+		if(tableName.equals(MEmployeeSalaryOld.Table_Name)) {
+			if((columnName.equals(MEmployeeSalaryOld.COLUMNNAME_C_BPartner_ID)
+				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_DateAcct) || columnName.equals(MEmployeeSalaryOld.COLUMNNAME_Present_Days)
+				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_IsCalculated) 
 				)) {
 				list.add(new CalloutEmployeeSalary());
 			}
 			
-			if(columnName.equals(MEmployeeSalary.COLUMNNAME_C_BPartner_ID)) {
+			if(columnName.equals(MEmployeeSalaryOld.COLUMNNAME_C_BPartner_ID)) {
 				list.add(new CalloutEmployeeSalary_BPartner());
 			}
 		}
@@ -672,6 +675,16 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			list.add(new CalloutRequisition_SetPriceUOM());
 		}
 		
+		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Salary)				
+				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_NoOfDays))) {			
+			list.add(new CalloutEmployeeSalary_SalaryDue());
+		}
+		
+		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Salary)				
+				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_NoOfDays) || columnName.equals(MEmployeeSalaryDet.COLUMNNAME_MessAdvance) 
+				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_DeductAdvance) )) {			
+			list.add(new CalloutEmployeeSalary_NetSalary());
+		}
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 
