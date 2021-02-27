@@ -11,13 +11,17 @@ import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInOut;
 import org.compiere.model.MInOutLine;
+import org.compiere.model.MInvoiceLine;
 import org.compiere.model.MOrder;
+import org.compiere.model.MPriceList;
 import org.compiere.model.MProduct;
 import org.compiere.model.MRMA;
 import org.compiere.model.MSysConfig;
+import org.compiere.model.MTable;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
+import org.compiere.util.Env;
 import org.compiere.util.Msg;
 
 
@@ -94,6 +98,73 @@ public class TF_MInOut extends MInOut {
 			 return 0;
 		return ii.intValue();
 	}
+	
+	/** Column name C_BPartnerDebit_ID */
+    public static final String COLUMNNAME_C_BPartnerDebit_ID = "C_BPartnerDebit_ID";
+    
+	public org.compiere.model.I_C_BPartner getC_BPartnerDebit() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_Name)
+			.getPO(getC_BPartnerDebit_ID(), get_TrxName());	}
+
+	/** Set Debit To.
+		@param C_BPartnerDebit_ID Debit To	  */
+	public void setC_BPartnerDebit_ID (int C_BPartnerDebit_ID)
+	{
+		if (C_BPartnerDebit_ID < 1) 
+			set_Value (COLUMNNAME_C_BPartnerDebit_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_BPartnerDebit_ID, Integer.valueOf(C_BPartnerDebit_ID));
+	}
+
+	/** Get Debit To.
+		@return Debit To	  */
+	public int getC_BPartnerDebit_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartnerDebit_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Column name C_InvoiceDebitNote_ID */
+    public static final String COLUMNNAME_C_InvoiceDebitNote_ID = "C_InvoiceDebitNote_ID";
+
+	public org.compiere.model.I_C_Invoice getC_InvoiceDebitNote() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Invoice)MTable.get(getCtx(), org.compiere.model.I_C_Invoice.Table_Name)
+			.getPO(getC_InvoiceDebitNote_ID(), get_TrxName());	}
+
+	/** Set Debit Note.
+		@param C_InvoiceDebitNote_ID Debit Note	  */
+	public void setC_InvoiceDebitNote_ID (int C_InvoiceDebitNote_ID)
+	{
+		if (C_InvoiceDebitNote_ID < 1) 
+			set_Value (COLUMNNAME_C_InvoiceDebitNote_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_InvoiceDebitNote_ID, Integer.valueOf(C_InvoiceDebitNote_ID));
+	}
+
+	/** Get Debit Note.
+		@return Debit Note	  */
+	public int getC_InvoiceDebitNote_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_InvoiceDebitNote_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	int ExplosivesVendor_ID = MSysConfig.getIntValue("EXPLOSIVES_VENDOR_ID", 1000662);
+	int QuarrySubcontractor_ID = MSysConfig.getIntValue("QUARRY_SUBCONTRACTOR_ID", 1000580);
+	
+	@Override
+	protected boolean beforeSave(boolean newRecord) {
+		if(!isSOTrx() && getC_BPartner_ID() == ExplosivesVendor_ID) {
+			setC_BPartnerDebit_ID(QuarrySubcontractor_ID);
+		}
+		return super.beforeSave(newRecord);
+	}
 
 	public boolean materialReceipt = true;
 	
@@ -113,10 +184,11 @@ public class TF_MInOut extends MInOut {
 			if(createConsolidatedTransportInvoice)
 				createTransportMaterialReceipt();
 			createMaterialMovement(we);
+			
 			m_processMsg = postCrusherProduction(we);
 			
 		}
-		
+		createDebitNote();
 		// TODO Auto-generated method stub
 		return super.completeIt();
 	}
@@ -143,7 +215,8 @@ public class TF_MInOut extends MInOut {
 			crProd.saveEx();
 			setTF_Crusher_Production_ID(0);
 		}		
-				
+		reverseDebitNote();
+		
 		return super.reverseCorrectIt();
 	}
 	
@@ -359,5 +432,73 @@ public class TF_MInOut extends MInOut {
 		
 		return m_processMsg;
 	}	
+	
+	private void createDebitNote() {
+	
+		if(getC_BPartnerDebit_ID() == 0 || getC_InvoiceDebitNote_ID() > 0)
+			return;
+		
+		//Debit Note Header
+		//if(getRate().doubleValue() > 0) {
+		TF_MInvoice invoice = new TF_MInvoice(getCtx(), 0, get_TrxName());
+		invoice.setClientOrg(getAD_Client_ID(), getAD_Org_ID());
+		invoice.setC_DocTypeTarget_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getDebitNote_DocType_ID());			
+		invoice.setDateInvoiced(getDateAcct());
+		invoice.setDateAcct(getDateAcct());
+		//
+		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
+		//
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartnerDebit_ID(), get_TrxName());
+		invoice.setBPartner(bp);
+		invoice.setIsSOTrx(false);		
+		
+		//String description = getDocumentNo();		
+		invoice.setDescription("Material Receipt: " + getDocumentNo());
+		if(getDescription() != null && getDescription().length() > 0)			 		
+			invoice.addDescription(getDescription());
+		
+		//Price List
+		int m_M_PriceList_ID = Env.getContextAsInt(getCtx(), "#M_PriceList_ID");
+		if(bp.getPO_PriceList_ID() > 0)
+			m_M_PriceList_ID = bp.getPO_PriceList_ID();			
+		invoice.setM_PriceList_ID(m_M_PriceList_ID);
+		invoice.setC_Currency_ID(MPriceList.get(getCtx(), m_M_PriceList_ID, get_TrxName()).getC_Currency_ID());
+		
+		//Financial Dimension - Profit Center			
+		invoice.setC_Project_ID(getC_Project_ID());
+		
+		invoice.saveEx();
+		//End Invoice Header
+		
+		//Invoice Line - Vehicle Rental Charge
+		for (MInOutLine ioLine : getLines()) {
+			MInvoiceLine invLine = new MInvoiceLine(invoice);
+		
+			invLine.setM_Product_ID(ioLine.getM_Product_ID(), true);
+			invLine.setQty(ioLine.getMovementQty());			
+			BigDecimal price = MPriceListUOM.getPrice(getCtx(), invLine.getM_Product_ID(), invLine.getC_UOM_ID(), QuarrySubcontractor_ID, false, getDateAcct());
+			
+			invLine.setPriceActual(price);
+			invLine.setPriceList(price);
+			invLine.setPriceLimit(price);
+			invLine.setPriceEntered(price);
+			invLine.setC_Tax_ID(1000000);
+			invLine.saveEx();
+		}
+		
+		setC_InvoiceDebitNote_ID(invoice.getC_Invoice_ID());
+				
+	}
+	
+	private void reverseDebitNote() {		
+		if(getC_InvoiceDebitNote_ID() > 0 ) {
+			TF_MInvoice inv = new TF_MInvoice(getCtx(), getC_InvoiceDebitNote_ID(), get_TrxName());
+			if(inv.getDocStatus().equals(DOCSTATUS_Completed))
+				inv.reverseCorrectIt();
+			else
+				inv.voidIt();
+			inv.saveEx();
+		}
+	}
 
 }
