@@ -43,6 +43,15 @@ public interface I_TF_EmployeeSalary_Det
 
     /** Load Meta Data */
 
+    /** Column name Absentees */
+    public static final String COLUMNNAME_Absentees = "Absentees";
+
+	/** Set Absentees	  */
+	public void setAbsentees (BigDecimal Absentees);
+
+	/** Get Absentees	  */
+	public BigDecimal getAbsentees();
+
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
@@ -224,6 +233,15 @@ public interface I_TF_EmployeeSalary_Det
 	/** Get Salary Due	  */
 	public BigDecimal getSalaryDue();
 
+    /** Column name SalaryWithheld */
+    public static final String COLUMNNAME_SalaryWithheld = "SalaryWithheld";
+
+	/** Set Salary Withheld	  */
+	public void setSalaryWithheld (BigDecimal SalaryWithheld);
+
+	/** Get Salary Withheld	  */
+	public BigDecimal getSalaryWithheld();
+
     /** Column name SNo */
     public static final String COLUMNNAME_SNo = "SNo";
 
@@ -261,6 +279,15 @@ public interface I_TF_EmployeeSalary_Det
 	public int getTF_EmployeeSalary_ID();
 
 	public I_TF_EmployeeSalary getTF_EmployeeSalary() throws RuntimeException;
+
+    /** Column name UnpaidSalary */
+    public static final String COLUMNNAME_UnpaidSalary = "UnpaidSalary";
+
+	/** Set Unpaid Salary	  */
+	public void setUnpaidSalary (BigDecimal UnpaidSalary);
+
+	/** Get Unpaid Salary	  */
+	public BigDecimal getUnpaidSalary();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

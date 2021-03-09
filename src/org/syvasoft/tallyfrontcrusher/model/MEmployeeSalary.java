@@ -9,6 +9,7 @@ import org.compiere.model.MBPartner;
 import org.compiere.model.MJournal;
 import org.compiere.model.MJournalLine;
 import org.compiere.model.MPeriod;
+import org.compiere.util.AdempiereUserError;
 import org.compiere.util.Env;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
@@ -34,7 +35,24 @@ public class MEmployeeSalary extends X_TF_EmployeeSalary {
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		//
-		
+		if(newRecord){
+			String whereClause = "C_Period_ID = ? AND EmployeeType = ?";
+			List<MEmployeeSalary> empSalary =  new Query(getCtx(),MEmployeeSalary.Table_Name, whereClause, get_TrxName()).setClient_ID()
+					.setParameters(getC_Period_ID(), getEmployeeType()).list();
+			
+			if(empSalary.size() > 0) {
+				throw new AdempiereUserError("Record already exists!");
+			}
+		}
+		else {
+			String whereClause = "C_Period_ID = ? AND EmployeeType = ? AND TF_EmployeeSalary_ID <> ?";
+			List<MEmployeeSalary> empSalary =  new Query(getCtx(),MEmployeeSalary.Table_Name, whereClause, get_TrxName()).setClient_ID()
+					.setParameters(getC_Period_ID(), getEmployeeType(), getTF_EmployeeSalary_ID()).list();
+			
+			if(empSalary.size() > 0) {
+				throw new AdempiereUserError("Record already exists!");
+			}
+		}
 		return super.beforeSave(newRecord);
 	}
 	
