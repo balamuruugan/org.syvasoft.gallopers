@@ -43,7 +43,7 @@ public class CalloutEmployeeSalary_NetSalary implements IColumnCallout {
 		
 		salaryDue = (BigDecimal)mTab.getValue(MEmployeeSalaryDet.COLUMNNAME_SalaryDue);
 		
-		netSalary = salaryDue.add(unpaidSalary).subtract(deductAdvance).subtract(messAdvance).subtract(salaryWithheld);
+		netSalary = salaryDue.add(unpaidSalary).subtract(deductAdvance).subtract(messAdvance).subtract(salaryWithheld).setScale(0,RoundingMode.HALF_UP);
 		
 		mTab.setValue(MEmployeeSalaryDet.COLUMNNAME_NetSalary, netSalary);
 		return null;

@@ -41,7 +41,7 @@ public class MEmployeeSalary extends X_TF_EmployeeSalary {
 					.setParameters(getC_Period_ID(), getEmployeeType()).list();
 			
 			if(empSalary.size() > 0) {
-				throw new AdempiereUserError("Record already exists!");
+				throw new AdempiereUserError("Attendence already exists for the selected month!");
 			}
 		}
 		else {
@@ -50,7 +50,7 @@ public class MEmployeeSalary extends X_TF_EmployeeSalary {
 					.setParameters(getC_Period_ID(), getEmployeeType(), getTF_EmployeeSalary_ID()).list();
 			
 			if(empSalary.size() > 0) {
-				throw new AdempiereUserError("Record already exists!");
+				throw new AdempiereUserError("Attendence already exists for the selected month!");
 			}
 		}
 		return super.beforeSave(newRecord);
@@ -115,7 +115,6 @@ public class MEmployeeSalary extends X_TF_EmployeeSalary {
 		List<MEmployeeSalaryDet> empSalaryList = new Query(getCtx(), MEmployeeSalaryDet.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
 				.setParameters(getTF_EmployeeSalary_ID()).setOrderBy(MEmployeeSalaryDet.COLUMNNAME_TF_EmployeeSalary_Det_ID).list();
-		
 		
 		for(MEmployeeSalaryDet empSalaryDet : empSalaryList) {
 			empSalaryDet.setProcessed(isprocessed);

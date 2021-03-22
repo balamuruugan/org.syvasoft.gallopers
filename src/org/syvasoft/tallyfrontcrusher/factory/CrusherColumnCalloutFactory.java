@@ -20,6 +20,7 @@ import org.syvasoft.tallyfrontcrusher.callout.CalloutElementValue_AccountGroup;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalaryIssue_CalcBalanceAmts;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalaryIssue_SetOpenAmt;
+import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_BPDetails;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_BPartner;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_NetSalary;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_PresentDays;
@@ -674,6 +675,10 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		if((tableName.equals(TF_MRequisitionLine.Table_Name)) && (columnName.equals(TF_MRequisitionLine.COLUMNNAME_M_Product_ID)				
 				|| columnName.equals(TF_MRequisitionLine.COLUMNNAME_C_UOM_ID) || columnName.equals(TF_MRequisitionLine.COLUMNNAME_C_BPartner_ID) )) {			
 			list.add(new CalloutRequisition_SetPriceUOM());
+		}
+		
+		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_C_BPartner_ID))) {			
+			list.add(new CalloutEmployeeSalary_BPDetails());
 		}
 		
 		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Absentees))) {			
