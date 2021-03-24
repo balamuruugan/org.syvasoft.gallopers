@@ -58,20 +58,18 @@ public class MEmployeeSalaryDet extends X_TF_EmployeeSalary_Det {
 		return super.beforeSave(newRecord);
 	}
 	
-	public void processIt(String DocAction) {
-		
-	}
-	public void reverseIt() {
-		
-	}
-	
 	public static void createEmployeeSalaryDetail(Properties ctx, String trxName, MEmployeeSalary EmployeeSalary, TF_MBPartner BPartner,int SNo) {		
+		
+		String whereClause = "C_Period_ID = ?";
+				
+		MPeriod period = new Query(ctx, MPeriod.Table_Name, whereClause, trxName).setClient_ID()
+				.setParameters(EmployeeSalary.getC_Period_ID()).first();
 		
 		String wherecondition = "TF_EmployeeSalary.TF_EmployeeSalary_id IN (SELECT d.TF_EmployeeSalary_id FROM TF_EmployeeSalary_Det d " + 
 				"WHERE d.TF_EmployeeSalary_id = TF_EmployeeSalary.TF_EmployeeSalary_id AND d.C_BPartner_ID = ?) AND DateAcct < ?";
 		
 		MEmployeeSalary prevEmployeeSalary =  new Query(ctx,MEmployeeSalary.Table_Name, wherecondition, trxName).setClient_ID()
-				.setParameters(BPartner.getC_BPartner_ID(), EmployeeSalary.getDateAcct()).setOrderBy(MEmployeeSalary.COLUMNNAME_DateAcct + " desc").first();
+				.setParameters(BPartner.getC_BPartner_ID(), period.getEndDate()).setOrderBy(MEmployeeSalary.COLUMNNAME_DateAcct + " desc").first();
 		
 		wherecondition = "TF_EmployeeSalary_id = ? AND C_BPartner_ID = ?";
 		MEmployeeSalaryDet prevEmployeeSalaryDet = null;
@@ -79,50 +77,6 @@ public class MEmployeeSalaryDet extends X_TF_EmployeeSalary_Det {
 		if(prevEmployeeSalary != null)
 			prevEmployeeSalaryDet = new Query(ctx,MEmployeeSalaryDet.Table_Name, wherecondition, trxName).setClient_ID()
 				.setParameters(prevEmployeeSalary.getTF_EmployeeSalary_ID(), BPartner.getC_BPartner_ID()).first();
-		
-		wherecondition = "TF_EmployeeSalary_Det.TF_EmployeeSalary_id IN (SELECT h.TF_EmployeeSalary_id FROM TF_EmployeeSalary h " + 
-				"WHERE h.TF_EmployeeSalary_id = TF_EmployeeSalary_Det.TF_EmployeeSalary_id AND h.DateAcct < ?) and C_BPartner_ID = ?";
-		
-		Query query = new Query(ctx,MEmployeeSalaryDet.Table_Name, wherecondition, trxName).setClient_ID()
-				.setParameters(EmployeeSalary.getDateAcct(), BPartner.getC_BPartner_ID());
-		
-		BigDecimal deductedAmt = (BigDecimal) query.aggregate(COLUMNNAME_DeductAdvance, Query.AGGREGATE_SUM);
-		
-		wherecondition = "C_BPartner_ID = ? AND DateAcct < ? AND DocStatus IN ('CO','CL')";
-		
-		Query querySalAdvance = new Query(ctx, MEmployeeSalaryAdvance.Table_Name, wherecondition, trxName).setClient_ID()
-				.setParameters(BPartner.getC_BPartner_ID(), EmployeeSalary.getDateAcct());
-		
-		BigDecimal salaryAdvance = (BigDecimal) querySalAdvance.aggregate(MEmployeeSalaryAdvance.COLUMNNAME_Advance_Amt, Query.AGGREGATE_SUM);
-		
-		BigDecimal salaryAdvRemaining = BigDecimal.ZERO;
-		
-		if(salaryAdvance.intValue() > 0)
-			salaryAdvRemaining = salaryAdvance.subtract(deductedAmt);
-		
-		/*String whereClause = "C_Period_ID = ?";
-		
-		
-		MPeriod period = new Query(ctx, MPeriod.Table_Name, whereClause, trxName).setClient_ID()
-				.setParameters(EmployeeSalary.getC_Period_ID()).first();
-		
-		whereClause = "C_Year_ID = ? AND PeriodNo < ?";
-		
-		MPeriod prevperiod = new Query(ctx,MPeriod.Table_Name, whereClause, trxName).setClient_ID()
-				.setParameters(period.getC_Year_ID(),period.getPeriodNo()).setOrderBy(MPeriod.COLUMNNAME_PeriodNo + " desc").first();		
-		
-		whereClause = "C_Period_ID = ? AND EmployeeType = ?";
-		MEmployeeSalary prevEmployeeSalary =  new Query(ctx,MEmployeeSalary.Table_Name, whereClause, trxName).setClient_ID()
-				.setParameters(prevperiod.getC_Period_ID(), EmployeeSalary.getEmployeeType()).first();
-		*/
-		
-		//String whereClause = "TF_EmployeeSalary_ID = ? AND C_BPartner_ID = ?";
-		
-		//MEmployeeSalaryDet prevEmployeeSalaryDet = null;
-		
-		if(prevEmployeeSalaryDet != null)
-			prevEmployeeSalaryDet =  query.first();
-		
 		
 		MEmployeeSalaryDet employeesalaryDet = new MEmployeeSalaryDet(ctx, 0, trxName);
 		
@@ -134,6 +88,8 @@ public class MEmployeeSalaryDet extends X_TF_EmployeeSalary_Det {
 		employeesalaryDet.setSalary(BPartner.getMonthlySalary());
 		employeesalaryDet.setNoOfDays(EmployeeSalary.getStd_Days());
 		employeesalaryDet.setSalaryDue(BPartner.getMonthlySalary());
+		
+		BigDecimal salaryAdvRemaining = getAdvancePaid(ctx, trxName, EmployeeSalary, employeesalaryDet, BPartner);
 		employeesalaryDet.setAdvancePaid(salaryAdvRemaining);
 		
 		if(prevEmployeeSalaryDet != null) {
@@ -155,8 +111,7 @@ public class MEmployeeSalaryDet extends X_TF_EmployeeSalary_Det {
 		BigDecimal deductAdvance = EmployeeSalaryDet.getDeductAdvance();
 		BigDecimal messAdvance = EmployeeSalaryDet.getMessAdvance();		
 		BigDecimal salaryWithheld = EmployeeSalaryDet.getSalaryWithheld();
-		BigDecimal unpaidSalary = EmployeeSalaryDet.getUnpaidSalary(); 
-		
+		BigDecimal unpaidSalary = EmployeeSalaryDet.getUnpaidSalary(); 		
 		
 		salary = (salary == null) ? BigDecimal.ZERO : salary;
 		presentDays = (presentDays == null) ? BigDecimal.ZERO : presentDays;
@@ -177,5 +132,58 @@ public class MEmployeeSalaryDet extends X_TF_EmployeeSalary_Det {
 		netSalary = salaryDue.add(unpaidSalary).subtract(deductAdvance).subtract(messAdvance).subtract(salaryWithheld).setScale(0,RoundingMode.HALF_UP);
 		EmployeeSalaryDet.setNetSalary(netSalary);
 		EmployeeSalaryDet.saveEx();
+	}
+	
+	public static void updateDetails(Properties ctx, String trxName, MEmployeeSalary EmployeeSalary, MEmployeeSalaryDet EmployeeSalaryDet, TF_MBPartner BPartner, boolean updatePresentDays, boolean updateMonthlySalary, boolean updateAdvancePaid) {
+		if(updatePresentDays){
+			EmployeeSalaryDet.setNoOfDays(EmployeeSalary.getStd_Days());
+			EmployeeSalaryDet.setSalary(BPartner.getMonthlySalary());
+			EmployeeSalaryDet.saveEx();
+		}
+		
+		if(updateMonthlySalary) {
+			EmployeeSalaryDet.setSalary(BPartner.getMonthlySalary());
+			EmployeeSalaryDet.saveEx();
+		}
+		
+		if(updateAdvancePaid) {
+			BigDecimal salaryAdvRemaining = getAdvancePaid(ctx, trxName, EmployeeSalary, EmployeeSalaryDet, BPartner);
+			EmployeeSalaryDet.setAdvancePaid(salaryAdvRemaining);
+			EmployeeSalaryDet.saveEx();
+		}
+		
+		if(updatePresentDays || updateMonthlySalary || updateAdvancePaid) {
+			calculateSalary(ctx, trxName, EmployeeSalary, EmployeeSalaryDet);
+		}
+	}
+	
+	public static BigDecimal getAdvancePaid(Properties ctx, String trxName, MEmployeeSalary EmployeeSalary, MEmployeeSalaryDet EmployeeSalaryDet, TF_MBPartner BPartner) {
+		
+		String whereClause = "C_Period_ID = ?";
+		
+		MPeriod period = new Query(ctx, MPeriod.Table_Name, whereClause, trxName).setClient_ID()
+				.setParameters(EmployeeSalary.getC_Period_ID()).first();
+		
+		String wherecondition = "TF_EmployeeSalary_Det.TF_EmployeeSalary_id IN (SELECT h.TF_EmployeeSalary_id FROM TF_EmployeeSalary h " + 
+				"WHERE h.TF_EmployeeSalary_id = TF_EmployeeSalary_Det.TF_EmployeeSalary_id AND h.DateAcct < ? AND h.DocStatus IN ('CO','CL')) and C_BPartner_ID = ?";
+		
+		Query query = new Query(ctx,MEmployeeSalaryDet.Table_Name, wherecondition, trxName).setClient_ID()
+				.setParameters(period.getEndDate(), BPartner.getC_BPartner_ID());
+		
+		BigDecimal deductedAmt = (BigDecimal) query.aggregate(COLUMNNAME_DeductAdvance, Query.AGGREGATE_SUM);
+		
+		wherecondition = "C_BPartner_ID = ? AND DateAcct < ? AND DocStatus IN ('CO','CL')";
+		
+		Query querySalAdvance = new Query(ctx, MEmployeeSalaryAdvance.Table_Name, wherecondition, trxName).setClient_ID()
+				.setParameters(BPartner.getC_BPartner_ID(), period.getEndDate());
+		
+		BigDecimal salaryAdvance = (BigDecimal) querySalAdvance.aggregate(MEmployeeSalaryAdvance.COLUMNNAME_Advance_Amt, Query.AGGREGATE_SUM);
+		
+		BigDecimal salaryAdvRemaining = BigDecimal.ZERO;
+		
+		if(salaryAdvance.intValue() > 0)
+			salaryAdvRemaining = salaryAdvance.subtract(deductedAmt);
+		
+		return salaryAdvRemaining;
 	}
 }
