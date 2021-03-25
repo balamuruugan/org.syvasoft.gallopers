@@ -33,7 +33,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210122L;
+	private static final long serialVersionUID = 20210301L;
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)
@@ -42,7 +42,6 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
       /** if (TF_WeighmentEntry_ID == 0)
         {
 			setDocumentNo (null);
-			setM_Product_ID (0);
 			setProcessed (false);
 			setStatus (null);
 // IP
@@ -642,6 +641,20 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_NewDestination);
 	}
 
+	/** Set New Product.
+		@param NewProduct New Product	  */
+	public void setNewProduct (String NewProduct)
+	{
+		set_Value (COLUMNNAME_NewProduct, NewProduct);
+	}
+
+	/** Get New Product.
+		@return New Product	  */
+	public String getNewProduct () 
+	{
+		return (String)get_Value(COLUMNNAME_NewProduct);
+	}
+
 	/** Set Party Name.
 		@param PartyName Party Name	  */
 	public void setPartyName (String PartyName)
@@ -700,12 +713,14 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String PAYMENTRULE_DirectDeposit = "T";
 	/** Check = S */
 	public static final String PAYMENTRULE_Check = "S";
-	/** On Credit = P */
+	/** Credit = P */
 	public static final String PAYMENTRULE_OnCredit = "P";
 	/** Direct Debit = D */
 	public static final String PAYMENTRULE_DirectDebit = "D";
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULE_MixedPOSPayment = "M";
+	/** Cash  = Z */
+	public static final String PAYMENTRULE_PrepaidCash = "Z";
 	/** Set Payment Rule.
 		@param PaymentRule 
 		How you pay the invoice
@@ -855,13 +870,13 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 
 	/** In Progress = IP */
 	public static final String STATUS_InProgress = "IP";
-	/** Unbilled = CO */
+	/** Completed = CO */
 	public static final String STATUS_Unbilled = "CO";
 	/** Billed = CL */
 	public static final String STATUS_Billed = "CL";
 	/** Voided = VO */
 	public static final String STATUS_Voided = "VO";
-	/** Under Review - UR*/
+	/** Under Review = UR */
 	public static final String STATUS_UnderReview = "UR";
 	/** Set Status.
 		@param Status 
@@ -1184,6 +1199,41 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return bd;
 	}
 
+	/** Set Transporter.
+		@param Transporter Transporter	  */
+	public void setTransporter (String Transporter)
+	{
+		set_ValueNoCheck (COLUMNNAME_Transporter, Transporter);
+	}
+
+	/** Get Transporter.
+		@return Transporter	  */
+	public String getTransporter () 
+	{
+		return (String)get_Value(COLUMNNAME_Transporter);
+	}
+
+
+	/** Set Transporter.
+		@param Transporter_ID Transporter	  */
+	public void setTransporter_ID (int Transporter_ID)
+	{
+		if (Transporter_ID < 1) 
+			set_Value (COLUMNNAME_Transporter_ID, null);
+		else 
+			set_Value (COLUMNNAME_Transporter_ID, Integer.valueOf(Transporter_ID));
+	}
+
+	/** Get Transporter.
+		@return Transporter	  */
+	public int getTransporter_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Transporter_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set User Name.
 		@param UserName User Name	  */
 	public void setUserName (String UserName)
@@ -1218,10 +1268,12 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String WEIGHMENTENTRYTYPE_Input = "2PO";
 	/** Own Production Receipt = 3PR */
 	public static final String WEIGHMENTENTRYTYPE_OwnProductionReceipt = "3PR";
-	/** Subcontract Production Receipt = 4SR */
-	public static final String WEIGHMENTENTRYTYPE_SubcontractProductionReceipt = "4SR";
-	/** Stock to Crusher = 5KA */
+	/** Quary to Crusher = 4SR */
+	public static final String WEIGHMENTENTRYTYPE_QuaryToCrusher = "4SR";
+	/** Stockyard to Crusher = 5KA */
 	public static final String WEIGHMENTENTRYTYPE_StockToCrusher = "5KA";
+	/** Other Purchase = 8OP */
+	public static final String WEIGHMENTENTRYTYPE_OtherPurchase = "8OP";
 	/** Set Type.
 		@param WeighmentEntryType Type	  */
 	public void setWeighmentEntryType (String WeighmentEntryType)

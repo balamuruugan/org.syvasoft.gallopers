@@ -8,7 +8,10 @@ import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MJournal;
 import org.compiere.model.MJournalLine;
+import org.compiere.model.MOrderLine;
 import org.compiere.model.MPeriod;
+import org.compiere.util.AdempiereUserError;
+import org.compiere.util.DB;
 import org.compiere.util.Env;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
@@ -34,7 +37,24 @@ public class MEmployeeSalary extends X_TF_EmployeeSalary {
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		//
-		
+		if(newRecord){
+			String whereClause = "C_Period_ID = ? AND EmployeeType = ?";
+			List<MEmployeeSalary> empSalary =  new Query(getCtx(),MEmployeeSalary.Table_Name, whereClause, get_TrxName()).setClient_ID()
+					.setParameters(getC_Period_ID(), getEmployeeType()).list();
+			
+			if(empSalary.size() > 0) {
+				throw new AdempiereUserError("Attendence already exists for the selected month!");
+			}
+		}
+		else {
+			String whereClause = "C_Period_ID = ? AND EmployeeType = ? AND TF_EmployeeSalary_ID <> ?";
+			List<MEmployeeSalary> empSalary =  new Query(getCtx(),MEmployeeSalary.Table_Name, whereClause, get_TrxName()).setClient_ID()
+					.setParameters(getC_Period_ID(), getEmployeeType(), getTF_EmployeeSalary_ID()).list();
+			
+			if(empSalary.size() > 0) {
+				throw new AdempiereUserError("Attendence already exists for the selected month!");
+			}
+		}
 		return super.beforeSave(newRecord);
 	}
 	
@@ -67,7 +87,13 @@ public class MEmployeeSalary extends X_TF_EmployeeSalary {
 		setDocStatus(DOCSTATUS_Drafted);
 	}
 	
-	public void createEmployeeList() {
+	public void createEmployeeList(boolean reCreate, boolean updatePresentDays, boolean updateMonthlySalary, boolean updateAdvancePaid) {
+		
+		if(reCreate) {
+			String sqlDelete = "DELETE FROM TF_EmployeeSalary_Det WHERE TF_EmployeeSalary_ID = " + getTF_EmployeeSalary_ID();
+			DB.executeUpdate(sqlDelete, get_TrxName());
+		}
+		
 		String whereClause = "IsActive = 'Y' AND IsEmployee = 'Y' AND EmployeeType = ?";
 		List<TF_MBPartner> bpList = new Query(getCtx(), TF_MBPartner.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
@@ -75,7 +101,18 @@ public class MEmployeeSalary extends X_TF_EmployeeSalary {
 		
 		int sno = 1;
 		for(TF_MBPartner bpartner : bpList) {
-			MEmployeeSalaryDet.createEmployeeSalaryDetail(getCtx(), get_TrxName(), this, bpartner, sno);
+			
+			String wherecondition = "TF_EmployeeSalary_id = ? AND C_BPartner_ID = ?";
+			
+			MEmployeeSalaryDet employeeSalaryDet =  new Query(getCtx(),MEmployeeSalaryDet.Table_Name, wherecondition, get_TrxName()).setClient_ID()
+					.setParameters(getTF_EmployeeSalary_ID(), bpartner.getC_BPartner_ID()).first();
+			
+			if(employeeSalaryDet == null){
+				MEmployeeSalaryDet.createEmployeeSalaryDetail(getCtx(), get_TrxName(), this, bpartner, sno);
+			}
+			else {
+				MEmployeeSalaryDet.updateDetails(getCtx(), get_TrxName(), this, employeeSalaryDet, bpartner, updatePresentDays, updateMonthlySalary, updateAdvancePaid);
+			}
 			sno++;
 		}
 	}
@@ -97,7 +134,6 @@ public class MEmployeeSalary extends X_TF_EmployeeSalary {
 		List<MEmployeeSalaryDet> empSalaryList = new Query(getCtx(), MEmployeeSalaryDet.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
 				.setParameters(getTF_EmployeeSalary_ID()).setOrderBy(MEmployeeSalaryDet.COLUMNNAME_TF_EmployeeSalary_Det_ID).list();
-		
 		
 		for(MEmployeeSalaryDet empSalaryDet : empSalaryList) {
 			empSalaryDet.setProcessed(isprocessed);

@@ -20,8 +20,10 @@ import org.syvasoft.tallyfrontcrusher.callout.CalloutElementValue_AccountGroup;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalaryIssue_CalcBalanceAmts;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalaryIssue_SetOpenAmt;
+import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_BPDetails;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_BPartner;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_NetSalary;
+import org.syvasoft.tallyfrontcrusher.callout.CalloutEmployeeSalary_PresentDays;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutFuelIssue_CalcAmount;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutFuelIssue_IssueType;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutFuelIssue_SetPrice;
@@ -675,17 +677,25 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			list.add(new CalloutRequisition_SetPriceUOM());
 		}
 		
-		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Salary)				
-				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_NoOfDays))) {			
-			list.add(new CalloutEmployeeSalary_SalaryDue());
+		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_C_BPartner_ID))) {			
+			list.add(new CalloutEmployeeSalary_BPDetails());
+		}
+		
+		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Absentees))) {			
+			list.add(new CalloutEmployeeSalary_PresentDays());
 		}
 		
 		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Salary)				
+				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_NoOfDays) || columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Absentees))) {			
+			list.add(new CalloutEmployeeSalary_SalaryDue());
+		}
+		
+		if((tableName.equals(MEmployeeSalaryDet.Table_Name)) && (columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Salary)	
+				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_Absentees)
 				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_NoOfDays) || columnName.equals(MEmployeeSalaryDet.COLUMNNAME_MessAdvance) 
-				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_DeductAdvance) )) {			
+				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_DeductAdvance) || columnName.equals(MEmployeeSalaryDet.COLUMNNAME_SalaryWithheld))) {			
 			list.add(new CalloutEmployeeSalary_NetSalary());
 		}
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
-
 }

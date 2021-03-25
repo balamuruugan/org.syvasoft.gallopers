@@ -8,6 +8,11 @@ import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalary;
 public class CreateEmployeeLinesSalaryEntry extends SvrProcess {
 
 	private String docAction="CO";
+	boolean reCreate = false;
+	boolean updatePresentDays = false;
+	boolean updateMonthlySalary = false;
+	boolean updateAdvancePaid = false;
+	
 	MEmployeeSalary salary;
 	
 	@Override
@@ -19,12 +24,20 @@ public class CreateEmployeeLinesSalaryEntry extends SvrProcess {
 			String name = para[i].getParameterName();
 			if (name.equals("DocAction"))
 				docAction =  para[i].getParameterAsString();
+			else if (name.equals("reCreate"))
+				reCreate =  para[i].getParameterAsBoolean();
+			else if (name.equals("UpdatePresentDays"))
+				updatePresentDays =  para[i].getParameterAsBoolean();
+			else if (name.equals("UpdateMonthlySalary"))
+				updateMonthlySalary =  para[i].getParameterAsBoolean();
+			else if (name.equals("UpdateAdvancePaid"))
+				updateAdvancePaid =  para[i].getParameterAsBoolean();
 		}
 	}
 
 	@Override
 	protected String doIt() throws Exception {
-		salary.createEmployeeList();			
+		salary.createEmployeeList(reCreate, updatePresentDays, updateMonthlySalary, updateAdvancePaid);			
 		salary.saveEx();
 		return null;
 	}

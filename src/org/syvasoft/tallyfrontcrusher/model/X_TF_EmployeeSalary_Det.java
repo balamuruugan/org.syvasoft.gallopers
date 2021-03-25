@@ -33,7 +33,7 @@ public class X_TF_EmployeeSalary_Det extends PO implements I_TF_EmployeeSalary_D
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210227L;
+	private static final long serialVersionUID = 20210308L;
 
     /** Standard Constructor */
     public X_TF_EmployeeSalary_Det (Properties ctx, int TF_EmployeeSalary_Det_ID, String trxName)
@@ -79,6 +79,23 @@ public class X_TF_EmployeeSalary_Det extends PO implements I_TF_EmployeeSalary_D
         .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	/** Set Absentees.
+		@param Absentees Absentees	  */
+	public void setAbsentees (BigDecimal Absentees)
+	{
+		set_Value (COLUMNNAME_Absentees, Absentees);
+	}
+
+	/** Get Absentees.
+		@return Absentees	  */
+	public BigDecimal getAbsentees () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Absentees);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
 
 	/** Set Advance Paid.
 		@param AdvancePaid Advance Paid	  */
@@ -309,6 +326,23 @@ public class X_TF_EmployeeSalary_Det extends PO implements I_TF_EmployeeSalary_D
 		return bd;
 	}
 
+	/** Set Salary Withheld.
+		@param SalaryWithheld Salary Withheld	  */
+	public void setSalaryWithheld (BigDecimal SalaryWithheld)
+	{
+		set_Value (COLUMNNAME_SalaryWithheld, SalaryWithheld);
+	}
+
+	/** Get Salary Withheld.
+		@return Salary Withheld	  */
+	public BigDecimal getSalaryWithheld () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_SalaryWithheld);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set S No.
 		@param SNo S No	  */
 	public void setSNo (int SNo)
@@ -383,5 +417,22 @@ public class X_TF_EmployeeSalary_Det extends PO implements I_TF_EmployeeSalary_D
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Unpaid Salary.
+		@param UnpaidSalary Unpaid Salary	  */
+	public void setUnpaidSalary (BigDecimal UnpaidSalary)
+	{
+		set_Value (COLUMNNAME_UnpaidSalary, UnpaidSalary);
+	}
+
+	/** Get Unpaid Salary.
+		@return Unpaid Salary	  */
+	public BigDecimal getUnpaidSalary () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_UnpaidSalary);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 }

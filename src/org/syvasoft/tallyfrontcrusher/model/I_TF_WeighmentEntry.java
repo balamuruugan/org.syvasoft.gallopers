@@ -413,6 +413,15 @@ public interface I_TF_WeighmentEntry
 	/** Get New Destination	  */
 	public String getNewDestination();
 
+    /** Column name NewProduct */
+    public static final String COLUMNNAME_NewProduct = "NewProduct";
+
+	/** Set New Product	  */
+	public void setNewProduct (String NewProduct);
+
+	/** Get New Product	  */
+	public String getNewProduct();
+
     /** Column name PartyName */
     public static final String COLUMNNAME_PartyName = "PartyName";
 
@@ -686,6 +695,26 @@ public interface I_TF_WeighmentEntry
 	  * Total Amount
 	  */
 	public BigDecimal getTotalAmt();
+
+    /** Column name Transporter */
+    public static final String COLUMNNAME_Transporter = "Transporter";
+
+	/** Set Transporter	  */
+	public void setTransporter (String Transporter);
+
+	/** Get Transporter	  */
+	public String getTransporter();
+
+    /** Column name Transporter_ID */
+    public static final String COLUMNNAME_Transporter_ID = "Transporter_ID";
+
+	/** Set Transporter	  */
+	public void setTransporter_ID (int Transporter_ID);
+
+	/** Get Transporter	  */
+	public int getTransporter_ID();
+
+	
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

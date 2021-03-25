@@ -26,13 +26,13 @@ public class MEmployeeSalaryAdvance extends X_TF_Employee_Salary_Advance {
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		//If the Employee is created from Quick Entry
-		if(!getC_BPartner().isEmployee()) {
+		/*if(!getC_BPartner().isEmployee()) {
 			MBPartner bp = new MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
 			bp.setIsEmployee(true);
 			bp.setIsCustomer(false);
 			bp.setIsVendor(false);
 			bp.saveEx();
-		}
+		}*/
 		return super.beforeSave(newRecord);
 	}
 	public void processIt(String docAction) {
@@ -44,7 +44,7 @@ public class MEmployeeSalaryAdvance extends X_TF_Employee_Salary_Advance {
 			setProcessed(true);
 			
 			
-			MGLPostingConfig glConfig = MGLPostingConfig.getMGLPostingConfig(getCtx());
+			/*MGLPostingConfig glConfig = MGLPostingConfig.getMGLPostingConfig(getCtx());
 			
 			//Create Salaries Advance Charge if it is not there already.
 			//It should be in atomic transaction to get account settings of Charge for the current docaction transaction.
@@ -84,13 +84,13 @@ public class MEmployeeSalaryAdvance extends X_TF_Employee_Salary_Advance {
 			payment.processIt(DocAction.ACTION_Complete);
 			payment.saveEx();
 			
-			setC_Payment_ID(payment.get_ID());
+			setC_Payment_ID(payment.get_ID());*/
 			
 		}
 	}
 	
 	public void reverseIt() {
-		if(getC_Payment_ID()>0) {
+		/*if(getC_Payment_ID()>0) {
 			TF_MPayment payment = new TF_MPayment(getCtx(), getC_Payment_ID(), get_TrxName());
 			payment.reverseCorrectIt();
 			payment.saveEx();
@@ -98,6 +98,8 @@ public class MEmployeeSalaryAdvance extends X_TF_Employee_Salary_Advance {
 			setC_Payment_ID(0);
 			setProcessed(false);
 			setDocStatus(DOCSTATUS_Drafted);
-		}
+		}*/
+		setProcessed(false);
+		setDocStatus(DOCSTATUS_Drafted);
 	}
 }
