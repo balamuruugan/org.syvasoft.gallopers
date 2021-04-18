@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: PCS Industries
-Bundle-SymbolicName: org.syvasoft.pcs;singleton:=true
+Bundle-Name: Sri Rama Bluemetals
+Bundle-SymbolicName: org.syvasoft.sriramabm;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
