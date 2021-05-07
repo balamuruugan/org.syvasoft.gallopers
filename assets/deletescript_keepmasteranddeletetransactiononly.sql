@@ -441,3 +441,5 @@ DELETE FROM AD_Sequence_No WHERE ad_client_id=1000000;
 DELETE FROM TF_DaySeq;
 
 DELETE FROM TF_Boulder_Movement;
+
+DELETE FROM tf_vehiclerent_tajconfig;
