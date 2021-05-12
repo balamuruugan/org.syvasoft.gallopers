@@ -32,7 +32,7 @@ public interface I_PM_Spare
     /** TableName=PM_Spare */
     public static final String Table_Name = "PM_Spare";
 
-    /** AD_Table_ID=1000320 */
+    /** AD_Table_ID=1000328 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -122,10 +122,10 @@ public interface I_PM_Spare
     /** Column name IssuedAt */
     public static final String COLUMNNAME_IssuedAt = "IssuedAt";
 
-	/** Set Issued Meter	  */
+	/** Set Issued at	  */
 	public void setIssuedAt (BigDecimal IssuedAt);
 
-	/** Get Issued Meter	  */
+	/** Get Issued at	  */
 	public BigDecimal getIssuedAt();
 
     /** Column name LastMeter */
@@ -235,6 +235,15 @@ public interface I_PM_Spare
 
 	/** Get Remaining Life	  */
 	public BigDecimal getRemainingLife();
+
+    /** Column name ReplacedDate */
+    public static final String COLUMNNAME_ReplacedDate = "ReplacedDate";
+
+	/** Set Replaced Date	  */
+	public void setReplacedDate (Timestamp ReplacedDate);
+
+	/** Get Replaced Date	  */
+	public Timestamp getReplacedDate();
 
     /** Column name SpareLife_UOM_ID */
     public static final String COLUMNNAME_SpareLife_UOM_ID = "SpareLife_UOM_ID";

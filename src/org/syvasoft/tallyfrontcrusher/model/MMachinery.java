@@ -2,6 +2,7 @@ package org.syvasoft.tallyfrontcrusher.model;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Properties;
 
 import org.compiere.model.MProduct;
@@ -83,5 +84,16 @@ public class MMachinery extends X_PM_Machinery {
 		}
 		
 		return ok;
+	}
+	
+	public void updateSpareMeter() {
+			
+		String whereClause = "PM_Machinery_ID = ?";
+		List<MMeter> meterList = new Query(getCtx(), MMeter.Table_Name, whereClause, get_TrxName())
+				.setClient_ID().setParameters(getPM_Machinery_ID()).setOrderBy(MMeter.COLUMNNAME_PM_Machinery_ID).list();
+		
+		for(MMeter meter : meterList) {
+			MSpareMaster.updateSpareMeter(getCtx(), get_TrxName(), meter.getPM_Machinery_ID(), meter.getC_UOM_ID(), meter.getCurrentMeter());
+		}
 	}
 }

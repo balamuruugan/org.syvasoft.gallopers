@@ -125,6 +125,17 @@ public class TF_MElementValue extends MElementValue {
 		return false;
 	}
 
+	public boolean isMandatoryCostCenter() {
+		Object oo = get_Value("IsMandatoryCostCenter");
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+	
 	
 	@Override
 	protected boolean beforeSave(boolean newRecord) {

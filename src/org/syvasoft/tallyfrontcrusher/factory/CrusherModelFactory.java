@@ -271,6 +271,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return MEmployeeSalary.class;
 		else if(MEmployeeSalaryDet.Table_Name.equals(tableName))
 			return MEmployeeSalaryDet.class;
+		else if(MSpareMaster.Table_Name.equals(tableName))			
+			return MSpareMaster.class;
+		else if(MSpareSetup.Table_Name.equals(tableName))			
+			return MSpareSetup.class;
 		return null;
 	}
 
@@ -535,6 +539,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeSalary(ctx, Record_ID, trxName);
 		else if(MEmployeeSalaryDet.Table_Name.equals(tableName))
 			return new MEmployeeSalaryDet(ctx, Record_ID, trxName);
+		else if(MSpareMaster.Table_Name.equals(tableName))			
+			return new MSpareMaster(ctx, Record_ID, trxName);
+		else if(MSpareSetup.Table_Name.equals(tableName))			
+			return new MSpareSetup(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -801,6 +809,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeSalary(ctx, rs, trxName);
 		else if(MEmployeeSalaryDet.Table_Name.equals(tableName))			
 			return new MEmployeeSalaryDet(ctx, rs, trxName);
+		else if(MSpareMaster.Table_Name.equals(tableName))			
+			return new MSpareMaster(ctx, rs, trxName);
+		else if(MSpareSetup.Table_Name.equals(tableName))			
+			return new MSpareSetup(ctx, rs, trxName);
 		return null;
 	}
 

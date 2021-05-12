@@ -33,7 +33,7 @@ public class X_PM_Spare extends PO implements I_PM_Spare, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200929L;
+	private static final long serialVersionUID = 20201229L;
 
     /** Standard Constructor */
     public X_PM_Spare (Properties ctx, int PM_Spare_ID, String trxName)
@@ -122,15 +122,15 @@ public class X_PM_Spare extends PO implements I_PM_Spare, I_Persistent
 		return (String)get_Value(COLUMNNAME_DocumentNo);
 	}
 
-	/** Set Issued Meter.
-		@param IssuedAt Issued Meter	  */
+	/** Set Issued at.
+		@param IssuedAt Issued at	  */
 	public void setIssuedAt (BigDecimal IssuedAt)
 	{
 		set_Value (COLUMNNAME_IssuedAt, IssuedAt);
 	}
 
-	/** Get Issued Meter.
-		@return Issued Meter	  */
+	/** Get Issued at.
+		@return Issued at	  */
 	public BigDecimal getIssuedAt () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_IssuedAt);
@@ -343,6 +343,20 @@ public class X_PM_Spare extends PO implements I_PM_Spare, I_Persistent
 		return bd;
 	}
 
+	/** Set Replaced Date.
+		@param ReplacedDate Replaced Date	  */
+	public void setReplacedDate (Timestamp ReplacedDate)
+	{
+		set_Value (COLUMNNAME_ReplacedDate, ReplacedDate);
+	}
+
+	/** Get Replaced Date.
+		@return Replaced Date	  */
+	public Timestamp getReplacedDate () 
+	{
+		return (Timestamp)get_Value(COLUMNNAME_ReplacedDate);
+	}
+
 	public org.compiere.model.I_C_UOM getSpareLife_UOM() throws RuntimeException
     {
 		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
@@ -406,6 +420,8 @@ public class X_PM_Spare extends PO implements I_PM_Spare, I_Persistent
 	public static final String SPARESTATUS_InUse = "A";
 	/** Replaced = R */
 	public static final String SPARESTATUS_Replaced = "R";
+	/** Voided = V */
+	public static final String SPARESTATUS_Voided = "V";
 	/** Set Spare Status.
 		@param SpareStatus Spare Status	  */
 	public void setSpareStatus (String SpareStatus)

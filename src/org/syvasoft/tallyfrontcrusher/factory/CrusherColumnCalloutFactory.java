@@ -41,6 +41,7 @@ import org.syvasoft.tallyfrontcrusher.callout.CalloutLabourWage;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutLabourWageIssue_CalcBalanceAmts;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutLabourWageIssue_SetOpenAmt;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutMJobworkResourceRentEntry_CalcContractAmt;
+import org.syvasoft.tallyfrontcrusher.callout.CalloutMeterLog_SetOpeningMeter;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutOrderQuickEntry_CalcAmt;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutOrderQuickEntry_SetPrice;
 import org.syvasoft.tallyfrontcrusher.callout.CalloutOrderQuickEntry_SetPriceUOM;
@@ -120,6 +121,7 @@ import org.syvasoft.tallyfrontcrusher.model.MInvestmentReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MJobworkResourceRentEntry;
 import org.syvasoft.tallyfrontcrusher.model.MLabourWage;
 import org.syvasoft.tallyfrontcrusher.model.MLabourWageIssue;
+import org.syvasoft.tallyfrontcrusher.model.MMeterLog;
 import org.syvasoft.tallyfrontcrusher.model.MPMSchedule;
 import org.syvasoft.tallyfrontcrusher.model.MPermitPurchase;
 import org.syvasoft.tallyfrontcrusher.model.MPriceListUOM;
@@ -696,6 +698,13 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				|| columnName.equals(MEmployeeSalaryDet.COLUMNNAME_DeductAdvance) || columnName.equals(MEmployeeSalaryDet.COLUMNNAME_SalaryWithheld))) {			
 			list.add(new CalloutEmployeeSalary_NetSalary());
 		}
+		
+				
+		if((tableName.equals(MMeterLog.Table_Name)) && (columnName.equals(MMeterLog.COLUMNNAME_PM_Machinery_ID)				
+				|| columnName.equals(MMeterLog.COLUMNNAME_C_UOM_ID))) {			
+			list.add(new CalloutMeterLog_SetOpeningMeter());
+		}
+		
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 }

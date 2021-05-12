@@ -3593,4 +3593,73 @@ public class TF_MOrder extends MOrder {
 		}
 	}
 		
+	public int getC_VendorInvoiceDocType_ID() {
+		int DocType_ID = MSysConfig.getIntValue("VENDORINVOICE_ORDER_ID", 1000061, Env.getAD_Client_ID(getCtx()));
+		return DocType_ID;
+	}
+	
+	public void createInvoiceVendor() {
+						
+		if(getC_DocTypeTarget_ID() != getC_VendorInvoiceDocType_ID())
+			return;
+		
+		//Invoice Header
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
+		
+		TF_MInvoice invoice = new TF_MInvoice(getCtx(), 0, get_TrxName());
+		invoice.setC_Order_ID(getC_Order_ID());
+		invoice.setClientOrg(getAD_Client_ID(), getAD_Org_ID());
+		invoice.setC_DocTypeTarget_ID(getC_DocTypeTarget().getC_DocTypeInvoice_ID());	// Counter Doc
+		invoice.setIsSOTrx(isSOTrx());
+		invoice.setDateInvoiced(getDateAcct());
+		invoice.setDateAcct(getDateAcct());
+		
+		//
+		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		
+		invoice.setPaymentRule(getPaymentRule());
+		invoice.setC_PaymentTerm_ID(getC_PaymentTerm_ID());
+		//
+		
+		invoice.setBPartner(bp);				
+		invoice.setVehicleNo(getVehicleNo());
+		invoice.setDescription(getDescription());
+		
+		//Price List
+				
+		
+		invoice.setM_PriceList_ID(getM_PriceList_ID());
+		invoice.setC_Currency_ID(getC_Currency_ID());
+		
+		//Financial Dimension - Profit Center		
+		//invoice.setC_Project_ID(counterProj.getC_Project_ID());
+		//invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
+		
+		invoice.saveEx();
+		
+		for(MOrderLine oLine : getLines() ) {
+			//Create Invoice Line
+			MInvoiceLine invLine = new MInvoiceLine(invoice);
+			int M_Product_ID = oLine.getM_Product_ID();
+			invLine.setM_Product_ID(M_Product_ID , true);
+			invLine.setC_UOM_ID(oLine.getC_UOM_ID());
+			invLine.setQty(oLine.getQtyOrdered());
+			invLine.setPriceActual(oLine.getPriceActual());
+			invLine.setPriceList(oLine.getPriceList());
+			invLine.setPriceLimit(oLine.getPriceLimit());
+			invLine.setPriceEntered(oLine.getPriceEntered());		
+			invLine.setC_Tax_ID(oLine.getC_Tax_ID());
+			invLine.setDescription(oLine.getDescription());
+			invLine.setC_Project_ID(getC_Project_ID());
+			invLine.setC_OrderLine_ID(oLine.getC_OrderLine_ID());
+			if(oLine.getPriceEntered().doubleValue() == 0) {
+				throw new AdempiereException("Invalid Price at Line: " + oLine.getLine() + " for Product Name : " + oLine.getM_Product().getName());
+			}			
+			invLine.saveEx();
+		}
+		
+		//Invoice DocAction
+		if (!invoice.processIt(DocAction.ACTION_Complete))
+			throw new AdempiereException("Failed when processing document - " + invoice.getProcessMsg());
+		invoice.saveEx();
+	}
 }

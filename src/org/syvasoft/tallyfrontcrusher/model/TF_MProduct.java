@@ -119,6 +119,143 @@ public class TF_MProduct extends MProduct {
 			 return Env.ZERO;
 		return bd;
 	}
+	
+	/** Column name PM_SpareGroup_ID */
+    public static final String COLUMNNAME_PM_SpareGroup_ID = "PM_SpareGroup_ID";
+    
+	/** Column name SpareLife_UOM_ID */
+    public static final String COLUMNNAME_SpareLife_UOM_ID = "SpareLife_UOM_ID";
+
+	/** Column name SpareLIfeGreenLimit */
+    public static final String COLUMNNAME_SpareLIfeGreenLimit = "SpareLIfeGreenLimit";
+
+    /** Column name SpareLIfeYellowLimit */
+    public static final String COLUMNNAME_SpareLIfeYellowLimit = "SpareLIfeYellowLimit";
+
+    /** Column name SpareStdLife */
+    public static final String COLUMNNAME_SpareStdLife = "SpareStdLife";
+
+    /** Column name TrackSpareLife */
+    public static final String COLUMNNAME_TrackSpareLife = "TrackSpareLife";
+    
+    /** Set Track Spare Life.
+	@param TrackSpareLife Track Spare Life	  */
+	public void setTrackSpareLife (boolean TrackSpareLife)
+	{
+		set_Value (COLUMNNAME_TrackSpareLife, Boolean.valueOf(TrackSpareLife));
+	}
+	
+	/** Get Track Spare Life.
+		@return Track Spare Life	  */
+	public boolean isTrackSpareLife () 
+	{
+		Object oo = get_Value(COLUMNNAME_TrackSpareLife);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+	/** Set Spare Group.
+	@param PM_SpareGroup_ID Spare Group	  */
+	public void setPM_SpareGroup_ID (int PM_SpareGroup_ID)
+	{
+		if (PM_SpareGroup_ID < 1) 
+			set_Value (COLUMNNAME_PM_SpareGroup_ID, null);
+		else 
+			set_Value (COLUMNNAME_PM_SpareGroup_ID, Integer.valueOf(PM_SpareGroup_ID));
+	}
+	
+	/** Get Spare Group.
+		@return Spare Group	  */
+	public int getPM_SpareGroup_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_PM_SpareGroup_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_UOM getSpareLife_UOM() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getSpareLife_UOM_ID(), get_TrxName());	}
+
+	/** Set Spare Life UOM.
+		@param SpareLife_UOM_ID Spare Life UOM	  */
+	public void setSpareLife_UOM_ID (int SpareLife_UOM_ID)
+	{
+		if (SpareLife_UOM_ID < 1) 
+			set_Value (COLUMNNAME_SpareLife_UOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_SpareLife_UOM_ID, Integer.valueOf(SpareLife_UOM_ID));
+	}
+
+	/** Get Spare Life UOM.
+		@return Spare Life UOM	  */
+	public int getSpareLife_UOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_SpareLife_UOM_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Spare LIfe Green Limit.
+		@param SpareLIfeGreenLimit Spare LIfe Green Limit	  */
+	public void setSpareLIfeGreenLimit (BigDecimal SpareLIfeGreenLimit)
+	{
+		set_Value (COLUMNNAME_SpareLIfeGreenLimit, SpareLIfeGreenLimit);
+	}
+
+	/** Get Spare LIfe Green Limit.
+		@return Spare LIfe Green Limit	  */
+	public BigDecimal getSpareLIfeGreenLimit () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_SpareLIfeGreenLimit);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Spare LIfe Yellow Limit.
+		@param SpareLIfeYellowLimit Spare LIfe Yellow Limit	  */
+	public void setSpareLIfeYellowLimit (BigDecimal SpareLIfeYellowLimit)
+	{
+		set_Value (COLUMNNAME_SpareLIfeYellowLimit, SpareLIfeYellowLimit);
+	}
+
+	/** Get Spare LIfe Yellow Limit.
+		@return Spare LIfe Yellow Limit	  */
+	public BigDecimal getSpareLIfeYellowLimit () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_SpareLIfeYellowLimit);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Spare Standard Life.
+		@param SpareStdLife 
+		Spare Standard Life (in Spare Life UOM)
+	  */
+	public void setSpareStdLife (BigDecimal SpareStdLife)
+	{
+		set_Value (COLUMNNAME_SpareStdLife, SpareStdLife);
+	}
+
+	/** Get Spare Standard Life.
+		@return Spare Standard Life (in Spare Life UOM)
+	  */
+	public BigDecimal getSpareStdLife () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_SpareStdLife);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
 
     /** Column name ValueNumber */
     public static final String COLUMNNAME_ValueNumber = "ValueNumber";
