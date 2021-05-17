@@ -33,7 +33,7 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210208L;
+	private static final long serialVersionUID = 20210517L;
 
     /** Standard Constructor */
     public X_TF_Fuel_Issue (Properties ctx, int TF_Fuel_Issue_ID, String trxName)
@@ -43,6 +43,9 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
         {
 			setDateAcct (new Timestamp( System.currentTimeMillis() ));
 // @#Date@
+
+
+
 			setIsCalculated (true);
 // Y
 			setIssueType (null);
@@ -461,6 +464,26 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		return (String)get_Value(COLUMNNAME_IssueType);
 	}
 
+	/** Set Logo.
+		@param Logo_ID Logo	  */
+	public void setLogo_ID (int Logo_ID)
+	{
+		if (Logo_ID < 1) 
+			set_Value (COLUMNNAME_Logo_ID, null);
+		else 
+			set_Value (COLUMNNAME_Logo_ID, Integer.valueOf(Logo_ID));
+	}
+
+	/** Get Logo.
+		@return Logo	  */
+	public int getLogo_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Logo_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_M_InOut getM_InOut() throws RuntimeException
     {
 		return (org.compiere.model.I_M_InOut)MTable.get(getCtx(), org.compiere.model.I_M_InOut.Table_Name)
@@ -512,6 +535,29 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	public int getM_Inventory_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_M_Inventory_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Locator.
+		@param M_Locator_ID 
+		Warehouse Locator
+	  */
+	public void setM_Locator_ID (int M_Locator_ID)
+	{
+		if (M_Locator_ID < 1) 
+			set_Value (COLUMNNAME_M_Locator_ID, null);
+		else 
+			set_Value (COLUMNNAME_M_Locator_ID, Integer.valueOf(M_Locator_ID));
+	}
+
+	/** Get Locator.
+		@return Warehouse Locator
+	  */
+	public int getM_Locator_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_M_Locator_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -700,6 +746,26 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	public BigDecimal getQty () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Qty);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Available Quantity.
+		@param QtyAvailable 
+		Available Quantity (On Hand - Reserved)
+	  */
+	public void setQtyAvailable (BigDecimal QtyAvailable)
+	{
+		set_ValueNoCheck (COLUMNNAME_QtyAvailable, QtyAvailable);
+	}
+
+	/** Get Available Quantity.
+		@return Available Quantity (On Hand - Reserved)
+	  */
+	public BigDecimal getQtyAvailable () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_QtyAvailable);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;

@@ -19,6 +19,7 @@ import org.compiere.model.MInOutLine;
 import org.compiere.model.MInventory;
 import org.compiere.model.MInventoryLine;
 import org.compiere.model.MInvoiceLine;
+import org.compiere.model.MLocator;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MProduct;
 import org.compiere.model.MResource;
@@ -68,8 +69,10 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		//}
 		
 		//if(is_ValueChanged(COLUMNNAME_M_Product_ID) || is_ValueChanged(COLUMNNAME_Qty)) {
-			MWarehouse wh = (MWarehouse) getM_Warehouse();
-			
+			MLocator lc=new MLocator(getCtx(), getM_Locator_ID(), get_TrxName());
+			setM_Warehouse_ID(lc.getM_Warehouse_ID());
+		
+			/*
 			String sql = " SELECT " +
 								" bomQtyOnHand(" + getM_Product_ID() + "," + getM_Warehouse_ID() + " ,0) - " + 
 								" bomQtyReserved(" + getM_Product_ID() + "," + getM_Warehouse_ID() + " ,0) - " +
@@ -77,6 +80,9 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 							" FROM " + 
 								" M_Locator l " + 
 							" WHERE l.M_Locator_ID=" + wh.getDefaultLocator().get_ID();
+			*/
+			String sql = " SELECT qtyonhand FROM m_storeageonhand_v s WHERE s.M_Locator_ID=" + getM_Locator_ID()+ "AND s.M_Product_ID="+getM_Product_ID();
+
 			BigDecimal qtyAvailable = DB.getSQLValueBD(null, sql);
 			if(qtyAvailable.doubleValue() < getQty().doubleValue()) {
 				//log.saveError("NotEnoughStocked", Msg.getElement(getCtx(), COLUMNNAME_Qty));
@@ -189,7 +195,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		inv.saveEx();
 		
 		//Inventory Use Line
-		MInventoryLine line = new MInventoryLine(inv, wh.getDefaultLocator().get_ID(), getM_Product_ID(), 0, null, null, getQty());
+		MInventoryLine line = new MInventoryLine(inv, getM_Locator_ID(), getM_Product_ID(), 0, null, null, getQty());
 		
 		TF_MCharge chrg = TF_MCharge.createChargeFromAccount(getCtx(), getAccount_ID(), get_TrxName());
 		line.setC_Charge_ID(chrg.getC_Charge_ID());
@@ -358,7 +364,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			//Material Issue Line
 			MInOutLine ioLine = new MInOutLine(inout);
 			MWarehouse wh = (MWarehouse) getM_Warehouse();
-			ioLine.setInvoiceLine(invLine, wh.getDefaultLocator().get_ID(), getQty());
+			ioLine.setInvoiceLine(invLine, getM_Locator_ID(), getQty());
 			ioLine.setQty(getQty());
 			ioLine.saveEx(get_TrxName());
 			
@@ -417,7 +423,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		//Material Issue Line
 		MInOutLine ioLine = new MInOutLine(inout);
 		MWarehouse wh = (MWarehouse) getM_Warehouse();
-		ioLine.setM_Locator_ID(wh.getDefaultLocator().getM_Locator_ID());
+		ioLine.setM_Locator_ID(getM_Locator_ID());
 		ioLine.setM_Product_ID(getM_Product_ID(), true);		
 		ioLine.setQty(getQty());
 		ioLine.saveEx(get_TrxName());

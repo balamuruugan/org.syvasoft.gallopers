@@ -290,6 +290,15 @@ public interface I_TF_Fuel_Issue
 	/** Get Issue Type	  */
 	public String getIssueType();
 
+    /** Column name Logo_ID */
+    public static final String COLUMNNAME_Logo_ID = "Logo_ID";
+
+	/** Set Logo	  */
+	public void setLogo_ID (int Logo_ID);
+
+	/** Get Logo	  */
+	public int getLogo_ID();
+
     /** Column name M_InOut_ID */
     public static final String COLUMNNAME_M_InOut_ID = "M_InOut_ID";
 
@@ -319,6 +328,19 @@ public interface I_TF_Fuel_Issue
 	public int getM_Inventory_ID();
 
 	public org.compiere.model.I_M_Inventory getM_Inventory() throws RuntimeException;
+
+    /** Column name M_Locator_ID */
+    public static final String COLUMNNAME_M_Locator_ID = "M_Locator_ID";
+
+	/** Set Locator.
+	  * Warehouse Locator
+	  */
+	public void setM_Locator_ID (int M_Locator_ID);
+
+	/** Get Locator.
+	  * Warehouse Locator
+	  */
+	public int getM_Locator_ID();
 
     /** Column name M_Product_ID */
     public static final String COLUMNNAME_M_Product_ID = "M_Product_ID";
@@ -415,6 +437,19 @@ public interface I_TF_Fuel_Issue
 	  * Quantity
 	  */
 	public BigDecimal getQty();
+
+    /** Column name QtyAvailable */
+    public static final String COLUMNNAME_QtyAvailable = "QtyAvailable";
+
+	/** Set Available Quantity.
+	  * Available Quantity (On Hand - Reserved)
+	  */
+	public void setQtyAvailable (BigDecimal QtyAvailable);
+
+	/** Get Available Quantity.
+	  * Available Quantity (On Hand - Reserved)
+	  */
+	public BigDecimal getQtyAvailable();
 
     /** Column name Rate */
     public static final String COLUMNNAME_Rate = "Rate";
