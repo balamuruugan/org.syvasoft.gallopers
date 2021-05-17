@@ -443,3 +443,9 @@ DELETE FROM TF_DaySeq;
 DELETE FROM TF_Boulder_Movement;
 
 DELETE FROM tf_vehiclerent_tajconfig;
+
+
+DELETE FROM AD_Preference WHERE AD_uSER_id in (1000705);
+DELETE FROM ad_password_history WHERE AD_uSER_id in (1000705);
+DELETE FROM ad_userpreference WHERE AD_uSER_id in (1000705);pa_dashboardpreference
+DELETE FROM pa_dashboardpreference WHERE AD_uSER_id in (1000705);
