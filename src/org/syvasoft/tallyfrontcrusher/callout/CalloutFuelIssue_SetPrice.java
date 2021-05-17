@@ -42,7 +42,7 @@ public class CalloutFuelIssue_SetPrice implements IColumnCallout {
 		else
 			return null;
 		BigDecimal currentCost = TF_MProduct.getCurrentCost(AD_Org_ID, M_Product_ID);
-		if(MSysConfig.getBooleanValue("SET_MATERIAL_ISSUE_PRICE", false))
+		if(MSysConfig.getBooleanValue("SET_MATERIAL_ISSUE_PRICE", true))
 			mTab.setValue(MFuelIssue.COLUMNNAME_Rate, currentCost);
 		
 		int Product_Category_ID = 0;

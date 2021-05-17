@@ -1,6 +1,7 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
@@ -537,6 +538,9 @@ public class TF_MProduct extends MProduct {
 	}
 	
 	public static BigDecimal getCurrentCost(int AD_Org_ID, int M_Product_ID) {
+		BigDecimal latestPO = getLatestPurchasePrice(Env.getCtx(), AD_Org_ID, M_Product_ID);
+		if(latestPO.doubleValue() > 0)
+			return latestPO;
 		
 		MProduct product = MProduct.get(Env.getCtx(), M_Product_ID);
 		MClient client = MClient.get(Env.getCtx());
@@ -564,5 +568,35 @@ public class TF_MProduct extends MProduct {
 	
 	public boolean IsIssuedMeterRequired() {
 		return get_ValueAsBoolean("IssuedMeterRequired");
+	}
+	
+	public static BigDecimal getLatestPurchasePrice(Properties ctx, int AD_Org_ID, int M_Product_ID) {
+		String sql = "SELECT \r\n" + 
+				"	ol.C_OrderLine_ID\r\n" + 
+				"FROM\r\n" + 
+				"	C_Order O INNER JOIN C_OrderLine Ol\r\n" + 
+				"	 ON o.C_Order_ID = ol.C_Order_ID\r\n" + 
+				"	INNER JOIN C_DocType dt\r\n" + 
+				"	 ON dt.C_DocType_ID = o.C_DocTypeTarget_ID \r\n" + 
+				"WHERE\r\n" + 
+				"	o.AD_Org_ID = ? AND ol.M_Product_ID = ? AND dt.DocBaseType = 'POO' AND\r\n" + 
+				"	o.DocStatus IN ('CO','CL')\r\n" +
+				"ORDER BY \r\n" + 
+				"	o.DateOrdered DESC" ;
+		
+		int C_OrderLine_ID = DB.getSQLValue(null, sql, AD_Org_ID, M_Product_ID);
+		
+		TF_MOrderLine ol = new TF_MOrderLine(ctx, C_OrderLine_ID, null);
+		
+		BigDecimal price = ol.getPriceEntered();		
+		MTax taxRate = new MTax(ctx, ol.getC_Tax_ID(), null);
+		BigDecimal HUND = new BigDecimal(100);
+		BigDecimal cost = price.add(price.multiply(taxRate.getRate()).divide(HUND, 2, RoundingMode.HALF_EVEN));
+		
+		if(cost == null || cost.doubleValue() < 0)
+			return BigDecimal.ZERO;
+		
+		return cost;
+				
 	}
 }
