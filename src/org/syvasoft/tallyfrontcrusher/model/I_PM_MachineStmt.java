@@ -197,6 +197,17 @@ public interface I_PM_MachineStmt
 
 	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException;
 
+    /** Column name PM_Job_ID */
+    public static final String COLUMNNAME_PM_Job_ID = "PM_Job_ID";
+
+	/** Set Maintenance Job	  */
+	public void setPM_Job_ID (int PM_Job_ID);
+
+	/** Get Maintenance Job	  */
+	public int getPM_Job_ID();
+
+	public I_PM_Job getPM_Job() throws RuntimeException;
+
     /** Column name PM_Machinery_ID */
     public static final String COLUMNNAME_PM_Machinery_ID = "PM_Machinery_ID";
 
@@ -262,6 +273,17 @@ public interface I_PM_MachineStmt
 	public int getTF_Fuel_Issue_ID();
 
 	public I_TF_Fuel_Issue getTF_Fuel_Issue() throws RuntimeException;
+
+    /** Column name TF_TripSheet_ID */
+    public static final String COLUMNNAME_TF_TripSheet_ID = "TF_TripSheet_ID";
+
+	/** Set Trip Sheet	  */
+	public void setTF_TripSheet_ID (int TF_TripSheet_ID);
+
+	/** Get Trip Sheet	  */
+	public int getTF_TripSheet_ID();
+
+	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

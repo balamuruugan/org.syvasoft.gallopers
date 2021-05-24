@@ -224,6 +224,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		int M_CostElement_ID = MCostElement.getByCostingMethod(getCtx(), prod.getCostingMethod(as)).get(0).get_ID();
 		cost = MCost.get(prod, 0,
 				as, getAD_Org_ID(),M_CostElement_ID , get_TrxName());
+		cost.setCurrentQty(getQtyAvailable());
 		cost.saveEx();
 		
 		if(getRate().doubleValue() ==0)
@@ -255,7 +256,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		costingLine.setCurrentCostPrice(cost==null?BigDecimal.ZERO:cost.getCurrentCostPrice());
 		costingLine.setNewCostPrice(getRate());
 		costingLine.setM_Locator_ID(M_Locator_ID);
-		costingLine.setAD_Org_ID(getAD_Org_ID());
+		costingLine.setAD_Org_ID(getAD_Org_ID());		
 		costingLine.setM_AttributeSetInstance_ID(0);
 		costingLine.saveEx();
 		//Inventory Line	

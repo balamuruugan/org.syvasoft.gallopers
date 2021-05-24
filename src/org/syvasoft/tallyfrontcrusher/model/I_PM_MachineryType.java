@@ -37,9 +37,9 @@ public interface I_PM_MachineryType
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 1 - Org 
+    /** AccessLevel = 3 - Client - Org 
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(1);
+    BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
 
@@ -63,6 +63,17 @@ public interface I_PM_MachineryType
 	  * Organizational entity within client
 	  */
 	public int getAD_Org_ID();
+
+    /** Column name C_ElementValueRentIncome_ID */
+    public static final String COLUMNNAME_C_ElementValueRentIncome_ID = "C_ElementValueRentIncome_ID";
+
+	/** Set Rent Income Account	  */
+	public void setC_ElementValueRentIncome_ID (int C_ElementValueRentIncome_ID);
+
+	/** Get Rent Income Account	  */
+	public int getC_ElementValueRentIncome_ID();
+
+	public org.compiere.model.I_C_ElementValue getC_ElementValueRentIncome() throws RuntimeException;
 
     /** Column name C_UOM_ID */
     public static final String COLUMNNAME_C_UOM_ID = "C_UOM_ID";
