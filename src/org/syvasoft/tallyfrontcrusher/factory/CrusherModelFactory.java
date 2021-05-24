@@ -275,6 +275,11 @@ public class CrusherModelFactory implements IModelFactory {
 			return MSpareMaster.class;
 		else if(MSpareSetup.Table_Name.equals(tableName))			
 			return MSpareSetup.class;
+		else if(MDrillingBlastingEntry.Table_Name.equals(tableName))			
+			return MDrillingBlastingEntry.class;
+		else if(MBlastingEntry.Table_Name.equals(tableName))			
+			return MBlastingEntry.class;
+		
 		return null;
 	}
 
@@ -543,6 +548,11 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MSpareMaster(ctx, Record_ID, trxName);
 		else if(MSpareSetup.Table_Name.equals(tableName))			
 			return new MSpareSetup(ctx, Record_ID, trxName);
+		else if(MDrillingBlastingEntry.Table_Name.equals(tableName))			
+			return new MDrillingBlastingEntry(ctx, Record_ID, trxName);
+		else if(MBlastingEntry.Table_Name.equals(tableName))			
+			return new MBlastingEntry(ctx, Record_ID, trxName);
+
 		return null;
 	}
 
@@ -813,6 +823,11 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MSpareMaster(ctx, rs, trxName);
 		else if(MSpareSetup.Table_Name.equals(tableName))			
 			return new MSpareSetup(ctx, rs, trxName);
+		else if(MDrillingBlastingEntry.Table_Name.equals(tableName))			
+			return new MDrillingBlastingEntry(ctx, rs, trxName);
+		else if(MBlastingEntry.Table_Name.equals(tableName))			
+			return new MBlastingEntry(ctx, rs, trxName);
+
 		return null;
 	}
 

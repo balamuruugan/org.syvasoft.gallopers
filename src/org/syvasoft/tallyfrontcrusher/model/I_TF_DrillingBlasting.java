@@ -21,25 +21,25 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for TF_DrillingEntry
+/** Generated Interface for TF_DrillingBlasting
  *  @author iDempiere (generated) 
  *  @version Release 5.1
  */
 @SuppressWarnings("all")
-public interface I_TF_DrillingEntry 
+public interface I_TF_DrillingBlasting 
 {
 
-    /** TableName=TF_DrillingEntry */
-    public static final String Table_Name = "TF_DrillingEntry";
+    /** TableName=TF_DrillingBlasting */
+    public static final String Table_Name = "TF_DrillingBlasting";
 
-    /** AD_Table_ID=1000321 */
+    /** AD_Table_ID=1000336 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 1 - Org 
+    /** AccessLevel = 3 - Client - Org 
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(1);
+    BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
 
@@ -123,19 +123,6 @@ public interface I_TF_DrillingEntry
 	  */
 	public Timestamp getDateAcct();
 
-    /** Column name Description */
-    public static final String COLUMNNAME_Description = "Description";
-
-	/** Set Description.
-	  * Optional short description of the record
-	  */
-	public void setDescription (String Description);
-
-	/** Get Description.
-	  * Optional short description of the record
-	  */
-	public String getDescription();
-
     /** Column name DocStatus */
     public static final String COLUMNNAME_DocStatus = "DocStatus";
 
@@ -162,42 +149,6 @@ public interface I_TF_DrillingEntry
 	  */
 	public String getDocumentNo();
 
-    /** Column name DrillingCost */
-    public static final String COLUMNNAME_DrillingCost = "DrillingCost";
-
-	/** Set Drilling Cost	  */
-	public void setDrillingCost (BigDecimal DrillingCost);
-
-	/** Get Drilling Cost	  */
-	public BigDecimal getDrillingCost();
-
-    /** Column name Feet */
-    public static final String COLUMNNAME_Feet = "Feet";
-
-	/** Set Feet	  */
-	public void setFeet (BigDecimal Feet);
-
-	/** Get Feet	  */
-	public BigDecimal getFeet();
-
-    /** Column name FeetRate */
-    public static final String COLUMNNAME_FeetRate = "FeetRate";
-
-	/** Set Rate / Feet	  */
-	public void setFeetRate (BigDecimal FeetRate);
-
-	/** Get Rate / Feet	  */
-	public BigDecimal getFeetRate();
-
-    /** Column name Holes */
-    public static final String COLUMNNAME_Holes = "Holes";
-
-	/** Set Holes	  */
-	public void setHoles (BigDecimal Holes);
-
-	/** Get Holes	  */
-	public BigDecimal getHoles();
-
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -211,20 +162,14 @@ public interface I_TF_DrillingEntry
 	  */
 	public boolean isActive();
 
-    /** Column name M_Product_ID */
-    public static final String COLUMNNAME_M_Product_ID = "M_Product_ID";
+    /** Column name IsDebitBlast */
+    public static final String COLUMNNAME_IsDebitBlast = "IsDebitBlast";
 
-	/** Set Product.
-	  * Product, Service, Item
-	  */
-	public void setM_Product_ID (int M_Product_ID);
+	/** Set Is Debit Blast	  */
+	public void setIsDebitBlast (boolean IsDebitBlast);
 
-	/** Get Product.
-	  * Product, Service, Item
-	  */
-	public int getM_Product_ID();
-
-	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException;
+	/** Get Is Debit Blast	  */
+	public boolean isDebitBlast();
 
     /** Column name Processed */
     public static final String COLUMNNAME_Processed = "Processed";
@@ -257,45 +202,14 @@ public interface I_TF_DrillingEntry
 	/** Get TF_DrillingBlasting	  */
 	public int getTF_DrillingBlasting_ID();
 
-	public I_TF_DrillingBlasting getTF_DrillingBlasting() throws RuntimeException;
+    /** Column name TF_DrillingBlasting_UU */
+    public static final String COLUMNNAME_TF_DrillingBlasting_UU = "TF_DrillingBlasting_UU";
 
-    /** Column name TF_DrillingEntry_ID */
-    public static final String COLUMNNAME_TF_DrillingEntry_ID = "TF_DrillingEntry_ID";
+	/** Set TF_DrillingBlasting_UU	  */
+	public void setTF_DrillingBlasting_UU (String TF_DrillingBlasting_UU);
 
-	/** Set Drilling Entry	  */
-	public void setTF_DrillingEntry_ID (int TF_DrillingEntry_ID);
-
-	/** Get Drilling Entry	  */
-	public int getTF_DrillingEntry_ID();
-
-    /** Column name TF_DrillingEntry_UU */
-    public static final String COLUMNNAME_TF_DrillingEntry_UU = "TF_DrillingEntry_UU";
-
-	/** Set TF_DrillingEntry_UU	  */
-	public void setTF_DrillingEntry_UU (String TF_DrillingEntry_UU);
-
-	/** Get TF_DrillingEntry_UU	  */
-	public String getTF_DrillingEntry_UU();
-
-    /** Column name TF_Quarry_ID */
-    public static final String COLUMNNAME_TF_Quarry_ID = "TF_Quarry_ID";
-
-	/** Set Quarry	  */
-	public void setTF_Quarry_ID (int TF_Quarry_ID);
-
-	/** Get Quarry	  */
-	public int getTF_Quarry_ID();
-
-	public I_TF_Quarry getTF_Quarry() throws RuntimeException;
-
-    /** Column name TotalFeet */
-    public static final String COLUMNNAME_TotalFeet = "TotalFeet";
-
-	/** Set Total Feet	  */
-	public void setTotalFeet (BigDecimal TotalFeet);
-
-	/** Get Total Feet	  */
-	public BigDecimal getTotalFeet();
+	/** Get TF_DrillingBlasting_UU	  */
+	public String getTF_DrillingBlasting_UU();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
