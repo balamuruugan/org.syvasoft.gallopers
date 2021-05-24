@@ -66,7 +66,7 @@ public class MTripSheet extends X_TF_TripSheet {
 		setTotal_Wage(getEarned_Wage().add(getIncentive()));
 		
 		//If the Employee is created from Quick Entry
-		if(!getC_BPartner().isEmployee()) {
+		if(!getC_BPartner().isEmployee() && getC_BPartner_ID() > 0) {
 			MBPartner bp = new MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
 			bp.setIsEmployee(true);
 			bp.setIsCustomer(false);
@@ -113,21 +113,22 @@ public class MTripSheet extends X_TF_TripSheet {
 			setDocStatus(DOCSTATUS_Completed);
 			setProcessed(true);
 			
-			String dieselIssue = MSysConfig.getValue("TF_DIESEL_ISSUE_FROM_TRIPSHEET", "N");
-			if(dieselIssue.equals("N")) { 
-				String sql = "UPDATE TF_Fuel_Issue SET TF_TripSheet_ID = ?" +  
-						"  WHERE TF_TripSheet_ID IS NULL AND Vehicle_ID = ? " +  
-						" AND DateAcct <= ? AND DocStatus = 'CO' ";			
-				Object[] obj = new Object[3];
-				obj[0] = getTF_TripSheet_ID();
-				obj[1] = getVehicle_ID();
-				obj[2] = getDateReport();			
-				DB.executeUpdateEx(sql,obj, get_TrxName());
+			if(getExpensed_Fuel().doubleValue() > 0) {
+				String dieselIssue = MSysConfig.getValue("TF_DIESEL_ISSUE_FROM_TRIPSHEET", "N");
+				if(dieselIssue.equals("N")) { 
+					String sql = "UPDATE TF_Fuel_Issue SET TF_TripSheet_ID = ?" +  
+							"  WHERE TF_TripSheet_ID IS NULL AND Vehicle_ID = ? " +  
+							" AND DateAcct <= ? AND DocStatus = 'CO' ";			
+					Object[] obj = new Object[3];
+					obj[0] = getTF_TripSheet_ID();
+					obj[1] = getVehicle_ID();
+					obj[2] = getDateReport();			
+					DB.executeUpdateEx(sql,obj, get_TrxName());
+				}
+				else {
+					issueDiesel();
+				}
 			}
-			else {
-				issueDiesel();
-			}
-			
 			//Post readings into Machinery Meter Log
 			if(getPM_Machinery_ID() > 0) {
 				MMachineryType mt = (MMachineryType) getPM_Machinery().getPM_MachineryType();
@@ -180,6 +181,24 @@ public class MTripSheet extends X_TF_TripSheet {
 				setTF_Labour_Wage_ID(wage.getTF_Labour_Wage_ID());
 			}
 						
+			//post Machinery Rent
+			if(getRent_Amt().doubleValue() > 0) {
+				int rentAccount  = getPM_Machinery().getPM_MachineryType().getC_ElementValueRentIncome_ID();
+				if(rentAccount == 0)
+					throw new AdempiereException("Please set Machinery Rent Income Account!");
+				
+				MMachineryStatement ms = new MMachineryStatement(getCtx(), 0, get_TrxName());
+				ms.setAD_Org_ID(getAD_Org_ID());
+				ms.setDateAcct(getDateReport());
+				ms.setPM_Machinery_ID(getPM_Machinery_ID());
+				ms.setM_Product_ID(getJobWork_Product_ID());
+				ms.setC_UOM_ID(getC_UOM_ID());
+				ms.setRate(getRate());
+				ms.setIncome(getRent_Amt());
+				ms.setC_ElementValue_ID(rentAccount);
+				ms.setTF_TripSheet_ID(getTF_TripSheet_ID());
+				ms.saveEx();
+			}
 		}
 	}
 	
@@ -207,6 +226,7 @@ public class MTripSheet extends X_TF_TripSheet {
 		}
 		
 		MMeterLog.deleteTripSheetMeterLog(getCtx(), getTF_TripSheet_ID(), get_TrxName());
+		MMachineryStatement.deleteTripSheetEntries(getCtx(), getTF_TripSheet_ID(), get_TrxName());
 		
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);

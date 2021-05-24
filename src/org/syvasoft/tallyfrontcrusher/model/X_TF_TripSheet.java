@@ -33,7 +33,7 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200623L;
+	private static final long serialVersionUID = 20210524L;
 
     /** Standard Constructor */
     public X_TF_TripSheet (Properties ctx, int TF_TripSheet_ID, String trxName)
@@ -41,6 +41,7 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
       super (ctx, TF_TripSheet_ID, trxName);
       /** if (TF_TripSheet_ID == 0)
         {
+			setC_UOM_ID (0);
 			setDocumentNo (null);
 			setProcessed (false);
 			setTF_TripSheet_ID (0);
@@ -155,6 +156,34 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public int getC_Project_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Project_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getC_UOM_ID(), get_TrxName());	}
+
+	/** Set UOM.
+		@param C_UOM_ID 
+		Unit of Measure
+	  */
+	public void setC_UOM_ID (int C_UOM_ID)
+	{
+		if (C_UOM_ID < 1) 
+			set_Value (COLUMNNAME_C_UOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_UOM_ID, Integer.valueOf(C_UOM_ID));
+	}
+
+	/** Get UOM.
+		@return Unit of Measure
+	  */
+	public int getC_UOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_UOM_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -291,6 +320,12 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public static final String DOCSTATUS_Activated = "AC";
 	/** Canceled = CA */
 	public static final String DOCSTATUS_Canceled = "CA";
+	/** Overdue = OD */
+	public static final String DOCSTATUS_Overdue = "OD";
+	/** Due = DU */
+	public static final String DOCSTATUS_Due = "DU";
+	/** Upcoming = UP */
+	public static final String DOCSTATUS_Upcoming = "UP";
 	/** Set Document Status.
 		@param DocStatus 
 		The current status of the document
@@ -375,6 +410,31 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	public org.compiere.model.I_M_Product getJobWork_Product() throws RuntimeException
+    {
+		return (org.compiere.model.I_M_Product)MTable.get(getCtx(), org.compiere.model.I_M_Product.Table_Name)
+			.getPO(getJobWork_Product_ID(), get_TrxName());	}
+
+	/** Set Job Work.
+		@param JobWork_Product_ID Job Work	  */
+	public void setJobWork_Product_ID (int JobWork_Product_ID)
+	{
+		if (JobWork_Product_ID < 1) 
+			set_Value (COLUMNNAME_JobWork_Product_ID, null);
+		else 
+			set_Value (COLUMNNAME_JobWork_Product_ID, Integer.valueOf(JobWork_Product_ID));
+	}
+
+	/** Get Job Work.
+		@return Job Work	  */
+	public int getJobWork_Product_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_JobWork_Product_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Opening Fuel.
@@ -520,6 +580,26 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		return false;
 	}
 
+	/** Set Rate.
+		@param Rate 
+		Rate or Tax or Exchange
+	  */
+	public void setRate (BigDecimal Rate)
+	{
+		set_Value (COLUMNNAME_Rate, Rate);
+	}
+
+	/** Get Rate.
+		@return Rate or Tax or Exchange
+	  */
+	public BigDecimal getRate () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Rate);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Received Fuel.
 		@param Received_Fuel Received Fuel	  */
 	public void setReceived_Fuel (BigDecimal Received_Fuel)
@@ -532,6 +612,23 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public BigDecimal getReceived_Fuel () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Received_Fuel);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Rent (Amount).
+		@param Rent_Amt Rent (Amount)	  */
+	public void setRent_Amt (BigDecimal Rent_Amt)
+	{
+		set_Value (COLUMNNAME_Rent_Amt, Rent_Amt);
+	}
+
+	/** Get Rent (Amount).
+		@return Rent (Amount)	  */
+	public BigDecimal getRent_Amt () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Rent_Amt);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;

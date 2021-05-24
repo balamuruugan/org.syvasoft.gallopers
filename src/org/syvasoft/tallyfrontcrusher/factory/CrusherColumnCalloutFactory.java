@@ -89,30 +89,35 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		if(tableName.equals(TF_MOrder.Table_Name) && columnName.equals(TF_MOrder.COLUMNNAME_Vehicle_ID))
 				list.add(new CalloutOrderQuickEntry_SetVehicleNo());
 				
-		//TF_TripSheet - Calc Running Meter
-		if(tableName.equals(MTripSheet.Table_Name) && (columnName.equals(MTripSheet.COLUMNNAME_Opening_Meter) || 
-				columnName.equals(MTripSheet.COLUMNNAME_Closing_Meter)))
-			list.add(new CalloutTripSheetRunningMeter());
-		
-		//TF_TripSheet - Calc Running Meter
-		if(tableName.equals(MTripSheet.Table_Name) && (columnName.equals(MTripSheet.COLUMNNAME_Opening_Fuel) || 
-				columnName.equals(MTripSheet.COLUMNNAME_Closing_Fuel) || columnName.equals(MTripSheet.COLUMNNAME_Received_Fuel)) )
-			list.add(new CalloutTripSheetFuelExpensed());
-		
-		//TF_TripSheet - Set Opening Meter / Fuel
-		if(tableName.equals(MTripSheet.Table_Name) && columnName.equals(MTripSheet.COLUMNNAME_Vehicle_ID))
-			list.add(new CalloutTripSheetOpeningEntries());
-		
-		//TF_TripSheet - Set Rental Contract 
-		if(tableName.equals(MTripSheet.Table_Name) && columnName.equals(MTripSheet.COLUMNNAME_Vehicle_ID))
-			list.add(new CalloutTripSheetRentalContract());
-		
-		//TF_TripSheet - Set Subcontract / Jobwork 
-		if(tableName.equals(MTripSheet.Table_Name) && columnName.equals(MTripSheet.COLUMNNAME_Vehicle_ID))
-			list.add(new CalloutTripSheetJobwork());
-		
-		if(tableName.equals(MTripSheet.Table_Name) && columnName.equals(MTripSheet.COLUMNNAME_PM_Machinery_ID))
-			list.add(new CalloutTripsheet_Vehicle());
+		if(tableName.equals(MTripSheet.Table_Name)) {
+			//TF_TripSheet - Calc Running Meter
+			if(columnName.equals(MTripSheet.COLUMNNAME_Opening_Meter) || 
+					columnName.equals(MTripSheet.COLUMNNAME_Closing_Meter))
+				list.add(new CalloutTripSheetRunningMeter());
+			
+			//TF_TripSheet - Calc Running Meter
+			if(columnName.equals(MTripSheet.COLUMNNAME_Opening_Fuel) || 
+					columnName.equals(MTripSheet.COLUMNNAME_Closing_Fuel) || columnName.equals(MTripSheet.COLUMNNAME_Received_Fuel) )
+				list.add(new CalloutTripSheetFuelExpensed());
+			
+			//TF_TripSheet - Set Opening Meter / Fuel
+			if(columnName.equals(MTripSheet.COLUMNNAME_Vehicle_ID))
+				list.add(new CalloutTripSheetOpeningEntries());
+			
+			//TF_TripSheet - Set Rental Contract 
+			if(columnName.equals(MTripSheet.COLUMNNAME_Vehicle_ID))
+				list.add(new CalloutTripSheetRentalContract());
+			
+			//TF_TripSheet - Set Subcontract / Jobwork 
+			if(columnName.equals(MTripSheet.COLUMNNAME_Vehicle_ID))
+				list.add(new CalloutTripSheetJobwork());
+			
+			if(columnName.equals(MTripSheet.COLUMNNAME_PM_Machinery_ID))
+				list.add(new CalloutTripsheet_Vehicle());
+			
+			if(columnName.equals(MTripSheet.COLUMNNAME_Rate)) 
+				list.add(new CalloutTripsheet_CalcRentAmt());
+		}
 		
 		
 		//C_Payment - Cash Type

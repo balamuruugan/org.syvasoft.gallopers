@@ -27,22 +27,24 @@ public class CalloutTripSheetOpeningEntries implements IColumnCallout {
 		Timestamp dateReport = (Timestamp) mTab.getValue(MTripSheet.COLUMNNAME_DateReport);
 		int vehicle_ID = (int) mTab.getValue(MTripSheet.COLUMNNAME_Vehicle_ID);
 				
-		String dieselIssue = MSysConfig.getValue("TF_DIESEL_ISSUE_FROM_TRIPSHEET", "N");		
+			
 		
 		//Get Opening Meter				
 		BigDecimal openingMeter = MTripSheet.getOpeningMeter(vehicle_ID, dateReport);		
 		mTab.setValue(MTripSheet.COLUMNNAME_Opening_Meter, openingMeter);
 		
+		/*
+		String dieselIssue = MSysConfig.getValue("TF_DIESEL_ISSUE_FROM_TRIPSHEET", "N");	
 		//Get Opening Fuel				
 		BigDecimal openingFuel = MTripSheet.getOpeningFuel(vehicle_ID, dateReport);		
-		mTab.setValue(MTripSheet.COLUMNNAME_Opening_Fuel, openingFuel);
+		//mTab.setValue(MTripSheet.COLUMNNAME_Opening_Fuel, openingFuel);
 		
 		//Set Received Fuel
 		if(!dieselIssue.equals("Y")) {
 			BigDecimal receivedFuel = MTripSheet.getReceivedFuel(vehicle_ID, dateReport);
-			mTab.setValue(MTripSheet.COLUMNNAME_Received_Fuel, receivedFuel);
+			//mTab.setValue(MTripSheet.COLUMNNAME_Received_Fuel, receivedFuel);
 		}
-		
+		*/
 		return null;
 	}
 

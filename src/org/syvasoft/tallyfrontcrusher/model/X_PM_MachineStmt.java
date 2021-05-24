@@ -33,7 +33,7 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200613L;
+	private static final long serialVersionUID = 20210524L;
 
     /** Standard Constructor */
     public X_PM_MachineStmt (Properties ctx, int PM_MachineStmt_ID, String trxName)
@@ -42,7 +42,6 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
       /** if (PM_MachineStmt_ID == 0)
         {
 			setDateAcct (new Timestamp( System.currentTimeMillis() ));
-			setDescription (null);
 			setPM_Machinery_ID (0);
 			setPM_MachineStmt_ID (0);
         } */
@@ -256,6 +255,31 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
 		return ii.intValue();
 	}
 
+	public I_PM_Job getPM_Job() throws RuntimeException
+    {
+		return (I_PM_Job)MTable.get(getCtx(), I_PM_Job.Table_Name)
+			.getPO(getPM_Job_ID(), get_TrxName());	}
+
+	/** Set Maintenance Job.
+		@param PM_Job_ID Maintenance Job	  */
+	public void setPM_Job_ID (int PM_Job_ID)
+	{
+		if (PM_Job_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_PM_Job_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_PM_Job_ID, Integer.valueOf(PM_Job_ID));
+	}
+
+	/** Get Maintenance Job.
+		@return Maintenance Job	  */
+	public int getPM_Job_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_PM_Job_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public I_PM_Machinery getPM_Machinery() throws RuntimeException
     {
 		return (I_PM_Machinery)MTable.get(getCtx(), I_PM_Machinery.Table_Name)
@@ -379,20 +403,27 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
 			 return 0;
 		return ii.intValue();
 	}
-	
-	public static final String  COLUMNNAME_PM_Job_ID = "PM_Job_ID";
-	
-	public void setPM_Job_ID (int PM_Job_ID)
+
+	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException
+    {
+		return (I_TF_TripSheet)MTable.get(getCtx(), I_TF_TripSheet.Table_Name)
+			.getPO(getTF_TripSheet_ID(), get_TrxName());	}
+
+	/** Set Trip Sheet.
+		@param TF_TripSheet_ID Trip Sheet	  */
+	public void setTF_TripSheet_ID (int TF_TripSheet_ID)
 	{
-		if (PM_Job_ID < 1) 
-			set_ValueNoCheck (COLUMNNAME_PM_Job_ID, null);
+		if (TF_TripSheet_ID < 1) 
+			set_Value (COLUMNNAME_TF_TripSheet_ID, null);
 		else 
-			set_ValueNoCheck (COLUMNNAME_PM_Job_ID, Integer.valueOf(PM_Job_ID));
+			set_Value (COLUMNNAME_TF_TripSheet_ID, Integer.valueOf(TF_TripSheet_ID));
 	}
 
-	public int getPM_Job_ID () 
+	/** Get Trip Sheet.
+		@return Trip Sheet	  */
+	public int getTF_TripSheet_ID () 
 	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_PM_Job_ID);
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_TripSheet_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

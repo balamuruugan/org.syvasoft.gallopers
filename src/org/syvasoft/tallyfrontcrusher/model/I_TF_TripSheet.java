@@ -109,6 +109,21 @@ public interface I_TF_TripSheet
 
 	public org.compiere.model.I_C_Project getC_Project() throws RuntimeException;
 
+    /** Column name C_UOM_ID */
+    public static final String COLUMNNAME_C_UOM_ID = "C_UOM_ID";
+
+	/** Set UOM.
+	  * Unit of Measure
+	  */
+	public void setC_UOM_ID (int C_UOM_ID);
+
+	/** Get UOM.
+	  * Unit of Measure
+	  */
+	public int getC_UOM_ID();
+
+	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException;
+
     /** Column name Closing_Fuel */
     public static final String COLUMNNAME_Closing_Fuel = "Closing_Fuel";
 
@@ -257,6 +272,17 @@ public interface I_TF_TripSheet
 	  */
 	public boolean isActive();
 
+    /** Column name JobWork_Product_ID */
+    public static final String COLUMNNAME_JobWork_Product_ID = "JobWork_Product_ID";
+
+	/** Set Job Work	  */
+	public void setJobWork_Product_ID (int JobWork_Product_ID);
+
+	/** Get Job Work	  */
+	public int getJobWork_Product_ID();
+
+	public org.compiere.model.I_M_Product getJobWork_Product() throws RuntimeException;
+
     /** Column name Opening_Fuel */
     public static final String COLUMNNAME_Opening_Fuel = "Opening_Fuel";
 
@@ -328,6 +354,19 @@ public interface I_TF_TripSheet
 	/** Get Process Now	  */
 	public boolean isProcessing();
 
+    /** Column name Rate */
+    public static final String COLUMNNAME_Rate = "Rate";
+
+	/** Set Rate.
+	  * Rate or Tax or Exchange
+	  */
+	public void setRate (BigDecimal Rate);
+
+	/** Get Rate.
+	  * Rate or Tax or Exchange
+	  */
+	public BigDecimal getRate();
+
     /** Column name Received_Fuel */
     public static final String COLUMNNAME_Received_Fuel = "Received_Fuel";
 
@@ -336,6 +375,15 @@ public interface I_TF_TripSheet
 
 	/** Get Received Fuel	  */
 	public BigDecimal getReceived_Fuel();
+
+    /** Column name Rent_Amt */
+    public static final String COLUMNNAME_Rent_Amt = "Rent_Amt";
+
+	/** Set Rent (Amount)	  */
+	public void setRent_Amt (BigDecimal Rent_Amt);
+
+	/** Get Rent (Amount)	  */
+	public BigDecimal getRent_Amt();
 
     /** Column name Running_Meter */
     public static final String COLUMNNAME_Running_Meter = "Running_Meter";

@@ -30,7 +30,7 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210214L;
+	private static final long serialVersionUID = 20210524L;
 
     /** Standard Constructor */
     public X_PM_MachineryType (Properties ctx, int PM_MachineryType_ID, String trxName)
@@ -38,10 +38,8 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
       super (ctx, PM_MachineryType_ID, trxName);
       /** if (PM_MachineryType_ID == 0)
         {
-			setIssuedMeterRequired (true);
-// Y
-			setMileageType (null);
-// K
+			setIssuedMeterRequired (false);
+// N
 			setName (null);
 			setPM_MachineryType_ID (0);
         } */
@@ -54,7 +52,7 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
     }
 
     /** AccessLevel
-      * @return 1 - Org 
+      * @return 3 - Client - Org 
       */
     protected int get_AccessLevel()
     {
@@ -74,6 +72,31 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
         .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	public org.compiere.model.I_C_ElementValue getC_ElementValueRentIncome() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_ElementValue)MTable.get(getCtx(), org.compiere.model.I_C_ElementValue.Table_Name)
+			.getPO(getC_ElementValueRentIncome_ID(), get_TrxName());	}
+
+	/** Set Rent Income Account.
+		@param C_ElementValueRentIncome_ID Rent Income Account	  */
+	public void setC_ElementValueRentIncome_ID (int C_ElementValueRentIncome_ID)
+	{
+		if (C_ElementValueRentIncome_ID < 1) 
+			set_Value (COLUMNNAME_C_ElementValueRentIncome_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_ElementValueRentIncome_ID, Integer.valueOf(C_ElementValueRentIncome_ID));
+	}
+
+	/** Get Rent Income Account.
+		@return Rent Income Account	  */
+	public int getC_ElementValueRentIncome_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_ElementValueRentIncome_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 
 	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException
     {
@@ -173,6 +196,10 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
 	public static final String MILEAGETYPE_KmLitre = "K";
 	/** litre/hr = H */
 	public static final String MILEAGETYPE_LitreHr = "H";
+	/** TPH = T */
+	public static final String MILEAGETYPE_TPH = "T";
+	/** Unit/hr = U */
+	public static final String MILEAGETYPE_UnitHr = "U";
 	/** Set Mileage Type.
 		@param MileageType Mileage Type	  */
 	public void setMileageType (String MileageType)
