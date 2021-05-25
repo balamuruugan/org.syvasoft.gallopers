@@ -172,6 +172,20 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 	private void createInternalUseInventory(String docAction) {
 		setCost();
 		
+		//Create Costing record for the product.
+		MAcctSchema as = (MAcctSchema) MGLPostingConfig.getMGLPostingConfig(getCtx()).getC_AcctSchema();
+		TF_MProduct prod = new TF_MProduct(getCtx(), getM_Product_ID(), get_TrxName());
+		MCost cost = prod.getCostingRecord(as, getAD_Org_ID(), 0, prod.getCostingMethod(as));
+		int M_CostElement_ID = MCostElement.getByCostingMethod(getCtx(), prod.getCostingMethod(as)).get(0).get_ID();
+		cost = MCost.get(prod, 0,
+				as, getAD_Org_ID(),M_CostElement_ID , get_TrxName());
+		cost.setCurrentQty(getQtyAvailable());
+		if(cost.getCumulatedQty().doubleValue() <=0) {
+			cost.setCumulatedQty(getQtyAvailable());
+			cost.setCumulatedAmt(getQtyAvailable().multiply(getRate()));
+		}
+		cost.saveEx();
+		
 		//Post Inventory Use Inventory for Fuel Expense.
 		MWarehouse wh = (MWarehouse) getM_Warehouse();
 		//Inventory Use Header
@@ -220,12 +234,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			return;
 		}
 				
-		//Create Costing record for the product.
-		int M_CostElement_ID = MCostElement.getByCostingMethod(getCtx(), prod.getCostingMethod(as)).get(0).get_ID();
-		cost = MCost.get(prod, 0,
-				as, getAD_Org_ID(),M_CostElement_ID , get_TrxName());
-		cost.setCurrentQty(getQtyAvailable());
-		cost.saveEx();
+		
 		
 		if(getRate().doubleValue() ==0)
 			return;
