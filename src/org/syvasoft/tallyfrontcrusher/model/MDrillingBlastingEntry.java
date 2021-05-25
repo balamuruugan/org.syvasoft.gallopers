@@ -60,6 +60,9 @@ public class MDrillingBlastingEntry extends X_TF_DrillingBlasting {
 		for(MBlastingEntry blEntry : blEntries) {
 			MFuelIssue fIssue=new MFuelIssue(getCtx(), blEntry.getTF_Fuel_Issue_ID(), get_TrxName());
 			fIssue.reverseIt();
+			fIssue.saveEx();
+			blEntry.setTF_Fuel_Issue_ID(0);
+			blEntry.saveEx();
 		}		
 		
 	}
@@ -154,6 +157,7 @@ public class MDrillingBlastingEntry extends X_TF_DrillingBlasting {
 			}
 			else {
 				fIssue.setIssueType("E");
+				//need to set expense account
 			}
 			
 			TF_MProduct prod=new TF_MProduct(getCtx(), blEntry.getM_Product_ID(), get_TrxName());
@@ -161,7 +165,7 @@ public class MDrillingBlastingEntry extends X_TF_DrillingBlasting {
 			
 			fIssue.setM_Product_ID(blEntry.getM_Product_ID());
 			fIssue.setC_ElementValue_ID(prodcategory.getSpareExpensesAcct_ID());
-			fIssue.setM_Locator_ID(prod.getM_Locator_ID());
+			fIssue.setM_Locator_ID(blEntry.getM_Locator_ID());
 			fIssue.setQty(blEntry.getQty());
 			fIssue.setQtyAvailable(blEntry.getQtyAvailable());
 			fIssue.setRate(blEntry.getPrice());

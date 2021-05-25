@@ -81,9 +81,12 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 								" M_Locator l " + 
 							" WHERE l.M_Locator_ID=" + wh.getDefaultLocator().get_ID();
 			*/
-			String sql = " SELECT qtyonhand FROM m_storeageonhand_v s WHERE s.M_Locator_ID=" + getM_Locator_ID()+ "AND s.M_Product_ID="+getM_Product_ID();
+			String sql = " SELECT  COALESCE(qtyonhand,0) FROM m_storeageonhand_v s WHERE s.M_Locator_ID=" + getM_Locator_ID()+ " AND s.M_Product_ID="+getM_Product_ID();
 
 			BigDecimal qtyAvailable = DB.getSQLValueBD(null, sql);
+			if(qtyAvailable==null) {
+				qtyAvailable=BigDecimal.ZERO;
+			}
 			if(qtyAvailable.doubleValue() < getQty().doubleValue()) {
 				//log.saveError("NotEnoughStocked", Msg.getElement(getCtx(), COLUMNNAME_Qty));
 				throw new AdempiereException("Inventory on Hand : " + qtyAvailable);				

@@ -38,7 +38,7 @@ public class ProcessDrillingBlasting extends SvrProcess {
 			else
 				rollback();
 		}
-		else if(drillBlast.isProcessed() && docAction.equals("RE")) {
+		else if(drillBlast.isProcessed() && docAction.equals("MO")) {
 			drillBlast.reverseIt();
 			drillBlast.saveEx();
 		}

@@ -10,6 +10,7 @@ import org.compiere.model.MJournalLine;
 import org.compiere.model.MOrder;
 import org.compiere.model.MPayment;
 import org.syvasoft.tallyfrontcrusher.callout.*;
+import org.syvasoft.tallyfrontcrusher.model.MBlastingEntry;
 import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MCrusherKatingEntry;
 import org.syvasoft.tallyfrontcrusher.model.MDrillingEntry;
@@ -614,7 +615,13 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				|| columnName.equals(MMeterLog.COLUMNNAME_C_UOM_ID))) {			
 			list.add(new CalloutMeterLog_SetOpeningMeter());
 		}
-		
+
+		if(tableName.equals(MBlastingEntry.Table_Name)) {
+			if(columnName.equals(MBlastingEntry.COLUMNNAME_M_Locator_ID) || columnName.equals(MBlastingEntry.COLUMNNAME_M_Product_ID)) {
+				list.add(new CalloutBlastingEntry_SetPriceUom());
+				list.add(new CalloutBlastingEntry_AvailableQty());
+			}
+		}
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 }
