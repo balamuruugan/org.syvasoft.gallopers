@@ -547,7 +547,7 @@ public class TF_MProduct extends MProduct {
 		MAcctSchema as = client.getAcctSchema();
 		String costingMethod = product.getCostingMethod(as);		
 		MCost cost = product.getCostingRecord(as, AD_Org_ID, 0, costingMethod);
-		if(cost == null) {
+		if(cost == null || cost.getCurrentCostPrice().doubleValue() == 0) {
 			Timestamp date = Env.getContextAsDate(Env.getCtx(), "#Date");
 			TF_MProduct prod = new TF_MProduct(Env.getCtx(), M_Product_ID, null);
 			BigDecimal puPrice = MPriceListUOM.getPrice(Env.getCtx(),AD_Org_ID, M_Product_ID, prod.getC_UOM_ID(), 0, false, date);
