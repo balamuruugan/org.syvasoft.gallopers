@@ -81,6 +81,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		registerTableEvent(IEventTopics.PO_AFTER_NEW, MTyre.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MJournal.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MMatchInv.Table_Name);
+		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MInOutLine.Table_Name);
 		registerEvent(IEventTopics.AFTER_LOGIN);		
 
 	}
@@ -197,6 +198,16 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_BucketRate, oLine.getBucketRate());
 					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_TotalLoad, oLine.getTotalLoad());
 					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_TF_VehicleType_ID, oLine.getTF_VehicleType_ID() == 0 ? null : oLine.getTF_VehicleType_ID());
+				}
+			}
+		}
+		else if(po.get_TableName().equals(MInOutLine.Table_Name)) {
+			MInOutLine iLine = (MInOutLine) po;
+			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
+				if (iLine.getC_OrderLine_ID() > 0) {
+					TF_MOrderLine oLine = new TF_MOrderLine(Env.getCtx(), iLine.getC_OrderLine_ID(), iLine.get_TrxName());
+					iLine.set_ValueOfColumn("M_WarehouseNew_ID", oLine.get_ValueAsInt("M_WarehouseNew_ID"));
+					iLine.set_ValueOfColumn("M_Locator_ID", oLine.get_ValueAsInt("M_Locator_ID"));					
 				}
 			}
 		}
