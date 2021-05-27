@@ -191,6 +191,7 @@ public class MTripSheet extends X_TF_TripSheet {
 				ms.setAD_Org_ID(getAD_Org_ID());
 				ms.setDateAcct(getDateReport());
 				ms.setPM_Machinery_ID(getPM_Machinery_ID());
+				ms.setQty(getRunning_Meter());
 				ms.setM_Product_ID(getJobWork_Product_ID());
 				ms.setC_UOM_ID(getC_UOM_ID());
 				ms.setRate(getRate());
