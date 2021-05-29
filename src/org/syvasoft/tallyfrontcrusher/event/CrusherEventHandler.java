@@ -21,6 +21,8 @@ import org.compiere.model.MInvoiceLine;
 import org.compiere.model.MJournal;
 import org.compiere.model.MMatchInv;
 import org.compiere.model.MOrder;
+import org.compiere.model.MOrderLine;
+import org.compiere.model.MOrgInfo;
 import org.compiere.model.MPInstance;
 import org.compiere.model.MPayment;
 import org.compiere.model.MPriceList;
@@ -33,6 +35,7 @@ import org.compiere.model.MStorageOnHand;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MTransaction;
 import org.compiere.model.MUser;
+import org.compiere.model.MWarehouse;
 import org.compiere.model.PO;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
@@ -47,6 +50,7 @@ import org.osgi.service.event.Event;
 import org.syvasoft.tallyfrontcrusher.model.MAdditionalTransactionSetup;
 import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MCashCounter;
+import org.syvasoft.tallyfrontcrusher.model.MCounterTransactionSetup;
 import org.syvasoft.tallyfrontcrusher.model.MGLPostingConfig;
 import org.syvasoft.tallyfrontcrusher.model.MJobworkItemIssue;
 import org.syvasoft.tallyfrontcrusher.model.MTyre;
@@ -72,6 +76,8 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		registerTableEvent(IEventTopics.DOC_AFTER_COMPLETE, TF_MInvoice.Table_Name);
 		registerTableEvent(IEventTopics.DOC_AFTER_REVERSECORRECT, TF_MInvoice.Table_Name);
 		registerTableEvent(IEventTopics.DOC_AFTER_COMPLETE, MOrder.Table_Name);
+		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrder.Table_Name);
+		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrderLine.Table_Name);
 		registerTableEvent(IEventTopics.DOC_BEFORE_PREPARE, MProduction.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MPayment.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_CHANGE, MPayment.Table_Name);
@@ -206,8 +212,13 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
 				if (iLine.getC_OrderLine_ID() > 0) {
 					TF_MOrderLine oLine = new TF_MOrderLine(Env.getCtx(), iLine.getC_OrderLine_ID(), iLine.get_TrxName());
-					iLine.set_ValueOfColumn("M_WarehouseNew_ID", oLine.get_ValueAsInt("M_WarehouseNew_ID"));
-					iLine.set_ValueOfColumn("M_Locator_ID", oLine.get_ValueAsInt("M_Locator_ID"));					
+					int M_Warehouse_ID = oLine.get_ValueAsInt("M_WarehouseNew_ID");
+					if(M_Warehouse_ID > 0)
+						iLine.set_ValueOfColumn("M_WarehouseNew_ID", oLine.get_ValueAsInt("M_WarehouseNew_ID"));
+					
+					int M_Locator_ID = oLine.get_ValueAsInt("M_Locator_ID");
+					if(M_Locator_ID > 0)
+						iLine.set_ValueOfColumn("M_Locator_ID", oLine.get_ValueAsInt("M_Locator_ID"));					
 				}
 			}
 		}
@@ -216,6 +227,43 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			if(event.getTopic().equals(IEventTopics.DOC_AFTER_COMPLETE)) {
 				createDriverTipsPayment(ord);
 				MJobworkItemIssue.IssueFromPO(ord);
+			}
+			else if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
+				int ref_Order_ID = ord.getRef_Order_ID();
+				if(ref_Order_ID > 0) {
+					MCounterTransactionSetup ctransSetup = new MCounterTransactionSetup(ord.getCtx(), 0, null);
+					//Set Counter Warehouse
+					MOrgInfo o = MOrgInfo.get(ord.getCtx(), ord.getAD_Org_ID(), null);
+					ord.setM_Warehouse_ID(o.getM_Warehouse_ID());
+					
+					//Set Counter Product and Locators					
+					int src_Product_ID = ord.get_ValueAsInt(TF_MOrder.COLUMNNAME_Item1_ID);
+					if(src_Product_ID > 0) {
+						int M_Product_ID = ctransSetup.getCounterProduct_ID(ord.getAD_Org_ID(), src_Product_ID);					
+						ord.set_ValueOfColumn(TF_MOrder.COLUMNNAME_Item1_ID, M_Product_ID);					
+						MWarehouse wh = (MWarehouse) o.getM_Warehouse();
+						ord.set_ValueOfColumn(TF_MOrder.COLUMNNAME_M_Locator_ID, wh.getDefaultLocator().getM_Locator_ID());
+					}
+				}
+			}
+		}
+		else if (po instanceof MOrderLine) {
+			MOrderLine oLine = (MOrderLine) po;
+			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
+				int ref_OrderLine_ID = oLine.getRef_OrderLine_ID();
+				if(ref_OrderLine_ID > 0) {
+					//Set Counter warehouse
+					MOrgInfo o = MOrgInfo.get(oLine.getCtx(), oLine.getAD_Org_ID(), null);
+					oLine.setM_Warehouse_ID(o.getM_Warehouse_ID());
+					
+					//Counter Product and Locators
+					MCounterTransactionSetup ctransSetup = new MCounterTransactionSetup(oLine.getCtx(), 0, null);
+					int src_Product_ID = oLine.get_ValueAsInt(MOrderLine.COLUMNNAME_M_Product_ID);
+					int M_Product_ID = ctransSetup.getCounterProduct_ID(oLine.getAD_Org_ID(), src_Product_ID);
+					oLine.setM_Product_ID(M_Product_ID);					
+					MWarehouse wh = (MWarehouse) o.getM_Warehouse();
+					oLine.set_ValueOfColumn(TF_MOrder.COLUMNNAME_M_Locator_ID, wh.getDefaultLocator().getM_Locator_ID());
+				}
 			}
 		}
 		else if (po instanceof MProduction) {
