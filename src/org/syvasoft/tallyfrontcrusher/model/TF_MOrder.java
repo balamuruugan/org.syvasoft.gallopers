@@ -10,6 +10,7 @@ import java.util.Properties;
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.exceptions.ProductNotOnPriceListException;
 import org.compiere.model.MBPartner;
+import org.compiere.model.MDocType;
 import org.compiere.model.MInOut;
 import org.compiere.model.MInOutLine;
 import org.compiere.model.MInvoice;
@@ -2307,8 +2308,11 @@ public class TF_MOrder extends MOrder {
 	@Override
 	public boolean voidIt() {
 		
+		String docSubType = getC_DocTypeTarget().getDocSubTypeSO();
+		
 		//POS Order's MR and Invoice should be reversed.
-		if(getC_DocType_ID() == 1000050 || getC_DocType_ID() == 1000041 || getC_DocType_ID() == getC_VendorInvoiceDocType_ID() ||
+		if((!isSOTrx() && MDocType.DOCSUBTYPESO_POSOrder.equals(docSubType)) ||
+				getC_DocType_ID() == 1000050 || getC_DocType_ID() == 1000041 || getC_DocType_ID() == getC_VendorInvoiceDocType_ID() ||
 				getC_DocType_ID() == GSTOrderDocType_ID(getCtx()) || getC_DocType_ID() == NonGSTOrderDocType_ID(getCtx())) {
 			//MR/Shipment reverse Correct
 			List<MInOut> inOutList = new Query(getCtx(), MInOut.Table_Name, "C_Order_ID=? AND DocStatus=? AND C_DocType_ID != ?", get_TrxName())
