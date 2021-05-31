@@ -543,6 +543,9 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		else if(getMileageType().equals(MMachineryType.MILEAGETYPE_LitreHr)) {
 			mileage = totalQty.divide(RunningMeter, 2, RoundingMode.HALF_EVEN);
 		}
+		else {
+			throw new AdempiereException(getMileageType() + " - Mileage Type not implemented!");
+		}
 		
 		setMileage(mileage);
 	}
