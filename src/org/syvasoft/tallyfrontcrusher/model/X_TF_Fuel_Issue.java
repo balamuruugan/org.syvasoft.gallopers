@@ -33,7 +33,7 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210517L;
+	private static final long serialVersionUID = 20210531L;
 
     /** Standard Constructor */
     public X_TF_Fuel_Issue (Properties ctx, int TF_Fuel_Issue_ID, String trxName)
@@ -48,6 +48,8 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 
 			setIsCalculated (true);
 // Y
+			setIsFullTank (false);
+// N
 			setIssueType (null);
 // P
 			setM_Warehouse_ID (0);
@@ -428,6 +430,27 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		return false;
 	}
 
+	/** Set Full Tank Issue.
+		@param IsFullTank Full Tank Issue	  */
+	public void setIsFullTank (boolean IsFullTank)
+	{
+		set_Value (COLUMNNAME_IsFullTank, Boolean.valueOf(IsFullTank));
+	}
+
+	/** Get Full Tank Issue.
+		@return Full Tank Issue	  */
+	public boolean isFullTank () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsFullTank);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Issued Meter.
 		@param IssueMeter Issued Meter	  */
 	public void setIssueMeter (BigDecimal IssueMeter)
@@ -563,6 +586,34 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		return ii.intValue();
 	}
 
+	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException
+    {
+		return (org.compiere.model.I_M_Product_Category)MTable.get(getCtx(), org.compiere.model.I_M_Product_Category.Table_Name)
+			.getPO(getM_Product_Category_ID(), get_TrxName());	}
+
+	/** Set Product Category.
+		@param M_Product_Category_ID 
+		Category of a Product
+	  */
+	public void setM_Product_Category_ID (int M_Product_Category_ID)
+	{
+		if (M_Product_Category_ID < 1) 
+			set_Value (COLUMNNAME_M_Product_Category_ID, null);
+		else 
+			set_Value (COLUMNNAME_M_Product_Category_ID, Integer.valueOf(M_Product_Category_ID));
+	}
+
+	/** Get Product Category.
+		@return Category of a Product
+	  */
+	public int getM_Product_Category_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_M_Product_Category_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException
     {
 		return (org.compiere.model.I_M_Product)MTable.get(getCtx(), org.compiere.model.I_M_Product.Table_Name)
@@ -617,6 +668,46 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Mileage.
+		@param Mileage Mileage	  */
+	public void setMileage (BigDecimal Mileage)
+	{
+		set_Value (COLUMNNAME_Mileage, Mileage);
+	}
+
+	/** Get Mileage.
+		@return Mileage	  */
+	public BigDecimal getMileage () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Mileage);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Km/litre = K */
+	public static final String MILEAGETYPE_KmLitre = "K";
+	/** litre/hr = H */
+	public static final String MILEAGETYPE_LitreHr = "H";
+	/** TPH = T */
+	public static final String MILEAGETYPE_TPH = "T";
+	/** Unit/hr = U */
+	public static final String MILEAGETYPE_UnitHr = "U";
+	/** Set Mileage Type.
+		@param MileageType Mileage Type	  */
+	public void setMileageType (String MileageType)
+	{
+
+		set_Value (COLUMNNAME_MileageType, MileageType);
+	}
+
+	/** Get Mileage Type.
+		@return Mileage Type	  */
+	public String getMileageType () 
+	{
+		return (String)get_Value(COLUMNNAME_MileageType);
 	}
 
 	public I_PM_Job getPM_Job() throws RuntimeException

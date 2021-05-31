@@ -272,6 +272,15 @@ public interface I_TF_Fuel_Issue
 	  */
 	public boolean isCalculated();
 
+    /** Column name IsFullTank */
+    public static final String COLUMNNAME_IsFullTank = "IsFullTank";
+
+	/** Set Full Tank Issue	  */
+	public void setIsFullTank (boolean IsFullTank);
+
+	/** Get Full Tank Issue	  */
+	public boolean isFullTank();
+
     /** Column name IssueMeter */
     public static final String COLUMNNAME_IssueMeter = "IssueMeter";
 
@@ -342,6 +351,21 @@ public interface I_TF_Fuel_Issue
 	  */
 	public int getM_Locator_ID();
 
+    /** Column name M_Product_Category_ID */
+    public static final String COLUMNNAME_M_Product_Category_ID = "M_Product_Category_ID";
+
+	/** Set Product Category.
+	  * Category of a Product
+	  */
+	public void setM_Product_Category_ID (int M_Product_Category_ID);
+
+	/** Get Product Category.
+	  * Category of a Product
+	  */
+	public int getM_Product_Category_ID();
+
+	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException;
+
     /** Column name M_Product_ID */
     public static final String COLUMNNAME_M_Product_ID = "M_Product_ID";
 
@@ -371,6 +395,24 @@ public interface I_TF_Fuel_Issue
 	public int getM_Warehouse_ID();
 
 	public org.compiere.model.I_M_Warehouse getM_Warehouse() throws RuntimeException;
+
+    /** Column name Mileage */
+    public static final String COLUMNNAME_Mileage = "Mileage";
+
+	/** Set Mileage	  */
+	public void setMileage (BigDecimal Mileage);
+
+	/** Get Mileage	  */
+	public BigDecimal getMileage();
+
+    /** Column name MileageType */
+    public static final String COLUMNNAME_MileageType = "MileageType";
+
+	/** Set Mileage Type	  */
+	public void setMileageType (String MileageType);
+
+	/** Get Mileage Type	  */
+	public String getMileageType();
 
     /** Column name PM_Job_ID */
     public static final String COLUMNNAME_PM_Job_ID = "PM_Job_ID";

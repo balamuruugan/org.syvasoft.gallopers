@@ -71,7 +71,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		//if(is_ValueChanged(COLUMNNAME_M_Product_ID) || is_ValueChanged(COLUMNNAME_Qty)) {
 			MLocator lc=new MLocator(getCtx(), getM_Locator_ID(), get_TrxName());
 			setM_Warehouse_ID(lc.getM_Warehouse_ID());
-		
+			
 			/*
 			String sql = " SELECT " +
 								" bomQtyOnHand(" + getM_Product_ID() + "," + getM_Warehouse_ID() + " ,0) - " + 
@@ -100,6 +100,20 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			MMachineryType mt = (MMachineryType) getPM_Machinery().getPM_MachineryType();
 			if(p.IsIssuedMeterRequired() && mt != null && mt.issuedMeterRequired()  && getIssueMeter().doubleValue() == 0) {
 				throw new AdempiereException("Required Issue Meter!");
+			}
+		}
+		
+		if(getPM_Machinery_ID() > 0) {
+			if(isFullTank()) {
+				String mileageType = getPM_Machinery().getPM_MachineryType().getMileageType();
+				setMileageType(mileageType);
+				
+				if(is_ValueChanged(COLUMNNAME_IssueMeter) || is_ValueChanged(COLUMNNAME_PrevIssueMeter))
+					calculateMileage();
+			}
+			else {
+				setMileage(null);
+				setMileageType(null);
 			}
 		}
 		
@@ -143,6 +157,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 				createMachineryStatement();
 			}
 			
+			calculateMileage();
 		}
 	}
 	
@@ -484,6 +499,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		setQty(BigDecimal.ZERO);			
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);
+		calculateMileage();
 	}
 	
 	public static BigDecimal getPreviousMeter(Properties ctx, int AD_Org_ID, Timestamp dateAcct, int Vehicle_ID, int M_Product_ID) {
@@ -493,4 +509,42 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 						
 		return prevIssuedMeter;
 	}
+	
+	public void calculateMileage() {
+		if(!isFullTank()) {			
+			return;
+		}
+		String sql = "SELECT MAX(TF_Fuel_Issue_ID) FROM TF_Fuel_Issue WHERE AD_Org_ID = ? AND PM_Machinery_ID = ? AND "
+				+ " M_Product_ID = ? AND IsFullTank='Y' AND DocStatus='CO' AND TF_Fuel_Issue_ID < ?";
+		
+		int prevFuelIssue_ID = DB.getSQLValue(get_TrxName(), sql, getAD_Org_ID(), getPM_Machinery_ID(), 
+				getM_Product_ID(), getTF_Fuel_Issue_ID());
+		
+		if(prevFuelIssue_ID <= 0)
+			return;
+		
+		MFuelIssue prevIssue = new MFuelIssue(getCtx(), prevFuelIssue_ID, get_TrxName());
+		BigDecimal RunningMeter = getIssueMeter().subtract(prevIssue.getIssueMeter());
+		
+		String sqlSum = "SELECT SUM(Qty) FROM TF_Fuel_Issue WHERE AD_Org_ID = ? AND TF_Fuel_Issue_ID > ? "
+				+ "AND TF_Fuel_Issue_ID <= ? "
+				+ "AND PM_Machinery_ID = ? AND M_Product_ID = ? AND DocStatus = 'CO' ";
+		
+		BigDecimal totalQty = DB.getSQLValueBD(get_TrxName(), sqlSum, getAD_Org_ID(), prevFuelIssue_ID, 
+				getTF_Fuel_Issue_ID(), getPM_Machinery_ID(), getM_Product_ID());
+		
+		BigDecimal mileage = null;
+		if(getMileageType() == null) {
+			throw new AdempiereException("Mileage Type should not be empty!");
+		}
+		else if(getMileageType().equals(MMachineryType.MILEAGETYPE_KmLitre)) {
+			mileage = RunningMeter.divide(totalQty, 2, RoundingMode.HALF_EVEN);
+		}
+		else if(getMileageType().equals(MMachineryType.MILEAGETYPE_LitreHr)) {
+			mileage = totalQty.divide(RunningMeter, 2, RoundingMode.HALF_EVEN);
+		}
+		
+		setMileage(mileage);
+	}
+	
 }
