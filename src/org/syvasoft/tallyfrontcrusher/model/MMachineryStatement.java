@@ -1,6 +1,7 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Properties;
 
 import org.compiere.model.Query;
@@ -25,12 +26,12 @@ public class MMachineryStatement extends X_PM_MachineStmt {
 	
 	public static void deleteTripSheetEntries(Properties ctx, int TF_TripSheet_ID, String trxName) {
 		String whereClause="TF_TripSheet_ID=?";
-		MMachineryStatement mStatement=new Query(ctx, MMachineryStatement.Table_Name, whereClause, trxName)
+		List<MMachineryStatement> list =new Query(ctx, MMachineryStatement.Table_Name, whereClause, trxName)
 						.setClient_ID()
 						.setParameters(TF_TripSheet_ID)
-						.first();
-		if(mStatement!=null) {
+						.list();
+		for(MMachineryStatement mStatement : list)
 			mStatement.delete(true);
-		}
+		
 	}
 }

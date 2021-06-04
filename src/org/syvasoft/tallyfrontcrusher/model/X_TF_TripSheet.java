@@ -33,7 +33,7 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210524L;
+	private static final long serialVersionUID = 20210602L;
 
     /** Standard Constructor */
     public X_TF_TripSheet (Properties ctx, int TF_TripSheet_ID, String trxName)
@@ -43,6 +43,8 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
         {
 			setC_UOM_ID (0);
 			setDocumentNo (null);
+			setIsManual (false);
+// N
 			setProcessed (false);
 			setTF_TripSheet_ID (0);
 			setVehicle_ID (0);
@@ -271,6 +273,23 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		return (Timestamp)get_Value(COLUMNNAME_DateStart);
 	}
 
+	/** Set Day Incentive.
+		@param DayIncentive Day Incentive	  */
+	public void setDayIncentive (BigDecimal DayIncentive)
+	{
+		set_Value (COLUMNNAME_DayIncentive, DayIncentive);
+	}
+
+	/** Get Day Incentive.
+		@return Day Incentive	  */
+	public BigDecimal getDayIncentive () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_DayIncentive);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Description.
 		@param Description 
 		Optional short description of the record
@@ -378,6 +397,23 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		return bd;
 	}
 
+	/** Set Eligible Unit.
+		@param EligibleUnit Eligible Unit	  */
+	public void setEligibleUnit (BigDecimal EligibleUnit)
+	{
+		set_Value (COLUMNNAME_EligibleUnit, EligibleUnit);
+	}
+
+	/** Get Eligible Unit.
+		@return Eligible Unit	  */
+	public BigDecimal getEligibleUnit () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_EligibleUnit);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Fuel Expensed.
 		@param Expensed_Fuel Fuel Expensed	  */
 	public void setExpensed_Fuel (BigDecimal Expensed_Fuel)
@@ -412,6 +448,53 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		return bd;
 	}
 
+	/** MT = MT */
+	public static final String INCENTIVETYPE_MT = "MT";
+	/** Hour = HR */
+	public static final String INCENTIVETYPE_Hour = "HR";
+	/** Day = DA */
+	public static final String INCENTIVETYPE_Day = "DA";
+	/** Month = MO */
+	public static final String INCENTIVETYPE_Month = "MO";
+	/** Set Incentive Type.
+		@param IncentiveType Incentive Type	  */
+	public void setIncentiveType (String IncentiveType)
+	{
+
+		set_Value (COLUMNNAME_IncentiveType, IncentiveType);
+	}
+
+	/** Get Incentive Type.
+		@return Incentive Type	  */
+	public String getIncentiveType () 
+	{
+		return (String)get_Value(COLUMNNAME_IncentiveType);
+	}
+
+	/** Set Manual.
+		@param IsManual 
+		This is a manual process
+	  */
+	public void setIsManual (boolean IsManual)
+	{
+		set_Value (COLUMNNAME_IsManual, Boolean.valueOf(IsManual));
+	}
+
+	/** Get Manual.
+		@return This is a manual process
+	  */
+	public boolean isManual () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsManual);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	public org.compiere.model.I_M_Product getJobWork_Product() throws RuntimeException
     {
 		return (org.compiere.model.I_M_Product)MTable.get(getCtx(), org.compiere.model.I_M_Product.Table_Name)
@@ -435,6 +518,23 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set No of Load.
+		@param NoOfLoad No of Load	  */
+	public void setNoOfLoad (BigDecimal NoOfLoad)
+	{
+		set_Value (COLUMNNAME_NoOfLoad, NoOfLoad);
+	}
+
+	/** Get No of Load.
+		@return No of Load	  */
+	public BigDecimal getNoOfLoad () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_NoOfLoad);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Opening Fuel.
@@ -634,6 +734,31 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		return bd;
 	}
 
+	public org.compiere.model.I_C_UOM getRent_UOM() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getRent_UOM_ID(), get_TrxName());	}
+
+	/** Set Delivery UOM.
+		@param Rent_UOM_ID Delivery UOM	  */
+	public void setRent_UOM_ID (int Rent_UOM_ID)
+	{
+		if (Rent_UOM_ID < 1) 
+			set_Value (COLUMNNAME_Rent_UOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_Rent_UOM_ID, Integer.valueOf(Rent_UOM_ID));
+	}
+
+	/** Get Delivery UOM.
+		@return Delivery UOM	  */
+	public int getRent_UOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Rent_UOM_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Running Meter.
 		@param Running_Meter Running Meter	  */
 	public void setRunning_Meter (BigDecimal Running_Meter)
@@ -692,6 +817,31 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public int getSubcon_Invoice_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Subcon_Invoice_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_Employee_Salary getTF_Employee_Salary() throws RuntimeException
+    {
+		return (I_TF_Employee_Salary)MTable.get(getCtx(), I_TF_Employee_Salary.Table_Name)
+			.getPO(getTF_Employee_Salary_ID(), get_TrxName());	}
+
+	/** Set Employee Salary.
+		@param TF_Employee_Salary_ID Employee Salary	  */
+	public void setTF_Employee_Salary_ID (int TF_Employee_Salary_ID)
+	{
+		if (TF_Employee_Salary_ID < 1) 
+			set_Value (COLUMNNAME_TF_Employee_Salary_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_Employee_Salary_ID, Integer.valueOf(TF_Employee_Salary_ID));
+	}
+
+	/** Get Employee Salary.
+		@return Employee Salary	  */
+	public int getTF_Employee_Salary_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Employee_Salary_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -831,6 +981,23 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		return ii.intValue();
 	}
 
+	/** Set MT / Load.
+		@param TonnagePerLoad MT / Load	  */
+	public void setTonnagePerLoad (BigDecimal TonnagePerLoad)
+	{
+		set_Value (COLUMNNAME_TonnagePerLoad, TonnagePerLoad);
+	}
+
+	/** Get MT / Load.
+		@return MT / Load	  */
+	public BigDecimal getTonnagePerLoad () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_TonnagePerLoad);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Total Earned Wage.
 		@param Total_Wage Total Earned Wage	  */
 	public void setTotal_Wage (BigDecimal Total_Wage)
@@ -843,6 +1010,57 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public BigDecimal getTotal_Wage () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Total_Wage);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Total MT (Manual).
+		@param TotalMT Total MT (Manual)	  */
+	public void setTotalMT (BigDecimal TotalMT)
+	{
+		set_Value (COLUMNNAME_TotalMT, TotalMT);
+	}
+
+	/** Get Total MT (Manual).
+		@return Total MT (Manual)	  */
+	public BigDecimal getTotalMT () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_TotalMT);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Total MT + Running Meter.
+		@param TotalMTExtended Total MT + Running Meter	  */
+	public void setTotalMTExtended (BigDecimal TotalMTExtended)
+	{
+		set_Value (COLUMNNAME_TotalMTExtended, TotalMTExtended);
+	}
+
+	/** Get Total MT + Running Meter.
+		@return Total MT + Running Meter	  */
+	public BigDecimal getTotalMTExtended () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_TotalMTExtended);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Unit Incentive.
+		@param UnitIncentive Unit Incentive	  */
+	public void setUnitIncentive (BigDecimal UnitIncentive)
+	{
+		set_Value (COLUMNNAME_UnitIncentive, UnitIncentive);
+	}
+
+	/** Get Unit Incentive.
+		@return Unit Incentive	  */
+	public BigDecimal getUnitIncentive () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_UnitIncentive);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;

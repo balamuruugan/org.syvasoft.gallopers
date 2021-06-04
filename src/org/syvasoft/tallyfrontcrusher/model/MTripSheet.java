@@ -140,45 +140,55 @@ public class MTripSheet extends X_TF_TripSheet {
 				else
 					defaultMeterType_ID = mt.getC_UOM_ID();
 				
-				MMeterLog mLog = new MMeterLog(getCtx(), 0, get_TrxName());
-				mLog.setAD_Org_ID(getAD_Org_ID());
-				mLog.setDateReport(getDateReport());
-				mLog.setShift(getShift());
-				mLog.setPM_Machinery_ID(getPM_Machinery_ID());
-				mLog.setOpening_Meter(getOpening_Meter());
-				mLog.setClosing_Meter(getClosing_Meter());
-				mLog.setRunning_Meter(getRunning_Meter());
-				mLog.setTF_TripSheet_ID(getTF_TripSheet_ID());
-				mLog.setC_UOM_ID(defaultMeterType_ID);
-				mLog.setProcessed(true);
-				mLog.saveEx();
+				//Create Meter log if the opening meter and closing meter entered
+				if(getClosing_Meter().doubleValue() > 0 ) {
+					MMeterLog mLog = new MMeterLog(getCtx(), 0, get_TrxName());
+					mLog.setAD_Org_ID(getAD_Org_ID());
+					mLog.setDateReport(getDateReport());
+					mLog.setShift(getShift());
+					mLog.setPM_Machinery_ID(getPM_Machinery_ID());
+					mLog.setOpening_Meter(getOpening_Meter());
+					mLog.setClosing_Meter(getClosing_Meter());
+					mLog.setRunning_Meter(getRunning_Meter());
+					mLog.setTF_TripSheet_ID(getTF_TripSheet_ID());
+					mLog.setC_UOM_ID(defaultMeterType_ID);
+					mLog.setProcessed(true);
+					mLog.saveEx();
+				}
 			}
 			
 			if(getTotal_Wage().doubleValue() != 0 && getC_BPartner_ID() > 0){
-				// Create Wage Entry
-				MLabourWage wage = new MLabourWage(getCtx(), 0, get_TrxName());
-				wage.setAD_Org_ID(Env.getAD_Org_ID(getCtx()));
-				wage.setDateAcct(getDateReport());
-				wage.setC_BPartner_ID(getC_BPartner_ID());
-				//wage.setTF_VehicleType_ID();
-						
-				wage.setStd_Days(BigDecimal.ONE);
-				wage.setStd_Wage(getEarned_Wage());
-				wage.setPresent_Days(BigDecimal.ONE);
-				wage.setIncentive(getIncentive());
-				wage.setEarned_Wage(getEarned_Wage());
-				wage.setIsCalculated(false);				
-				wage.setDescription("Generated from TripSheet" );
-				if(getTF_Quarry_ID() > 0) {
-					MQuarry quarry = new MQuarry(getCtx(), getTF_Quarry_ID(), get_TrxName());
-					wage.setC_ElementValue_ID(quarry.getC_ElementValue_ID());
-				}
-				wage.saveEx();
-				wage.processIt(DocAction.ACTION_Complete);
-				wage.saveEx();
-				//End Create
+				MEmployeeSalaryOld salary = new MEmployeeSalaryOld(getCtx(), 0, get_TrxName());
 				
-				setTF_Labour_Wage_ID(wage.getTF_Labour_Wage_ID());
+				salary.setAD_Org_ID(getAD_Org_ID());
+				salary.setDateAcct(getDateReport());
+				salary.setPresent_Days(BigDecimal.ONE);
+				salary.setC_BPartner_ID(getC_BPartner_ID());				
+				salary.setSalary_Amt(getEarned_Wage());
+				salary.setIncentive(getIncentive());
+				salary.setDescription("TripSheet No: " + getDocumentNo());
+				salary.setDocStatus(MEmployeeSalaryOld.DOCSTATUS_Drafted);							
+				salary.saveEx();
+				
+				setTF_Employee_Salary_ID(salary.getTF_Employee_Salary_ID());
+				
+				salary.processIt(DocAction.ACTION_Complete);
+				salary.saveEx();
+				
+				//operator salary expenses
+				MGLPostingConfig glConfig = MGLPostingConfig.getMGLPostingConfig(getCtx());
+				MMachineryStatement st = new MMachineryStatement(getCtx(), 0, get_TrxName());
+				st = new MMachineryStatement(getCtx(), 0, get_TrxName());
+				st.setAD_Org_ID(getAD_Org_ID());
+				st.setDateAcct(getDateReport());
+				st.setPM_Machinery_ID(getPM_Machinery_ID());
+				st.setC_ElementValue_ID(glConfig.getSalariesExpenseAcct());
+				st.setDescription(getC_BPartner().getName());
+				BigDecimal amount = getTotal_Wage();
+				st.setExpense(amount);
+				st.setTF_TripSheet_ID(getTF_TripSheet_ID());		
+				st.saveEx();
+				
 			}
 						
 			//post Machinery Rent
@@ -187,19 +197,27 @@ public class MTripSheet extends X_TF_TripSheet {
 				if(rentAccount == 0)
 					throw new AdempiereException("Please set Machinery Rent Income Account!");
 				
+				
+				BigDecimal qty = isManual() ? getTotalMTExtended() : getRunning_Meter();
+				
+				// For CRANE kind of machinery, rent will be posted in the shift/day Basis.
+				if(getC_UOM_ID() != getRent_UOM_ID())
+					qty = BigDecimal.ONE;
+				
 				MMachineryStatement ms = new MMachineryStatement(getCtx(), 0, get_TrxName());
 				ms.setAD_Org_ID(getAD_Org_ID());
 				ms.setDateAcct(getDateReport());
-				ms.setPM_Machinery_ID(getPM_Machinery_ID());
-				ms.setQty(getRunning_Meter());
+				ms.setPM_Machinery_ID(getPM_Machinery_ID());				
+				ms.setQty(qty);
 				ms.setM_Product_ID(getJobWork_Product_ID());
-				ms.setC_UOM_ID(getC_UOM_ID());
+				ms.setC_UOM_ID(getRent_UOM_ID());
 				ms.setRate(getRate());
 				ms.setIncome(getRent_Amt());
 				ms.setC_ElementValue_ID(rentAccount);
 				ms.setTF_TripSheet_ID(getTF_TripSheet_ID());
 				ms.saveEx();
 			}
+			
 		}
 	}
 	
@@ -228,8 +246,22 @@ public class MTripSheet extends X_TF_TripSheet {
 		
 		MMeterLog.deleteTripSheetMeterLog(getCtx(), getTF_TripSheet_ID(), get_TrxName());
 		MMachineryStatement.deleteTripSheetEntries(getCtx(), getTF_TripSheet_ID(), get_TrxName());
+		reverseDriverSalary();
 		
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);
+	}
+	
+	public void reverseDriverSalary() {
+		if(getTF_Employee_Salary_ID() == 0)
+			return;
+		
+		MEmployeeSalaryOld salary = new MEmployeeSalaryOld(getCtx(), getTF_Employee_Salary_ID(), get_TrxName());
+		
+		salary.reverseIt();
+		salary.setDocStatus(MEmployeeSalary.DOCSTATUS_Voided);
+		salary.setProcessed(true);
+		salary.saveEx();
+		
 	}
 }

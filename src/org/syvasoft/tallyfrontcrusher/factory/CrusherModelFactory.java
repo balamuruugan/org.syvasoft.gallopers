@@ -279,7 +279,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MDrillingBlastingEntry.class;
 		else if(MBlastingEntry.Table_Name.equals(tableName))			
 			return MBlastingEntry.class;
-		
+		else if(MEmployeeIncentive.Table_Name.equals(tableName))			
+			return MEmployeeIncentive.class;
 		return null;
 	}
 
@@ -552,7 +553,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MDrillingBlastingEntry(ctx, Record_ID, trxName);
 		else if(MBlastingEntry.Table_Name.equals(tableName))			
 			return new MBlastingEntry(ctx, Record_ID, trxName);
-
+		else if(MEmployeeIncentive.Table_Name.equals(tableName))			
+			return new MEmployeeIncentive(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -827,7 +829,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MDrillingBlastingEntry(ctx, rs, trxName);
 		else if(MBlastingEntry.Table_Name.equals(tableName))			
 			return new MBlastingEntry(ctx, rs, trxName);
-
+		else if(MEmployeeIncentive.Table_Name.equals(tableName))			
+			return new MEmployeeIncentive(ctx, rs, trxName);
 		return null;
 	}
 

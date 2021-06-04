@@ -93,8 +93,20 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		if(tableName.equals(MTripSheet.Table_Name)) {
 			//TF_TripSheet - Calc Running Meter
 			if(columnName.equals(MTripSheet.COLUMNNAME_Opening_Meter) || 
-					columnName.equals(MTripSheet.COLUMNNAME_Closing_Meter))
+					columnName.equals(MTripSheet.COLUMNNAME_Closing_Meter)) {
 				list.add(new CalloutTripSheetRunningMeter());
+				list.add(new CalloutTripSheet_CalcManualMeter());
+				list.add(new CalloutTripsheet_CalcRentAmt());
+				list.add(new CalloutTripSheet_CalcIncentive());
+			}
+			
+			if(columnName.equals(MTripSheet.COLUMNNAME_NoOfLoad) || 
+					columnName.equals(MTripSheet.COLUMNNAME_TonnagePerLoad) || 
+					columnName.equals(MTripSheet.COLUMNNAME_Running_Meter)) { 
+				list.add(new CalloutTripSheet_CalcManualMeter());
+				list.add(new CalloutTripsheet_CalcRentAmt());
+				list.add(new CalloutTripSheet_CalcIncentive());
+			}
 			
 			//TF_TripSheet - Calc Running Meter
 			if(columnName.equals(MTripSheet.COLUMNNAME_Opening_Fuel) || 
@@ -116,8 +128,20 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			if(columnName.equals(MTripSheet.COLUMNNAME_PM_Machinery_ID))
 				list.add(new CalloutTripsheet_Vehicle());
 			
-			if(columnName.equals(MTripSheet.COLUMNNAME_Rate)) 
+			if(columnName.equals(MTripSheet.COLUMNNAME_Rate) || 
+					columnName.equals(MTripSheet.COLUMNNAME_Rent_UOM_ID)) 
 				list.add(new CalloutTripsheet_CalcRentAmt());
+			
+			if(columnName.equals(MTripSheet.COLUMNNAME_C_UOM_ID) ||
+					columnName.equals(MTripSheet.COLUMNNAME_C_BPartner_ID)) {
+				list.add(new CalloutTripSheet_SetIncentiveRules());
+				list.add(new CalloutTripSheet_CalcIncentive());
+			}
+			
+			if(columnName.equals(MTripSheet.COLUMNNAME_PM_Machinery_ID) || 
+					columnName.equals(MTripSheet.COLUMNNAME_C_UOM_ID))
+				list.add(new CalloutTripSheet_SetMachineryRentInfo());
+			
 		}
 		
 		

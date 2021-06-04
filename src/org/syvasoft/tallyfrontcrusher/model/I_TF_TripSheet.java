@@ -193,6 +193,15 @@ public interface I_TF_TripSheet
 	  */
 	public Timestamp getDateStart();
 
+    /** Column name DayIncentive */
+    public static final String COLUMNNAME_DayIncentive = "DayIncentive";
+
+	/** Set Day Incentive	  */
+	public void setDayIncentive (BigDecimal DayIncentive);
+
+	/** Get Day Incentive	  */
+	public BigDecimal getDayIncentive();
+
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
 
@@ -241,6 +250,15 @@ public interface I_TF_TripSheet
 	/** Get Earned Wage	  */
 	public BigDecimal getEarned_Wage();
 
+    /** Column name EligibleUnit */
+    public static final String COLUMNNAME_EligibleUnit = "EligibleUnit";
+
+	/** Set Eligible Unit	  */
+	public void setEligibleUnit (BigDecimal EligibleUnit);
+
+	/** Get Eligible Unit	  */
+	public BigDecimal getEligibleUnit();
+
     /** Column name Expensed_Fuel */
     public static final String COLUMNNAME_Expensed_Fuel = "Expensed_Fuel";
 
@@ -259,6 +277,15 @@ public interface I_TF_TripSheet
 	/** Get Incentive / OT	  */
 	public BigDecimal getIncentive();
 
+    /** Column name IncentiveType */
+    public static final String COLUMNNAME_IncentiveType = "IncentiveType";
+
+	/** Set Incentive Type	  */
+	public void setIncentiveType (String IncentiveType);
+
+	/** Get Incentive Type	  */
+	public String getIncentiveType();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -272,6 +299,19 @@ public interface I_TF_TripSheet
 	  */
 	public boolean isActive();
 
+    /** Column name IsManual */
+    public static final String COLUMNNAME_IsManual = "IsManual";
+
+	/** Set Manual.
+	  * This is a manual process
+	  */
+	public void setIsManual (boolean IsManual);
+
+	/** Get Manual.
+	  * This is a manual process
+	  */
+	public boolean isManual();
+
     /** Column name JobWork_Product_ID */
     public static final String COLUMNNAME_JobWork_Product_ID = "JobWork_Product_ID";
 
@@ -282,6 +322,15 @@ public interface I_TF_TripSheet
 	public int getJobWork_Product_ID();
 
 	public org.compiere.model.I_M_Product getJobWork_Product() throws RuntimeException;
+
+    /** Column name NoOfLoad */
+    public static final String COLUMNNAME_NoOfLoad = "NoOfLoad";
+
+	/** Set No of Load	  */
+	public void setNoOfLoad (BigDecimal NoOfLoad);
+
+	/** Get No of Load	  */
+	public BigDecimal getNoOfLoad();
 
     /** Column name Opening_Fuel */
     public static final String COLUMNNAME_Opening_Fuel = "Opening_Fuel";
@@ -385,6 +434,17 @@ public interface I_TF_TripSheet
 	/** Get Rent (Amount)	  */
 	public BigDecimal getRent_Amt();
 
+    /** Column name Rent_UOM_ID */
+    public static final String COLUMNNAME_Rent_UOM_ID = "Rent_UOM_ID";
+
+	/** Set Delivery UOM	  */
+	public void setRent_UOM_ID (int Rent_UOM_ID);
+
+	/** Get Delivery UOM	  */
+	public int getRent_UOM_ID();
+
+	public org.compiere.model.I_C_UOM getRent_UOM() throws RuntimeException;
+
     /** Column name Running_Meter */
     public static final String COLUMNNAME_Running_Meter = "Running_Meter";
 
@@ -413,6 +473,17 @@ public interface I_TF_TripSheet
 	public int getSubcon_Invoice_ID();
 
 	public org.compiere.model.I_C_Invoice getSubcon_Invoice() throws RuntimeException;
+
+    /** Column name TF_Employee_Salary_ID */
+    public static final String COLUMNNAME_TF_Employee_Salary_ID = "TF_Employee_Salary_ID";
+
+	/** Set Employee Salary	  */
+	public void setTF_Employee_Salary_ID (int TF_Employee_Salary_ID);
+
+	/** Get Employee Salary	  */
+	public int getTF_Employee_Salary_ID();
+
+	public I_TF_Employee_Salary getTF_Employee_Salary() throws RuntimeException;
 
     /** Column name TF_Jobwork_IssuedResource_ID */
     public static final String COLUMNNAME_TF_Jobwork_IssuedResource_ID = "TF_Jobwork_IssuedResource_ID";
@@ -476,6 +547,15 @@ public interface I_TF_TripSheet
 
 	public I_TF_Vehicle_Rental_Contract getTF_Vehicle_Rental_Contract() throws RuntimeException;
 
+    /** Column name TonnagePerLoad */
+    public static final String COLUMNNAME_TonnagePerLoad = "TonnagePerLoad";
+
+	/** Set MT / Load	  */
+	public void setTonnagePerLoad (BigDecimal TonnagePerLoad);
+
+	/** Get MT / Load	  */
+	public BigDecimal getTonnagePerLoad();
+
     /** Column name Total_Wage */
     public static final String COLUMNNAME_Total_Wage = "Total_Wage";
 
@@ -484,6 +564,33 @@ public interface I_TF_TripSheet
 
 	/** Get Total Earned Wage	  */
 	public BigDecimal getTotal_Wage();
+
+    /** Column name TotalMT */
+    public static final String COLUMNNAME_TotalMT = "TotalMT";
+
+	/** Set Total MT (Manual)	  */
+	public void setTotalMT (BigDecimal TotalMT);
+
+	/** Get Total MT (Manual)	  */
+	public BigDecimal getTotalMT();
+
+    /** Column name TotalMTExtended */
+    public static final String COLUMNNAME_TotalMTExtended = "TotalMTExtended";
+
+	/** Set Total MT + Running Meter	  */
+	public void setTotalMTExtended (BigDecimal TotalMTExtended);
+
+	/** Get Total MT + Running Meter	  */
+	public BigDecimal getTotalMTExtended();
+
+    /** Column name UnitIncentive */
+    public static final String COLUMNNAME_UnitIncentive = "UnitIncentive";
+
+	/** Set Unit Incentive	  */
+	public void setUnitIncentive (BigDecimal UnitIncentive);
+
+	/** Get Unit Incentive	  */
+	public BigDecimal getUnitIncentive();
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
