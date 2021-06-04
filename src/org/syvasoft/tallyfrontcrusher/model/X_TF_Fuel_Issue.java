@@ -33,7 +33,7 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210531L;
+	private static final long serialVersionUID = 20210604L;
 
     /** Standard Constructor */
     public X_TF_Fuel_Issue (Properties ctx, int TF_Fuel_Issue_ID, String trxName)
@@ -914,6 +914,31 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	public String getTF_Fuel_Issue_UU () 
 	{
 		return (String)get_Value(COLUMNNAME_TF_Fuel_Issue_UU);
+	}
+
+	public I_TF_Fuel_Issue getTF_Fuel_IssueOp() throws RuntimeException
+    {
+		return (I_TF_Fuel_Issue)MTable.get(getCtx(), I_TF_Fuel_Issue.Table_Name)
+			.getPO(getTF_Fuel_IssueOp_ID(), get_TrxName());	}
+
+	/** Set Opening Issue Entry.
+		@param TF_Fuel_IssueOp_ID Opening Issue Entry	  */
+	public void setTF_Fuel_IssueOp_ID (int TF_Fuel_IssueOp_ID)
+	{
+		if (TF_Fuel_IssueOp_ID < 1) 
+			set_Value (COLUMNNAME_TF_Fuel_IssueOp_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_Fuel_IssueOp_ID, Integer.valueOf(TF_Fuel_IssueOp_ID));
+	}
+
+	/** Get Opening Issue Entry.
+		@return Opening Issue Entry	  */
+	public int getTF_Fuel_IssueOp_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Fuel_IssueOp_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException

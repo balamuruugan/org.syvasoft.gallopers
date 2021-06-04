@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -108,16 +109,29 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 				String mileageType = getPM_Machinery().getPM_MachineryType().getMileageType();
 				setMileageType(mileageType);
 				
-				if(is_ValueChanged(COLUMNNAME_IssueMeter) || is_ValueChanged(COLUMNNAME_PrevIssueMeter))
+				if(is_ValueChanged(COLUMNNAME_IsFullTank) || is_ValueChanged(COLUMNNAME_IssueMeter) || is_ValueChanged(COLUMNNAME_PrevIssueMeter))
 					calculateMileage();
 			}
 			else {
 				setMileage(null);
 				setMileageType(null);
+				setTF_Fuel_IssueOp_ID(0);
 			}
 		}
 		
 		return super.beforeSave(newRecord);
+	}
+	
+	@Override
+	protected boolean afterSave(boolean newRecord, boolean success) {
+		
+		
+		if(!newRecord && getDocStatus().equals(DOCSTATUS_Completed)  &&  (is_ValueChanged(COLUMNNAME_IsFullTank) ||
+				is_ValueChanged(COLUMNNAME_IssueMeter) || is_ValueChanged(COLUMNNAME_DocStatus) ||
+				is_ValueChanged(COLUMNNAME_PrevIssueMeter))) {
+			reCalculateMileage();
+		}
+		return super.afterSave(newRecord, success);
 	}
 	
 	public void processIt(String docAction) {
@@ -511,7 +525,8 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 	}
 	
 	public void calculateMileage() {
-		if(!isFullTank()) {			
+		if(!isFullTank()) {
+			
 			return;
 		}
 		String sql = "SELECT MAX(TF_Fuel_Issue_ID) FROM TF_Fuel_Issue WHERE AD_Org_ID = ? AND PM_Machinery_ID = ? AND "
@@ -525,7 +540,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		
 		MFuelIssue prevIssue = new MFuelIssue(getCtx(), prevFuelIssue_ID, get_TrxName());
 		BigDecimal RunningMeter = getIssueMeter().subtract(prevIssue.getIssueMeter());
-		
+				
 		String sqlSum = "SELECT SUM(Qty) FROM TF_Fuel_Issue WHERE AD_Org_ID = ? AND TF_Fuel_Issue_ID > ? "
 				+ "AND TF_Fuel_Issue_ID <= ? "
 				+ "AND PM_Machinery_ID = ? AND M_Product_ID = ? AND DocStatus = 'CO' ";
@@ -544,10 +559,27 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			mileage = totalQty.divide(RunningMeter, 2, RoundingMode.HALF_EVEN);
 		}
 		else {
-			throw new AdempiereException(getMileageType() + " - Mileage Type not implemented!");
+			//throw new AdempiereException(getMileageType() + " - Mileage Type not implemented!");
+			setDescription("Mileage Type is not set or not implemented");
 		}
 		
-		setMileage(mileage);
+		setTF_Fuel_IssueOp_ID(prevIssue.getTF_Fuel_Issue_ID());
+		setMileage(mileage);				
 	}
 	
+	public void reCalculateMileage() {
+		String whereClause = "TF_Fuel_Issue_ID > ? AND AD_Org_ID = ? AND IsFullTank = 'Y' AND "
+				+ " PM_Machinery_ID = ? AND M_Product_ID = ? AND DocStatus = 'CO'";
+		List<MFuelIssue> list = new Query(getCtx(), Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_Fuel_Issue_ID(), getAD_Org_ID(), getPM_Machinery_ID(), getM_Product_ID())
+				.setOrderBy(COLUMNNAME_DateAcct)
+				.list();
+		
+		for(MFuelIssue issue : list) {
+			issue.calculateMileage();
+			issue.saveEx();
+		}
+		
+	}
 }

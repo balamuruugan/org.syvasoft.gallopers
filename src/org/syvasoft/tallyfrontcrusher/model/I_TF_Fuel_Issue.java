@@ -524,6 +524,17 @@ public interface I_TF_Fuel_Issue
 	/** Get TF_Fuel_Issue_UU	  */
 	public String getTF_Fuel_Issue_UU();
 
+    /** Column name TF_Fuel_IssueOp_ID */
+    public static final String COLUMNNAME_TF_Fuel_IssueOp_ID = "TF_Fuel_IssueOp_ID";
+
+	/** Set Opening Issue Entry	  */
+	public void setTF_Fuel_IssueOp_ID (int TF_Fuel_IssueOp_ID);
+
+	/** Get Opening Issue Entry	  */
+	public int getTF_Fuel_IssueOp_ID();
+
+	public I_TF_Fuel_Issue getTF_Fuel_IssueOp() throws RuntimeException;
+
     /** Column name TF_TripSheet_ID */
     public static final String COLUMNNAME_TF_TripSheet_ID = "TF_TripSheet_ID";
 
