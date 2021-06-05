@@ -32,7 +32,7 @@ FROM
 		f.AD_Org_ID = 1000003 
 		AND f.M_Product_ID IN (1001019, 1000086)
 		AND f.DocStatus = 'CO' AND f.IsFullTank = 'Y'
-		AND f.DateAcct >= '2021-05-20' 
-		AND f.TF_Fuel_IssueOP_ID IS NOT NULL
+		AND f.DateAcct >= '2021-05-25' 
+	
 	GROUP BY
 		f.PM_Machinery_ID, f.M_Product_ID, f.MileageType) AS a
