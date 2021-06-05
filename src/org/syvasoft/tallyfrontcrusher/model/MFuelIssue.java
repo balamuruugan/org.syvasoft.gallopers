@@ -525,8 +525,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 	}
 	
 	public void calculateMileage() {
-		if(!isFullTank()) {
-			
+		if(!isFullTank() || !getDocStatus().equals(DOCSTATUS_Completed)) {			
 			return;
 		}
 		String sql = "SELECT MAX(TF_Fuel_Issue_ID) FROM TF_Fuel_Issue WHERE AD_Org_ID = ? AND PM_Machinery_ID = ? AND "
@@ -541,12 +540,12 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		MFuelIssue prevIssue = new MFuelIssue(getCtx(), prevFuelIssue_ID, get_TrxName());
 		BigDecimal RunningMeter = getIssueMeter().subtract(prevIssue.getIssueMeter());
 				
-		String sqlSum = "SELECT SUM(Qty) FROM TF_Fuel_Issue WHERE AD_Org_ID = ? AND TF_Fuel_Issue_ID > ? "
+		String sqlSum = "SELECT SUM(Qty) FROM TF_Fuel_Issue WHERE (AD_Org_ID = ? AND TF_Fuel_Issue_ID > ? "
 				+ "AND TF_Fuel_Issue_ID <= ? "
-				+ "AND PM_Machinery_ID = ? AND M_Product_ID = ? AND DocStatus = 'CO' ";
+				+ "AND PM_Machinery_ID = ? AND M_Product_ID = ? AND DocStatus = 'CO') OR (TF_Fuel_Issue_ID = ?)";
 		
 		BigDecimal totalQty = DB.getSQLValueBD(get_TrxName(), sqlSum, getAD_Org_ID(), prevFuelIssue_ID, 
-				getTF_Fuel_Issue_ID(), getPM_Machinery_ID(), getM_Product_ID());
+				getTF_Fuel_Issue_ID(), getPM_Machinery_ID(), getM_Product_ID(), getTF_Fuel_Issue_ID());
 		
 		BigDecimal mileage = null;
 		if(getMileageType() == null) {
