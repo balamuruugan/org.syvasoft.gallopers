@@ -77,7 +77,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		registerTableEvent(IEventTopics.DOC_AFTER_REVERSECORRECT, TF_MInvoice.Table_Name);
 		registerTableEvent(IEventTopics.DOC_AFTER_COMPLETE, MOrder.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrder.Table_Name);
-		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrderLine.Table_Name);
+		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrderLine.Table_Name);	
 		registerTableEvent(IEventTopics.DOC_BEFORE_PREPARE, MProduction.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MPayment.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_CHANGE, MPayment.Table_Name);
@@ -244,6 +244,13 @@ public class CrusherEventHandler extends AbstractEventHandler {
 						MWarehouse wh = (MWarehouse) o.getM_Warehouse();
 						ord.set_ValueOfColumn(TF_MOrder.COLUMNNAME_M_Locator_ID, wh.getDefaultLocator().getM_Locator_ID());
 					}
+					
+					MOrder srcOrder = new MOrder(ord.getCtx(), ref_Order_ID, ord.get_TrxName());
+					for(MOrderLine srcLine : srcOrder.getLines()) {
+						//everytime price list price will be updated with current price
+						TF_MOrder.addProductPricingIfNot(srcLine.getM_Product_ID(), ord.getM_PriceList_ID(), ord.getC_BPartner_ID(), 
+								srcLine.getQtyEntered(), srcLine.getPriceEntered(), ord.getDateOrdered(), ord.isSOTrx());
+					}
 				}
 			}
 		}
@@ -252,6 +259,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
 				int ref_OrderLine_ID = oLine.getRef_OrderLine_ID();
 				if(ref_OrderLine_ID > 0) {
+															
 					//Set Counter warehouse
 					MOrgInfo o = MOrgInfo.get(oLine.getCtx(), oLine.getAD_Org_ID(), null);
 					oLine.setM_Warehouse_ID(o.getM_Warehouse_ID());
