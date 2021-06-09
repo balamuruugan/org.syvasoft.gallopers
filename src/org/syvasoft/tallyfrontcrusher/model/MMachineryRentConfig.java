@@ -26,15 +26,20 @@ public class MMachineryRentConfig extends X_TF_Machinery_RentConfig {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static BigDecimal getRent(Properties ctx, int PM_Machinery_ID, int jobwork_id) {
+	public static BigDecimal getRent(Properties ctx, int PM_Machinery_ID, int jobwork_id, int rentUOM_ID) {
 	
-		String whereClause = "PM_Machinery_ID = ? and jobwork_id = ?";
+		String whereClause = "PM_Machinery_ID = ? and COALESCE(JobWork_Product_ID,0)  = ? AND C_UOM_ID = ?";
 		MMachineryRentConfig m = new Query(ctx, Table_Name, whereClause, null)
 				.setClient_ID()
-				.setParameters(PM_Machinery_ID,jobwork_id)
+				.setOnlyActiveRecords(true)
+				.setParameters(PM_Machinery_ID,jobwork_id, rentUOM_ID)
 				.first();
 		
-			 	return m.getUnitRent();
+		BigDecimal unitRent = BigDecimal.ZERO;
+		if(m != null)
+			unitRent = m.getUnitRent();
+		
+		return unitRent;
 		
 	}
 
