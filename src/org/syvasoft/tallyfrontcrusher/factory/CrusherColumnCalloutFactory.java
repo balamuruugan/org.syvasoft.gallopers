@@ -101,6 +101,7 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			}
 			
 			if(columnName.equals(MTripSheet.COLUMNNAME_NoOfLoad) || 
+					columnName.equals(MTripSheet.COLUMNNAME_TotalMT) ||
 					columnName.equals(MTripSheet.COLUMNNAME_TonnagePerLoad) || 
 					columnName.equals(MTripSheet.COLUMNNAME_Running_Meter)) { 
 				list.add(new CalloutTripSheet_CalcManualMeter());
