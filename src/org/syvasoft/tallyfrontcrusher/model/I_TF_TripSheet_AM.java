@@ -21,25 +21,25 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for PM_MachineryType
+/** Generated Interface for TF_TripSheet_AM
  *  @author iDempiere (generated) 
  *  @version Release 5.1
  */
 @SuppressWarnings("all")
-public interface I_PM_MachineryType 
+public interface I_TF_TripSheet_AM 
 {
 
-    /** TableName=PM_MachineryType */
-    public static final String Table_Name = "PM_MachineryType";
+    /** TableName=TF_TripSheet_AM */
+    public static final String Table_Name = "TF_TripSheet_AM";
 
-    /** AD_Table_ID=1000307 */
+    /** AD_Table_ID=1000341 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 1 - Org 
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(3);
+    BigDecimal accessLevel = BigDecimal.valueOf(1);
 
     /** Load Meta Data */
 
@@ -64,27 +64,18 @@ public interface I_PM_MachineryType
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name C_ElementValueExpenses_ID */
-    public static final String COLUMNNAME_C_ElementValueExpenses_ID = "C_ElementValueExpenses_ID";
+    /** Column name Amount */
+    public static final String COLUMNNAME_Amount = "Amount";
 
-	/** Set Machinery Expenses Account	  */
-	public void setC_ElementValueExpenses_ID (int C_ElementValueExpenses_ID);
+	/** Set Amount.
+	  * Amount in a defined currency
+	  */
+	public void setAmount (BigDecimal Amount);
 
-	/** Get Machinery Expenses Account	  */
-	public int getC_ElementValueExpenses_ID();
-
-	public org.compiere.model.I_C_ElementValue getC_ElementValueExpenses() throws RuntimeException;
-
-    /** Column name C_ElementValueRentIncome_ID */
-    public static final String COLUMNNAME_C_ElementValueRentIncome_ID = "C_ElementValueRentIncome_ID";
-
-	/** Set Rent Income Account	  */
-	public void setC_ElementValueRentIncome_ID (int C_ElementValueRentIncome_ID);
-
-	/** Get Rent Income Account	  */
-	public int getC_ElementValueRentIncome_ID();
-
-	public org.compiere.model.I_C_ElementValue getC_ElementValueRentIncome() throws RuntimeException;
+	/** Get Amount.
+	  * Amount in a defined currency
+	  */
+	public BigDecimal getAmount();
 
     /** Column name C_UOM_ID */
     public static final String COLUMNNAME_C_UOM_ID = "C_UOM_ID";
@@ -101,6 +92,15 @@ public interface I_PM_MachineryType
 
 	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException;
 
+    /** Column name Closing_Meter */
+    public static final String COLUMNNAME_Closing_Meter = "Closing_Meter";
+
+	/** Set Closing Meter	  */
+	public void setClosing_Meter (BigDecimal Closing_Meter);
+
+	/** Get Closing Meter	  */
+	public BigDecimal getClosing_Meter();
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -116,6 +116,19 @@ public interface I_PM_MachineryType
 	  * User who created this records
 	  */
 	public int getCreatedBy();
+
+    /** Column name DateReport */
+    public static final String COLUMNNAME_DateReport = "DateReport";
+
+	/** Set Report Date.
+	  * Expense/Time Report Date
+	  */
+	public void setDateReport (Timestamp DateReport);
+
+	/** Get Report Date.
+	  * Expense/Time Report Date
+	  */
+	public Timestamp getDateReport();
 
     /** Column name Description */
     public static final String COLUMNNAME_Description = "Description";
@@ -143,82 +156,98 @@ public interface I_PM_MachineryType
 	  */
 	public boolean isActive();
 
-    /** Column name IssuedMeterRequired */
-    public static final String COLUMNNAME_IssuedMeterRequired = "IssuedMeterRequired";
+    /** Column name Opening_Meter */
+    public static final String COLUMNNAME_Opening_Meter = "Opening_Meter";
 
-	/** Set Issued Meter Required	  */
-	public void setIssuedMeterRequired (boolean IssuedMeterRequired);
+	/** Set Opening Meter	  */
+	public void setOpening_Meter (BigDecimal Opening_Meter);
 
-	/** Get Issued Meter Required	  */
-	public boolean issuedMeterRequired();
+	/** Get Opening Meter	  */
+	public BigDecimal getOpening_Meter();
 
-    /** Column name M_Product_Category_ID */
-    public static final String COLUMNNAME_M_Product_Category_ID = "M_Product_Category_ID";
+    /** Column name PM_Machinery_ID */
+    public static final String COLUMNNAME_PM_Machinery_ID = "PM_Machinery_ID";
 
-	/** Set Product Category.
-	  * Category of a Product
+	/** Set Machinery	  */
+	public void setPM_Machinery_ID (int PM_Machinery_ID);
+
+	/** Get Machinery	  */
+	public int getPM_Machinery_ID();
+
+	public I_PM_Machinery getPM_Machinery() throws RuntimeException;
+
+    /** Column name Processed */
+    public static final String COLUMNNAME_Processed = "Processed";
+
+	/** Set Processed.
+	  * The document has been processed
 	  */
-	public void setM_Product_Category_ID (int M_Product_Category_ID);
+	public void setProcessed (boolean Processed);
 
-	/** Get Product Category.
-	  * Category of a Product
+	/** Get Processed.
+	  * The document has been processed
 	  */
-	public int getM_Product_Category_ID();
+	public boolean isProcessed();
 
-	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException;
+    /** Column name Rate */
+    public static final String COLUMNNAME_Rate = "Rate";
 
-    /** Column name MileageType */
-    public static final String COLUMNNAME_MileageType = "MileageType";
-
-	/** Set Mileage Type	  */
-	public void setMileageType (String MileageType);
-
-	/** Get Mileage Type	  */
-	public String getMileageType();
-
-    /** Column name Name */
-    public static final String COLUMNNAME_Name = "Name";
-
-	/** Set Name.
-	  * Alphanumeric identifier of the entity
+	/** Set Rate.
+	  * Rate or Tax or Exchange
 	  */
-	public void setName (String Name);
+	public void setRate (BigDecimal Rate);
 
-	/** Get Name.
-	  * Alphanumeric identifier of the entity
+	/** Get Rate.
+	  * Rate or Tax or Exchange
 	  */
-	public String getName();
+	public BigDecimal getRate();
 
-    /** Column name PM_MachineryType_ID */
-    public static final String COLUMNNAME_PM_MachineryType_ID = "PM_MachineryType_ID";
+    /** Column name Running_Meter */
+    public static final String COLUMNNAME_Running_Meter = "Running_Meter";
 
-	/** Set Machinery Type	  */
-	public void setPM_MachineryType_ID (int PM_MachineryType_ID);
+	/** Set Running Meter	  */
+	public void setRunning_Meter (BigDecimal Running_Meter);
 
-	/** Get Machinery Type	  */
-	public int getPM_MachineryType_ID();
+	/** Get Running Meter	  */
+	public BigDecimal getRunning_Meter();
 
-    /** Column name PM_MachineryType_UU */
-    public static final String COLUMNNAME_PM_MachineryType_UU = "PM_MachineryType_UU";
+    /** Column name Shift */
+    public static final String COLUMNNAME_Shift = "Shift";
 
-	/** Set PM_MachineryType_UU	  */
-	public void setPM_MachineryType_UU (String PM_MachineryType_UU);
+	/** Set Shift	  */
+	public void setShift (String Shift);
 
-	/** Get PM_MachineryType_UU	  */
-	public String getPM_MachineryType_UU();
+	/** Get Shift	  */
+	public String getShift();
 
-    /** Column name ProductType */
-    public static final String COLUMNNAME_ProductType = "ProductType";
+    /** Column name TF_TripSheet_AM_ID */
+    public static final String COLUMNNAME_TF_TripSheet_AM_ID = "TF_TripSheet_AM_ID";
 
-	/** Set Product Type.
-	  * Type of product
-	  */
-	public void setProductType (String ProductType);
+	/** Set Tripsheet Additional Meter Readings	  */
+	public void setTF_TripSheet_AM_ID (int TF_TripSheet_AM_ID);
 
-	/** Get Product Type.
-	  * Type of product
-	  */
-	public String getProductType();
+	/** Get Tripsheet Additional Meter Readings	  */
+	public int getTF_TripSheet_AM_ID();
+
+    /** Column name TF_TripSheet_AM_UU */
+    public static final String COLUMNNAME_TF_TripSheet_AM_UU = "TF_TripSheet_AM_UU";
+
+	/** Set TF_TripSheet_AM_UU	  */
+	public void setTF_TripSheet_AM_UU (String TF_TripSheet_AM_UU);
+
+	/** Get TF_TripSheet_AM_UU	  */
+	public String getTF_TripSheet_AM_UU();
+
+    /** Column name TF_TripSheet_ID */
+    public static final String COLUMNNAME_TF_TripSheet_ID = "TF_TripSheet_ID";
+
+	/** Set Trip Sheet	  */
+	public void setTF_TripSheet_ID (int TF_TripSheet_ID);
+
+	/** Get Trip Sheet	  */
+	public int getTF_TripSheet_ID();
+
+	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

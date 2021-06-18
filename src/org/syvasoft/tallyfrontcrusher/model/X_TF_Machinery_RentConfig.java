@@ -32,7 +32,7 @@ public class X_TF_Machinery_RentConfig extends PO implements I_TF_Machinery_Rent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210608L;
+	private static final long serialVersionUID = 20210618L;
 
     /** Standard Constructor */
     public X_TF_Machinery_RentConfig (Properties ctx, int TF_Machinery_RentConfig_ID, String trxName)
@@ -102,6 +102,23 @@ public class X_TF_Machinery_RentConfig extends PO implements I_TF_Machinery_Rent
 		return ii.intValue();
 	}
 
+	/** Set Description.
+		@param Description 
+		Optional short description of the record
+	  */
+	public void setDescription (String Description)
+	{
+		set_Value (COLUMNNAME_Description, Description);
+	}
+
+	/** Get Description.
+		@return Optional short description of the record
+	  */
+	public String getDescription () 
+	{
+		return (String)get_Value(COLUMNNAME_Description);
+	}
+
 	public org.compiere.model.I_M_Product getJobWork_Product() throws RuntimeException
     {
 		return (org.compiere.model.I_M_Product)MTable.get(getCtx(), org.compiere.model.I_M_Product.Table_Name)
@@ -137,9 +154,9 @@ public class X_TF_Machinery_RentConfig extends PO implements I_TF_Machinery_Rent
 	public void setPM_Machinery_ID (int PM_Machinery_ID)
 	{
 		if (PM_Machinery_ID < 1) 
-			set_ValueNoCheck (COLUMNNAME_PM_Machinery_ID, null);
+			set_Value (COLUMNNAME_PM_Machinery_ID, null);
 		else 
-			set_ValueNoCheck (COLUMNNAME_PM_Machinery_ID, Integer.valueOf(PM_Machinery_ID));
+			set_Value (COLUMNNAME_PM_Machinery_ID, Integer.valueOf(PM_Machinery_ID));
 	}
 
 	/** Get Machinery.
@@ -184,6 +201,23 @@ public class X_TF_Machinery_RentConfig extends PO implements I_TF_Machinery_Rent
 	public String getTF_Machinery_RentConfig_UU () 
 	{
 		return (String)get_Value(COLUMNNAME_TF_Machinery_RentConfig_UU);
+	}
+
+	/** Set Unit Expense.
+		@param UnitExpense Unit Expense	  */
+	public void setUnitExpense (BigDecimal UnitExpense)
+	{
+		set_Value (COLUMNNAME_UnitExpense, UnitExpense);
+	}
+
+	/** Get Unit Expense.
+		@return Unit Expense	  */
+	public BigDecimal getUnitExpense () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_UnitExpense);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set UnitRent.

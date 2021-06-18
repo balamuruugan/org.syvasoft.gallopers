@@ -95,6 +95,19 @@ public interface I_TF_Machinery_RentConfig
 	  */
 	public int getCreatedBy();
 
+    /** Column name Description */
+    public static final String COLUMNNAME_Description = "Description";
+
+	/** Set Description.
+	  * Optional short description of the record
+	  */
+	public void setDescription (String Description);
+
+	/** Get Description.
+	  * Optional short description of the record
+	  */
+	public String getDescription();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -147,6 +160,15 @@ public interface I_TF_Machinery_RentConfig
 
 	/** Get TF_Machinery_RentConfig_UU	  */
 	public String getTF_Machinery_RentConfig_UU();
+
+    /** Column name UnitExpense */
+    public static final String COLUMNNAME_UnitExpense = "UnitExpense";
+
+	/** Set Unit Expense	  */
+	public void setUnitExpense (BigDecimal UnitExpense);
+
+	/** Get Unit Expense	  */
+	public BigDecimal getUnitExpense();
 
     /** Column name UnitRent */
     public static final String COLUMNNAME_UnitRent = "UnitRent";

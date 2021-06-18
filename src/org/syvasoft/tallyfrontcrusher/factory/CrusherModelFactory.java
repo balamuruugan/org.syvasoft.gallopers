@@ -283,6 +283,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return MEmployeeIncentive.class;
 		else if(MMachineryRentConfig.Table_Name.equals(tableName))			
 			return MMachineryRentConfig.class;
+		else if(MEmployeeIncentiveExclude.Table_Name.equals(tableName))			
+			return MEmployeeIncentiveExclude.class;
+		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
+			return MTripSheetAddionalMeter.class;
 		return null;
 	}
 
@@ -559,6 +563,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeIncentive(ctx, Record_ID, trxName);
 		else if(MMachineryRentConfig.Table_Name.equals(tableName))			
 			return new MMachineryRentConfig(ctx, Record_ID, trxName);
+		else if(MEmployeeIncentiveExclude.Table_Name.equals(tableName))			
+			return new MEmployeeIncentiveExclude(ctx, Record_ID, trxName);
+		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
+			return new MTripSheetAddionalMeter(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -837,6 +845,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeIncentive(ctx, rs, trxName);
 		else if(MMachineryRentConfig.Table_Name.equals(tableName))			
 			return new MMachineryRentConfig(ctx, rs, trxName);
+		else if(MEmployeeIncentiveExclude.Table_Name.equals(tableName))			
+			return new MEmployeeIncentiveExclude(ctx, rs, trxName);
+		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
+			return new MTripSheetAddionalMeter(ctx, rs, trxName);
 		return null;
 	}
 

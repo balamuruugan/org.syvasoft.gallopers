@@ -94,6 +94,21 @@ public interface I_TF_TripSheet
 
 	public org.compiere.model.I_C_ElementValue getC_ElementValue() throws RuntimeException;
 
+    /** Column name C_Invoice_ID */
+    public static final String COLUMNNAME_C_Invoice_ID = "C_Invoice_ID";
+
+	/** Set Invoice.
+	  * Invoice Identifier
+	  */
+	public void setC_Invoice_ID (int C_Invoice_ID);
+
+	/** Get Invoice.
+	  * Invoice Identifier
+	  */
+	public int getC_Invoice_ID();
+
+	public org.compiere.model.I_C_Invoice getC_Invoice() throws RuntimeException;
+
     /** Column name C_Project_ID */
     public static final String COLUMNNAME_C_Project_ID = "C_Project_ID";
 
@@ -403,6 +418,19 @@ public interface I_TF_TripSheet
 	/** Get Process Now	  */
 	public boolean isProcessing();
 
+    /** Column name Qty */
+    public static final String COLUMNNAME_Qty = "Qty";
+
+	/** Set Quantity.
+	  * Quantity
+	  */
+	public void setQty (BigDecimal Qty);
+
+	/** Get Quantity.
+	  * Quantity
+	  */
+	public BigDecimal getQty();
+
     /** Column name Rate */
     public static final String COLUMNNAME_Rate = "Rate";
 
@@ -473,6 +501,17 @@ public interface I_TF_TripSheet
 	public int getSubcon_Invoice_ID();
 
 	public org.compiere.model.I_C_Invoice getSubcon_Invoice() throws RuntimeException;
+
+    /** Column name Subcontractor_ID */
+    public static final String COLUMNNAME_Subcontractor_ID = "Subcontractor_ID";
+
+	/** Set Subcontractor	  */
+	public void setSubcontractor_ID (int Subcontractor_ID);
+
+	/** Get Subcontractor	  */
+	public int getSubcontractor_ID();
+
+	public org.compiere.model.I_C_BPartner getSubcontractor() throws RuntimeException;
 
     /** Column name TF_Employee_Salary_ID */
     public static final String COLUMNNAME_TF_Employee_Salary_ID = "TF_Employee_Salary_ID";

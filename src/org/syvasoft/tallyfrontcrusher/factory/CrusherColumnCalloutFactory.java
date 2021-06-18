@@ -34,6 +34,7 @@ import org.syvasoft.tallyfrontcrusher.model.MTRTaxInvoiceLine;
 import org.syvasoft.tallyfrontcrusher.model.MTaxInvoice;
 import org.syvasoft.tallyfrontcrusher.model.MToken;
 import org.syvasoft.tallyfrontcrusher.model.MTripSheet;
+import org.syvasoft.tallyfrontcrusher.model.MTripSheetAddionalMeter;
 import org.syvasoft.tallyfrontcrusher.model.MTyreAssignment;
 import org.syvasoft.tallyfrontcrusher.model.MTyreStatusChange;
 import org.syvasoft.tallyfrontcrusher.model.MVehicleRent;
@@ -148,6 +149,21 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			
 		}
 		
+		if(tableName.equals(MTripSheetAddionalMeter.Table_Name)) {
+			if(columnName.equals(MTripSheetAddionalMeter.COLUMNNAME_PM_Machinery_ID) || 
+					columnName.equals(MTripSheetAddionalMeter.COLUMNNAME_C_UOM_ID)) {
+				list.add(new CalloutTripSheetAM_SetRate());
+				list.add(new CalloutTripSheetAM_CalcAmount());
+			}
+			
+			if(columnName.equals(MTripSheetAddionalMeter.COLUMNNAME_Opening_Meter) || 
+					columnName.equals(MTripSheetAddionalMeter.COLUMNNAME_Closing_Meter) ||
+					columnName.equals(MTripSheetAddionalMeter.COLUMNNAME_Running_Meter) ) {
+				list.add(new CalloutTripSheetRunningMeter());
+				list.add(new CalloutTripSheetAM_CalcAmount());
+			}
+				
+		}
 		
 		//C_Payment - Cash Type
 		//if(tableName.equals(MPayment.Table_Name) && (columnName.equals("CashType")))

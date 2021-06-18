@@ -26,6 +26,7 @@ public class CalloutTripsheet_CalcRentAmt implements IColumnCallout {
 		
 		BigDecimal rate = CalloutUtil.getBDValue(mTab, MTripSheet.COLUMNNAME_Rate);
 		BigDecimal Rent = runningMeter.multiply(rate);
+		mTab.setValue(MTripSheet.COLUMNNAME_Qty, runningMeter);
 		mTab.setValue(MTripSheet.COLUMNNAME_Rent_Amt, Rent);
 		return null;
 	}

@@ -33,7 +33,7 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210602L;
+	private static final long serialVersionUID = 20210618L;
 
     /** Standard Constructor */
     public X_TF_TripSheet (Properties ctx, int TF_TripSheet_ID, String trxName)
@@ -130,6 +130,34 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public int getC_ElementValue_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_ElementValue_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_Invoice getC_Invoice() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Invoice)MTable.get(getCtx(), org.compiere.model.I_C_Invoice.Table_Name)
+			.getPO(getC_Invoice_ID(), get_TrxName());	}
+
+	/** Set Invoice.
+		@param C_Invoice_ID 
+		Invoice Identifier
+	  */
+	public void setC_Invoice_ID (int C_Invoice_ID)
+	{
+		if (C_Invoice_ID < 1) 
+			set_Value (COLUMNNAME_C_Invoice_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_Invoice_ID, Integer.valueOf(C_Invoice_ID));
+	}
+
+	/** Get Invoice.
+		@return Invoice Identifier
+	  */
+	public int getC_Invoice_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Invoice_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -680,6 +708,26 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		return false;
 	}
 
+	/** Set Quantity.
+		@param Qty 
+		Quantity
+	  */
+	public void setQty (BigDecimal Qty)
+	{
+		set_Value (COLUMNNAME_Qty, Qty);
+	}
+
+	/** Get Quantity.
+		@return Quantity
+	  */
+	public BigDecimal getQty () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Qty);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Rate.
 		@param Rate 
 		Rate or Tax or Exchange
@@ -817,6 +865,31 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public int getSubcon_Invoice_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_Subcon_Invoice_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_BPartner getSubcontractor() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_Name)
+			.getPO(getSubcontractor_ID(), get_TrxName());	}
+
+	/** Set Subcontractor.
+		@param Subcontractor_ID Subcontractor	  */
+	public void setSubcontractor_ID (int Subcontractor_ID)
+	{
+		if (Subcontractor_ID < 1) 
+			set_Value (COLUMNNAME_Subcontractor_ID, null);
+		else 
+			set_Value (COLUMNNAME_Subcontractor_ID, Integer.valueOf(Subcontractor_ID));
+	}
+
+	/** Get Subcontractor.
+		@return Subcontractor	  */
+	public int getSubcontractor_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Subcontractor_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

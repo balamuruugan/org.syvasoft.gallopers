@@ -21,18 +21,18 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for PM_MachineryType
+/** Generated Interface for TF_IncentiveConfig_Exld
  *  @author iDempiere (generated) 
  *  @version Release 5.1
  */
 @SuppressWarnings("all")
-public interface I_PM_MachineryType 
+public interface I_TF_IncentiveConfig_Exld 
 {
 
-    /** TableName=PM_MachineryType */
-    public static final String Table_Name = "PM_MachineryType";
+    /** TableName=TF_IncentiveConfig_Exld */
+    public static final String Table_Name = "TF_IncentiveConfig_Exld";
 
-    /** AD_Table_ID=1000307 */
+    /** AD_Table_ID=1000342 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -64,43 +64,6 @@ public interface I_PM_MachineryType
 	  */
 	public int getAD_Org_ID();
 
-    /** Column name C_ElementValueExpenses_ID */
-    public static final String COLUMNNAME_C_ElementValueExpenses_ID = "C_ElementValueExpenses_ID";
-
-	/** Set Machinery Expenses Account	  */
-	public void setC_ElementValueExpenses_ID (int C_ElementValueExpenses_ID);
-
-	/** Get Machinery Expenses Account	  */
-	public int getC_ElementValueExpenses_ID();
-
-	public org.compiere.model.I_C_ElementValue getC_ElementValueExpenses() throws RuntimeException;
-
-    /** Column name C_ElementValueRentIncome_ID */
-    public static final String COLUMNNAME_C_ElementValueRentIncome_ID = "C_ElementValueRentIncome_ID";
-
-	/** Set Rent Income Account	  */
-	public void setC_ElementValueRentIncome_ID (int C_ElementValueRentIncome_ID);
-
-	/** Get Rent Income Account	  */
-	public int getC_ElementValueRentIncome_ID();
-
-	public org.compiere.model.I_C_ElementValue getC_ElementValueRentIncome() throws RuntimeException;
-
-    /** Column name C_UOM_ID */
-    public static final String COLUMNNAME_C_UOM_ID = "C_UOM_ID";
-
-	/** Set UOM.
-	  * Unit of Measure
-	  */
-	public void setC_UOM_ID (int C_UOM_ID);
-
-	/** Get UOM.
-	  * Unit of Measure
-	  */
-	public int getC_UOM_ID();
-
-	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException;
-
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -117,19 +80,6 @@ public interface I_PM_MachineryType
 	  */
 	public int getCreatedBy();
 
-    /** Column name Description */
-    public static final String COLUMNNAME_Description = "Description";
-
-	/** Set Description.
-	  * Optional short description of the record
-	  */
-	public void setDescription (String Description);
-
-	/** Get Description.
-	  * Optional short description of the record
-	  */
-	public String getDescription();
-
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -142,15 +92,6 @@ public interface I_PM_MachineryType
 	  * The record is active in the system
 	  */
 	public boolean isActive();
-
-    /** Column name IssuedMeterRequired */
-    public static final String COLUMNNAME_IssuedMeterRequired = "IssuedMeterRequired";
-
-	/** Set Issued Meter Required	  */
-	public void setIssuedMeterRequired (boolean IssuedMeterRequired);
-
-	/** Get Issued Meter Required	  */
-	public boolean issuedMeterRequired();
 
     /** Column name M_Product_Category_ID */
     public static final String COLUMNNAME_M_Product_Category_ID = "M_Product_Category_ID";
@@ -167,58 +108,49 @@ public interface I_PM_MachineryType
 
 	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException;
 
-    /** Column name MileageType */
-    public static final String COLUMNNAME_MileageType = "MileageType";
+    /** Column name M_Product_ID */
+    public static final String COLUMNNAME_M_Product_ID = "M_Product_ID";
 
-	/** Set Mileage Type	  */
-	public void setMileageType (String MileageType);
-
-	/** Get Mileage Type	  */
-	public String getMileageType();
-
-    /** Column name Name */
-    public static final String COLUMNNAME_Name = "Name";
-
-	/** Set Name.
-	  * Alphanumeric identifier of the entity
+	/** Set Product.
+	  * Product, Service, Item
 	  */
-	public void setName (String Name);
+	public void setM_Product_ID (int M_Product_ID);
 
-	/** Get Name.
-	  * Alphanumeric identifier of the entity
+	/** Get Product.
+	  * Product, Service, Item
 	  */
-	public String getName();
+	public int getM_Product_ID();
 
-    /** Column name PM_MachineryType_ID */
-    public static final String COLUMNNAME_PM_MachineryType_ID = "PM_MachineryType_ID";
+	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException;
 
-	/** Set Machinery Type	  */
-	public void setPM_MachineryType_ID (int PM_MachineryType_ID);
+    /** Column name TF_IncentiveConfig_Exld_ID */
+    public static final String COLUMNNAME_TF_IncentiveConfig_Exld_ID = "TF_IncentiveConfig_Exld_ID";
 
-	/** Get Machinery Type	  */
-	public int getPM_MachineryType_ID();
+	/** Set Employee Incentive Configuration Exclude	  */
+	public void setTF_IncentiveConfig_Exld_ID (int TF_IncentiveConfig_Exld_ID);
 
-    /** Column name PM_MachineryType_UU */
-    public static final String COLUMNNAME_PM_MachineryType_UU = "PM_MachineryType_UU";
+	/** Get Employee Incentive Configuration Exclude	  */
+	public int getTF_IncentiveConfig_Exld_ID();
 
-	/** Set PM_MachineryType_UU	  */
-	public void setPM_MachineryType_UU (String PM_MachineryType_UU);
+    /** Column name TF_IncentiveConfig_Exld_UU */
+    public static final String COLUMNNAME_TF_IncentiveConfig_Exld_UU = "TF_IncentiveConfig_Exld_UU";
 
-	/** Get PM_MachineryType_UU	  */
-	public String getPM_MachineryType_UU();
+	/** Set TF_IncentiveConfig_Exld_UU	  */
+	public void setTF_IncentiveConfig_Exld_UU (String TF_IncentiveConfig_Exld_UU);
 
-    /** Column name ProductType */
-    public static final String COLUMNNAME_ProductType = "ProductType";
+	/** Get TF_IncentiveConfig_Exld_UU	  */
+	public String getTF_IncentiveConfig_Exld_UU();
 
-	/** Set Product Type.
-	  * Type of product
-	  */
-	public void setProductType (String ProductType);
+    /** Column name TF_IncentiveConfig_ID */
+    public static final String COLUMNNAME_TF_IncentiveConfig_ID = "TF_IncentiveConfig_ID";
 
-	/** Get Product Type.
-	  * Type of product
-	  */
-	public String getProductType();
+	/** Set Employee Incentive Configuration	  */
+	public void setTF_IncentiveConfig_ID (int TF_IncentiveConfig_ID);
+
+	/** Get Employee Incentive Configuration	  */
+	public int getTF_IncentiveConfig_ID();
+
+	public I_TF_IncentiveConfig getTF_IncentiveConfig() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

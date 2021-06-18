@@ -30,7 +30,7 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210524L;
+	private static final long serialVersionUID = 20210618L;
 
     /** Standard Constructor */
     public X_PM_MachineryType (Properties ctx, int PM_MachineryType_ID, String trxName)
@@ -72,6 +72,31 @@ public class X_PM_MachineryType extends PO implements I_PM_MachineryType, I_Pers
         .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	public org.compiere.model.I_C_ElementValue getC_ElementValueExpenses() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_ElementValue)MTable.get(getCtx(), org.compiere.model.I_C_ElementValue.Table_Name)
+			.getPO(getC_ElementValueExpenses_ID(), get_TrxName());	}
+
+	/** Set Machinery Expenses Account.
+		@param C_ElementValueExpenses_ID Machinery Expenses Account	  */
+	public void setC_ElementValueExpenses_ID (int C_ElementValueExpenses_ID)
+	{
+		if (C_ElementValueExpenses_ID < 1) 
+			set_Value (COLUMNNAME_C_ElementValueExpenses_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_ElementValueExpenses_ID, Integer.valueOf(C_ElementValueExpenses_ID));
+	}
+
+	/** Get Machinery Expenses Account.
+		@return Machinery Expenses Account	  */
+	public int getC_ElementValueExpenses_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_ElementValueExpenses_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 
 	public org.compiere.model.I_C_ElementValue getC_ElementValueRentIncome() throws RuntimeException
     {

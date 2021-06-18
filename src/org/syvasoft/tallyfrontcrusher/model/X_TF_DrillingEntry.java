@@ -33,7 +33,7 @@ public class X_TF_DrillingEntry extends PO implements I_TF_DrillingEntry, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210524L;
+	private static final long serialVersionUID = 20210618L;
 
     /** Standard Constructor */
     public X_TF_DrillingEntry (Properties ctx, int TF_DrillingEntry_ID, String trxName)
@@ -42,6 +42,7 @@ public class X_TF_DrillingEntry extends PO implements I_TF_DrillingEntry, I_Pers
       /** if (TF_DrillingEntry_ID == 0)
         {
 			setC_BPartner_ID (0);
+			setC_UOM_ID (0);
 			setDateAcct (new Timestamp( System.currentTimeMillis() ));
 // @#Date@
 			setDrillingCost (Env.ZERO);
@@ -137,6 +138,34 @@ public class X_TF_DrillingEntry extends PO implements I_TF_DrillingEntry, I_Pers
 	public int getC_Invoice_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Invoice_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getC_UOM_ID(), get_TrxName());	}
+
+	/** Set UOM.
+		@param C_UOM_ID 
+		Unit of Measure
+	  */
+	public void setC_UOM_ID (int C_UOM_ID)
+	{
+		if (C_UOM_ID < 1) 
+			set_Value (COLUMNNAME_C_UOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_UOM_ID, Integer.valueOf(C_UOM_ID));
+	}
+
+	/** Get UOM.
+		@return Unit of Measure
+	  */
+	public int getC_UOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_UOM_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -469,6 +498,31 @@ public class X_TF_DrillingEntry extends PO implements I_TF_DrillingEntry, I_Pers
 	public int getTF_Quarry_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Quarry_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException
+    {
+		return (I_TF_TripSheet)MTable.get(getCtx(), I_TF_TripSheet.Table_Name)
+			.getPO(getTF_TripSheet_ID(), get_TrxName());	}
+
+	/** Set Trip Sheet.
+		@param TF_TripSheet_ID Trip Sheet	  */
+	public void setTF_TripSheet_ID (int TF_TripSheet_ID)
+	{
+		if (TF_TripSheet_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_TripSheet_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_TripSheet_ID, Integer.valueOf(TF_TripSheet_ID));
+	}
+
+	/** Get Trip Sheet.
+		@return Trip Sheet	  */
+	public int getTF_TripSheet_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_TripSheet_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
