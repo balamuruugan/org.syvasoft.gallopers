@@ -47,6 +47,9 @@ public class MTripSheetAddionalMeter extends X_TF_TripSheet_AM {
 		st = new MMachineryStatement(getCtx(), 0, get_TrxName());
 		st.setAD_Org_ID(getAD_Org_ID());
 		st.setDateAcct(getDateReport());
+		st.setC_UOM_ID(getC_UOM_ID());
+		st.setQty(getRunning_Meter());
+		st.setRate(getRate());
 		st.setPM_Machinery_ID(getPM_Machinery_ID());
 		st.setC_ElementValue_ID(mt.getC_ElementValueExpenses_ID());
 		st.setDescription(getDescription());

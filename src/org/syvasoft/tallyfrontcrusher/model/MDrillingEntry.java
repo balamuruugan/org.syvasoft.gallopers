@@ -29,6 +29,16 @@ public class MDrillingEntry extends X_TF_DrillingEntry {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	protected boolean afterSave(boolean newRecord, boolean success) {
+		if(getTF_TripSheet_ID() > 0) {
+			MTripSheet ts = new MTripSheet(getCtx(), getTF_TripSheet_ID(), get_TrxName());
+			ts.updateRentQty();
+			ts.saveEx();
+		}
+		return super.afterSave(newRecord, success);
+	}
+	
 	public void processIt(String docAction) {
 		if(docAction.equals(DocAction.ACTION_Complete)) {
 			setProcessed(true);

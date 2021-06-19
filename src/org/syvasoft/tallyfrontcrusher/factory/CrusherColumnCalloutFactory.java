@@ -610,6 +610,7 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		if(tableName.equals(MDrillingEntry.Table_Name)) {
 			if(columnName.equals(MDrillingEntry.COLUMNNAME_Holes) ||
 					columnName.equals(MDrillingEntry.COLUMNNAME_Feet) ||
+					columnName.equals(MDrillingEntry.COLUMNNAME_C_UOM_ID) ||
 					columnName.equals(MDrillingEntry.COLUMNNAME_FeetRate))
 				list.add(new CalloutDrillingEntry_CalcDrillingCost());
 		}
@@ -655,7 +656,7 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		}
 		
 				
-		if((tableName.equals(MMeterLog.Table_Name)) && (columnName.equals(MMeterLog.COLUMNNAME_PM_Machinery_ID)				
+		if((tableName.equals(MMeterLog.Table_Name) || tableName.equals(MTripSheetAddionalMeter.Table_Name)) && (columnName.equals(MMeterLog.COLUMNNAME_PM_Machinery_ID)				
 				|| columnName.equals(MMeterLog.COLUMNNAME_C_UOM_ID))) {			
 			list.add(new CalloutMeterLog_SetOpeningMeter());
 		}

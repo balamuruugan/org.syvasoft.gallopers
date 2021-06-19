@@ -25,7 +25,7 @@ public class CalloutTripSheetAM_SetRate implements IColumnCallout {
 		}
 		
 		mTab.setValue(MTripSheetAddionalMeter.COLUMNNAME_Rate, unitExpense);
-		mTab.setValue(MTripSheetAddionalMeter.COLUMNNAME_Rate, description);
+		mTab.setValue(MTripSheetAddionalMeter.COLUMNNAME_Description, description);
 		return null;
 	}
 

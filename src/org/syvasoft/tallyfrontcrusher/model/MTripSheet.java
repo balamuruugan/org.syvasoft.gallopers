@@ -10,6 +10,9 @@ import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MBPartner;
+import org.compiere.model.MClient;
+import org.compiere.model.MInvoiceLine;
+import org.compiere.model.MPriceList;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
@@ -112,7 +115,7 @@ public class MTripSheet extends X_TF_TripSheet {
 		else if(DocAction.ACTION_Complete.equals(docAction)) {
 			setDocStatus(DOCSTATUS_Completed);
 			setProcessed(true);
-			
+			updateRentQty();
 			if(getExpensed_Fuel().doubleValue() > 0) {
 				String dieselIssue = MSysConfig.getValue("TF_DIESEL_ISSUE_FROM_TRIPSHEET", "N");
 				if(dieselIssue.equals("N")) { 
@@ -132,13 +135,7 @@ public class MTripSheet extends X_TF_TripSheet {
 			//Post readings into Machinery Meter Log
 			if(getPM_Machinery_ID() > 0) {
 				MMachineryType mt = (MMachineryType) getPM_Machinery().getPM_MachineryType();
-				int defaultMeterType_ID = 0;
-				if(mt.getMileageType().equals(MMachineryType.MILEAGETYPE_KmLitre))
-					defaultMeterType_ID = MSysConfig.getIntValue("KILOMETER_UOM_ID", 1000071);
-				else if(mt.getMileageType().equals(MMachineryType.MILEAGETYPE_LitreHr))
-					defaultMeterType_ID = MSysConfig.getIntValue("HOUR_UOM_ID", 101);
-				else
-					defaultMeterType_ID = mt.getC_UOM_ID();
+				int defaultMeterType_ID = getC_UOM_ID();
 				
 				//Create Meter log if the opening meter and closing meter entered
 				if(getClosing_Meter().doubleValue() > 0 ) {
@@ -192,23 +189,23 @@ public class MTripSheet extends X_TF_TripSheet {
 			}
 						
 			//post Machinery Rent
-			if(getRent_Amt().doubleValue() > 0) {
+			if(getRent_Amt().doubleValue() > 0 && getDrillingEntries().size() == 0) {
 				int rentAccount  = getPM_Machinery().getPM_MachineryType().getC_ElementValueRentIncome_ID();
 				if(rentAccount == 0)
 					throw new AdempiereException("Please set Machinery Rent Income Account!");
 				
 				
-				BigDecimal qty = isManual() ? getTotalMTExtended() : getRunning_Meter();
+				//BigDecimal qty = isManual() ? getTotalMTExtended() : getRunning_Meter();
 				
 				// For CRANE kind of machinery, rent will be posted in the shift/day Basis.
-				if(getC_UOM_ID() != getRent_UOM_ID())
-					qty = BigDecimal.ONE;
+				//if(getC_UOM_ID() != getRent_UOM_ID())
+				//	qty = BigDecimal.ONE;
 				
 				MMachineryStatement ms = new MMachineryStatement(getCtx(), 0, get_TrxName());
 				ms.setAD_Org_ID(getAD_Org_ID());
 				ms.setDateAcct(getDateReport());
 				ms.setPM_Machinery_ID(getPM_Machinery_ID());				
-				ms.setQty(qty);
+				ms.setQty(getQty());
 				ms.setM_Product_ID(getJobWork_Product_ID());
 				ms.setC_UOM_ID(getRent_UOM_ID());
 				ms.setRate(getRate());
@@ -218,6 +215,8 @@ public class MTripSheet extends X_TF_TripSheet {
 				ms.saveEx();
 			}
 			
+			processDrillingEntries();
+			processAdditionalMeters();
 		}
 	}
 	
@@ -247,6 +246,8 @@ public class MTripSheet extends X_TF_TripSheet {
 		MMeterLog.deleteTripSheetMeterLog(getCtx(), getTF_TripSheet_ID(), get_TrxName());
 		MMachineryStatement.deleteTripSheetEntries(getCtx(), getTF_TripSheet_ID(), get_TrxName());
 		reverseDriverSalary();
+		reverseDrillingEntries();
+		reverseAdditionalMeters();
 		
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);
@@ -263,5 +264,168 @@ public class MTripSheet extends X_TF_TripSheet {
 		salary.setProcessed(true);
 		salary.saveEx();
 		
+	}
+	
+	public void updateRentQty() {
+		String sql = "SELECT SUM(TotalFeet) FROM TF_DrillingEntry WHERE TF_TripSheet_ID = ? ";
+		BigDecimal qty = DB.getSQLValueBDEx(get_TrxName(), sql, getTF_TripSheet_ID());
+		if(qty != null) {
+			setQty(qty);
+			setRent_Amt(getQty().multiply(getRate()));
+		}
+	}
+	
+	public List<MDrillingEntry> getDrillingEntries() {
+		String whereClause = "TF_TripSheet_ID = ?";
+		List<MDrillingEntry> list = new Query(getCtx(), MDrillingEntry.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_TripSheet_ID())
+				.list();
+		return list;
+	}
+	
+	private void processDrillingEntries() {
+		List<MDrillingEntry> list = getDrillingEntries();
+		if(list.size() == 0)
+			return;
+		int rentAccount  = getPM_Machinery().getPM_MachineryType().getC_ElementValueRentIncome_ID();
+		if(rentAccount == 0)
+			throw new AdempiereException("Please set Machinery Rent Income Account!");
+		
+		for(MDrillingEntry drill : list) {
+			MMachineryStatement ms = new MMachineryStatement(getCtx(), 0, get_TrxName());
+			String desc = "Holes : " + drill.getHoles().intValue() + ", Type:" + drill.getFeet().intValue() + " " + drill.getC_UOM().getName();			
+			ms.setAD_Org_ID(getAD_Org_ID());
+			ms.setDateAcct(getDateReport());
+			ms.setPM_Machinery_ID(getPM_Machinery_ID());				
+			ms.setQty(drill.getTotalFeet());
+			ms.setM_Product_ID(drill.getM_Product_ID());
+			ms.setC_UOM_ID(drill.getC_UOM_ID());
+			ms.setRate(drill.getFeetRate());
+			ms.setIncome(drill.getDrillingCost());
+			ms.setDescription(desc);
+			ms.setC_ElementValue_ID(rentAccount);
+			ms.setTF_TripSheet_ID(getTF_TripSheet_ID());
+			ms.saveEx();
+			
+			drill.setProcessed(true);
+			drill.saveEx();			
+		}
+		
+		if(getSubcontractor_ID() == 0)
+			return;
+		
+		//Create Subcontractor Invoice
+		//Purchase Invoice Header
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), getSubcontractor_ID(), get_TrxName());
+		MGLPostingConfig config = MGLPostingConfig.getMGLPostingConfig(getCtx());
+		TF_MInvoice invoice = new TF_MInvoice(getCtx(), 0, get_TrxName());
+		invoice.setClientOrg(getAD_Client_ID(), getAD_Org_ID());
+		invoice.setC_DocTypeTarget_ID(config.getTransporterInvoiceDocType_ID());	// AP Invoice		
+		invoice.setDateInvoiced(getDateReport());
+		invoice.setDateAcct(getDateReport());
+		//
+		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
+		//
+		
+		invoice.setBPartner(bp);
+		invoice.setIsSOTrx(false);		
+		
+		
+		//String desc = getFeet().doubleValue() + " Feet X "  + getHoles().doubleValue() + " Holes" ;		
+		String desc ="";
+		invoice.setDescription(desc);
+		
+		//Price List
+		int m_M_PriceList_ID = Env.getContextAsInt(getCtx(), "#M_PriceList_ID");
+		if(bp.getPO_PriceList_ID() > 0)
+			m_M_PriceList_ID = bp.getPO_PriceList_ID();
+		if(m_M_PriceList_ID == 0) {
+			MPriceList pl = new Query(getCtx(), MPriceList.Table_Name, "IsDefault='Y' AND IsActive='Y'", get_TrxName())
+					.setClient_ID().first();
+			if(pl != null)
+				m_M_PriceList_ID = pl.getM_PriceList_ID();
+		}
+		invoice.setC_Currency_ID(MPriceList.get(getCtx(), m_M_PriceList_ID, get_TrxName()).getC_Currency_ID());
+		if(invoice.getC_Currency_ID() == 0)
+			invoice.setC_Currency_ID(MClient.get(Env.getCtx()).getC_Currency_ID());
+		
+				
+		invoice.saveEx();
+		//End Invoice Header
+		for(MDrillingEntry drilEntry : list) {
+			//Invoice Line - Vehicle Rental Charge
+			MInvoiceLine invLine = new MInvoiceLine(invoice);
+			invLine.setM_Product_ID(drilEntry.getM_Product_ID(), true);				
+			invLine.setC_UOM_ID(drilEntry.getC_UOM_ID());
+			
+			invLine.setQty(drilEntry.getTotalFeet());
+			desc = "Holes : " + drilEntry.getHoles().intValue() + ", Type:" + drilEntry.getFeet().intValue() + " " + drilEntry.getC_UOM().getName();
+			invLine.setDescription(desc);
+			
+			invLine.setPriceActual(drilEntry.getFeetRate());
+			invLine.setPriceList(drilEntry.getFeetRate());
+			invLine.setPriceLimit(drilEntry.getFeetRate());
+			invLine.setPriceEntered(drilEntry.getFeetRate());
+			
+			invLine.setC_Tax_ID(1000000);
+			invLine.saveEx();
+		}
+		//Invoice DocAction
+		if (!invoice.processIt(DocAction.ACTION_Complete))
+			throw new AdempiereException("Failed when processing document - " + invoice.getProcessMsg());
+		invoice.saveEx();
+		
+		setC_Invoice_ID(invoice.getC_Invoice_ID());		
+	}
+	
+	private void reverseDrillingEntries() {
+		List<MDrillingEntry> list = getDrillingEntries();
+		if(list.size() == 0)
+			return;
+		
+		for(MDrillingEntry drill : list) {
+			drill.setProcessed(false);
+			drill.saveEx();			
+		}
+		
+		if(getC_Invoice_ID()>0) {
+			TF_MInvoice inv = new TF_MInvoice(getCtx(), getC_Invoice_ID(), get_TrxName());
+			if(inv.getDocStatus().equals(DOCSTATUS_Completed))
+				inv.reverseCorrectIt();
+			inv.saveEx();			
+			setC_Invoice_ID(0);						
+		}
+
+		
+	}
+	
+	public List<MTripSheetAddionalMeter> getAdditionalMeters() {
+		String whereClause = "TF_TripSheet_ID = ? ";
+		List<MTripSheetAddionalMeter> list = new Query(getCtx(), MTripSheetAddionalMeter.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_TripSheet_ID())
+				.list();
+		return list;
+	}
+	
+	private void processAdditionalMeters() {
+		List<MTripSheetAddionalMeter> list = getAdditionalMeters();
+		if(list.size() == 0)
+			return;
+		for(MTripSheetAddionalMeter am : list) {
+			am.processIt();
+			am.saveEx();
+		}
+	}
+	
+	private void reverseAdditionalMeters() {
+		List<MTripSheetAddionalMeter> list = getAdditionalMeters();
+		if(list.size() == 0)
+			return;
+		for(MTripSheetAddionalMeter am : list) {
+			am.reverseIt();
+			am.saveEx();
+		}
 	}
 }

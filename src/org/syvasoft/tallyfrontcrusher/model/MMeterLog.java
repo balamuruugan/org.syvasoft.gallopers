@@ -1,6 +1,8 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
+import java.io.LineNumberInputStream;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Properties;
 
 import org.compiere.model.Query;
@@ -42,11 +44,11 @@ public class MMeterLog extends X_PM_Meter_Log {
 	
 	public static void deleteTripSheetMeterLog(Properties ctx, int TF_TripSheet_ID, String trxName) {
 		String whereClause = "TF_TripSheet_ID = ?";
-		MMeterLog ml = new Query(ctx, Table_Name, whereClause, trxName)
+		List<MMeterLog> list = new Query(ctx, Table_Name, whereClause, trxName)
 				.setClient_ID()
 				.setParameters(TF_TripSheet_ID)
-				.first();
-		if(ml != null)
+				.list();
+		for(MMeterLog ml : list)
 			ml.deleteEx(true, trxName);
 	}
 }

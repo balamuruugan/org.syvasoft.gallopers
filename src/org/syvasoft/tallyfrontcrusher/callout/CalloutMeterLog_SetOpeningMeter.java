@@ -1,5 +1,6 @@
 package org.syvasoft.tallyfrontcrusher.callout;
 
+import java.math.BigDecimal;
 import java.util.Properties;
 
 import org.adempiere.base.IColumnCallout;
@@ -31,7 +32,7 @@ public class CalloutMeterLog_SetOpeningMeter implements IColumnCallout {
 				mTab.setValue(MMeterLog.COLUMNNAME_Opening_Meter,meterLog.getClosing_Meter());
 			}
 			else {
-				mTab.setValue(MMeterLog.COLUMNNAME_Opening_Meter,0);
+				mTab.setValue(MMeterLog.COLUMNNAME_Opening_Meter,BigDecimal.ZERO);
 			}
 		}
 		

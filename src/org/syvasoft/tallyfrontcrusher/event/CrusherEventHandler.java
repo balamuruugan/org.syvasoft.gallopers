@@ -77,7 +77,8 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		registerTableEvent(IEventTopics.DOC_AFTER_REVERSECORRECT, TF_MInvoice.Table_Name);
 		registerTableEvent(IEventTopics.DOC_AFTER_COMPLETE, MOrder.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrder.Table_Name);
-		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrderLine.Table_Name);	
+		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrderLine.Table_Name);
+		registerTableEvent(IEventTopics.PO_BEFORE_CHANGE, MOrderLine.Table_Name);	
 		registerTableEvent(IEventTopics.DOC_BEFORE_PREPARE, MProduction.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MPayment.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_CHANGE, MPayment.Table_Name);
@@ -256,10 +257,10 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		}
 		else if (po instanceof MOrderLine) {
 			MOrderLine oLine = (MOrderLine) po;
-			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
-				int ref_OrderLine_ID = oLine.getRef_OrderLine_ID();
-				if(ref_OrderLine_ID > 0) {
-															
+			int ref_OrderLine_ID = oLine.getRef_OrderLine_ID();
+			if(ref_OrderLine_ID > 0) {
+				MOrderLine srcLine = new MOrderLine(oLine.getCtx(), ref_OrderLine_ID, oLine.get_TrxName());
+				if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {											
 					//Set Counter warehouse
 					MOrgInfo o = MOrgInfo.get(oLine.getCtx(), oLine.getAD_Org_ID(), null);
 					oLine.setM_Warehouse_ID(o.getM_Warehouse_ID());
@@ -268,9 +269,26 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					MCounterTransactionSetup ctransSetup = new MCounterTransactionSetup(oLine.getCtx(), 0, null);
 					int src_Product_ID = oLine.get_ValueAsInt(MOrderLine.COLUMNNAME_M_Product_ID);
 					int M_Product_ID = ctransSetup.getCounterProduct_ID(oLine.getAD_Org_ID(), src_Product_ID);
+					
+					MProduct prod = new MProduct(oLine.getCtx(), M_Product_ID, oLine.get_TrxName());
+					prod.setAD_Org_ID(0);
+					prod.saveEx();
+					
 					oLine.setM_Product_ID(M_Product_ID);					
 					MWarehouse wh = (MWarehouse) o.getM_Warehouse();
 					oLine.set_ValueOfColumn(TF_MOrder.COLUMNNAME_M_Locator_ID, wh.getDefaultLocator().getM_Locator_ID());
+					
+					
+					oLine.setPriceActual(srcLine.getPriceActual());
+					oLine.setPriceEntered(srcLine.getPriceEntered());
+					oLine.setPriceLimit(oLine.getPriceLimit());
+					oLine.setPriceList(srcLine.getPriceList());
+					oLine.setDiscount(srcLine.getDiscount());
+					oLine.setC_Tax_ID(srcLine.getC_Tax_ID());					
+				}
+				
+				if(event.getTopic().equals(IEventTopics.PO_BEFORE_CHANGE)) {
+					oLine.setC_Tax_ID(srcLine.getC_Tax_ID());
 				}
 			}
 		}
