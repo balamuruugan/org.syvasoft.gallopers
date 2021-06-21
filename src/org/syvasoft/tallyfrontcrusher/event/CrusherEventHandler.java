@@ -271,7 +271,8 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					int M_Product_ID = ctransSetup.getCounterProduct_ID(oLine.getAD_Org_ID(), src_Product_ID);
 					
 					MProduct prod = new MProduct(oLine.getCtx(), M_Product_ID, oLine.get_TrxName());
-					prod.setAD_Org_ID(0);
+					if(src_Product_ID == M_Product_ID)
+						prod.setAD_Org_ID(0);
 					prod.saveEx();
 					
 					oLine.setM_Product_ID(M_Product_ID);					
@@ -314,7 +315,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 				cost.saveEx();
 				//trx.commit();
 							
-					
+					 
 				// Call Rollup BOM Cost process
 				
 				// Create instance parameters. I e the parameters you want to send to the process.
