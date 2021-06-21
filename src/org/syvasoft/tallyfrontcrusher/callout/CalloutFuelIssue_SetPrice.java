@@ -29,12 +29,12 @@ public class CalloutFuelIssue_SetPrice implements IColumnCallout {
 		else
 			return null;
 		
-		String issueType = (String) mTab.getValue(MFuelIssue.COLUMNNAME_IssueType);
+		/*String issueType = (String) mTab.getValue(MFuelIssue.COLUMNNAME_IssueType);
 		if(issueType.equals(MFuelIssue.ISSUETYPE_Payment)) {
 			mTab.setValue(MFuelIssue.COLUMNNAME_Rate, BigDecimal.ZERO);
 			mTab.setValue(MFuelIssue.COLUMNNAME_Account_ID, null);
 			return null;
-		}
+		}*/
 	
 	
 		if(mTab.getValue(MFuelIssue.COLUMNNAME_M_Product_ID) != null)
