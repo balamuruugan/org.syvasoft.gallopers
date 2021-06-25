@@ -35,6 +35,7 @@ import org.syvasoft.tallyfrontcrusher.model.MTaxInvoice;
 import org.syvasoft.tallyfrontcrusher.model.MToken;
 import org.syvasoft.tallyfrontcrusher.model.MTripSheet;
 import org.syvasoft.tallyfrontcrusher.model.MTripSheetAddionalMeter;
+import org.syvasoft.tallyfrontcrusher.model.MTripSheetSalary;
 import org.syvasoft.tallyfrontcrusher.model.MTyreAssignment;
 import org.syvasoft.tallyfrontcrusher.model.MTyreStatusChange;
 import org.syvasoft.tallyfrontcrusher.model.MVehicleRent;
@@ -147,6 +148,13 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 					columnName.equals(MTripSheet.COLUMNNAME_Rent_UOM_ID))
 				list.add(new CalloutTripSheet_SetMachineryRentInfo());
 			
+		}
+		
+		if(tableName.equals(MTripSheetSalary.Table_Name)) {
+			if(columnName.equals(MTripSheetSalary.COLUMNNAME_C_BPartner_ID)) {
+				list.add(new CalloutTripSheet_SetIncentiveRules());
+				list.add(new CalloutTripSheet_CalcIncentive());
+			}
 		}
 		
 		if(tableName.equals(MTripSheetAddionalMeter.Table_Name)) {

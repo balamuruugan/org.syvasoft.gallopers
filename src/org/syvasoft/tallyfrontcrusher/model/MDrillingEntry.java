@@ -31,11 +31,7 @@ public class MDrillingEntry extends X_TF_DrillingEntry {
 
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {
-		if(getTF_TripSheet_ID() > 0) {
-			MTripSheet ts = new MTripSheet(getCtx(), getTF_TripSheet_ID(), get_TrxName());
-			ts.updateRentQty();
-			ts.saveEx();
-		}
+		updateTripSheetDrillingQty();
 		return super.afterSave(newRecord, success);
 	}
 	
@@ -125,5 +121,12 @@ public class MDrillingEntry extends X_TF_DrillingEntry {
 		
 	}
 	
+	public void updateTripSheetDrillingQty() {
+		if(getTF_TripSheet_ID() > 0) {
+			MTripSheet ts = new MTripSheet(getCtx(), getTF_TripSheet_ID(), get_TrxName());
+			ts.updateDrillingQty();
+			ts.saveEx();
+		}
+	}
 }
 

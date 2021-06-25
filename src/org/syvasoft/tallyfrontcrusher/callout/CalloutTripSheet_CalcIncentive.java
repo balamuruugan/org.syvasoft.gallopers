@@ -17,9 +17,14 @@ public class CalloutTripSheet_CalcIncentive implements IColumnCallout {
 		BigDecimal totalMTExtended = CalloutUtil.getBDValue(mTab, MTripSheet.COLUMNNAME_TotalMTExtended);
 		BigDecimal RunningMeter = CalloutUtil.getBDValue(mTab, MTripSheet.COLUMNNAME_Running_Meter);		
 		BigDecimal qty = totalMTExtended;
+		int TF_Quarry_ID = CalloutUtil.getIntValue(mTab, MTripSheet.COLUMNNAME_TF_Quarry_ID);
 		
 		if(!mTab.getValueAsBoolean(MTripSheet.COLUMNNAME_IsManual))
 			qty = RunningMeter;
+		
+		BigDecimal drillingQty = CalloutUtil.getBDValue(mTab, MTripSheet.COLUMNNAME_DrillingQty);
+		if(drillingQty.doubleValue() > 0)
+			qty = drillingQty;
 		
 		BigDecimal unitIncentive = CalloutUtil.getBDValue(mTab, MTripSheet.COLUMNNAME_UnitIncentive);
 		BigDecimal dayincentive = CalloutUtil.getBDValue(mTab, MTripSheet.COLUMNNAME_DayIncentive);
@@ -35,6 +40,7 @@ public class CalloutTripSheet_CalcIncentive implements IColumnCallout {
 			else
 				incentiveAmt = unitIncentive.multiply(qty).setScale(2, RoundingMode.HALF_EVEN);
 		}
+		
 		
 		mTab.setValue(MTripSheet.COLUMNNAME_Incentive, incentiveAmt);
 		

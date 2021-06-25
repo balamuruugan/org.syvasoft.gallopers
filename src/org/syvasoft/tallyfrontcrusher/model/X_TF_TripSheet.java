@@ -33,7 +33,7 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210618L;
+	private static final long serialVersionUID = 20210623L;
 
     /** Standard Constructor */
     public X_TF_TripSheet (Properties ctx, int TF_TripSheet_ID, String trxName)
@@ -408,6 +408,23 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		return (String)get_Value(COLUMNNAME_DocumentNo);
 	}
 
+	/** Set Drilling Qty.
+		@param DrillingQty Drilling Qty	  */
+	public void setDrillingQty (BigDecimal DrillingQty)
+	{
+		set_Value (COLUMNNAME_DrillingQty, DrillingQty);
+	}
+
+	/** Get Drilling Qty.
+		@return Drilling Qty	  */
+	public BigDecimal getDrillingQty () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_DrillingQty);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Earned Wage.
 		@param Earned_Wage Earned Wage	  */
 	public void setEarned_Wage (BigDecimal Earned_Wage)
@@ -484,6 +501,8 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public static final String INCENTIVETYPE_Day = "DA";
 	/** Month = MO */
 	public static final String INCENTIVETYPE_Month = "MO";
+	/** Meter = ME */
+	public static final String INCENTIVETYPE_Meter = "ME";
 	/** Set Incentive Type.
 		@param IncentiveType Incentive Type	  */
 	public void setIncentiveType (String IncentiveType)

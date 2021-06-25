@@ -45,4 +45,19 @@ public class MEmployeeIncentive extends X_TF_IncentiveConfig {
 		return inc;
 	}
 	
+	public static MEmployeeIncentive get(Properties ctx, int AD_Org_ID, int C_BPartner_ID) {
+		if(C_BPartner_ID == 0)
+			return null;
+		
+		String whereClause = "AD_Org_ID IN (0,?) AND C_BPartner_ID = ?";
+		MEmployeeIncentive inc = new Query(ctx, Table_Name, whereClause, null)
+				.setClient_ID()
+				.setOnlyActiveRecords(true)
+				.setParameters(AD_Org_ID, C_BPartner_ID)
+				.setOrderBy("COALESCE(C_BPartner_ID,0) DESC")
+				.first();
+		
+		return inc;
+	}
+	
 }

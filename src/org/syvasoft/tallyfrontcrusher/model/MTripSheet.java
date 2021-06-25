@@ -164,7 +164,8 @@ public class MTripSheet extends X_TF_TripSheet {
 				salary.setSalary_Amt(getEarned_Wage());
 				salary.setIncentive(getIncentive());
 				salary.setDescription("TripSheet No: " + getDocumentNo());
-				salary.setDocStatus(MEmployeeSalaryOld.DOCSTATUS_Drafted);							
+				salary.setDocStatus(MEmployeeSalaryOld.DOCSTATUS_Drafted);		
+				salary.setTF_TripSheet_ID(getTF_TripSheet_ID());
 				salary.saveEx();
 				
 				setTF_Employee_Salary_ID(salary.getTF_Employee_Salary_ID());
@@ -217,6 +218,7 @@ public class MTripSheet extends X_TF_TripSheet {
 			
 			processDrillingEntries();
 			processAdditionalMeters();
+			processAdditionalLabourSalaries();
 		}
 	}
 	
@@ -248,6 +250,7 @@ public class MTripSheet extends X_TF_TripSheet {
 		reverseDriverSalary();
 		reverseDrillingEntries();
 		reverseAdditionalMeters();
+		reverseAdditionalLabourSalaries();
 		
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);
@@ -256,7 +259,6 @@ public class MTripSheet extends X_TF_TripSheet {
 	public void reverseDriverSalary() {
 		if(getTF_Employee_Salary_ID() == 0)
 			return;
-		
 		MEmployeeSalaryOld salary = new MEmployeeSalaryOld(getCtx(), getTF_Employee_Salary_ID(), get_TrxName());
 		
 		salary.reverseIt();
@@ -426,6 +428,60 @@ public class MTripSheet extends X_TF_TripSheet {
 		for(MTripSheetAddionalMeter am : list) {
 			am.reverseIt();
 			am.saveEx();
+		}
+	}
+	
+	public void updateDrillingQty() {
+		String sql = "SELECT SUM(DrillingCost) FROM TF_DrillingEntry WHERE TF_TripSheet_ID = ?";
+		BigDecimal drillingQty = DB.getSQLValueBDEx(get_TrxName(), sql, getTF_TripSheet_ID());
+		setDrillingQty(drillingQty);
+		
+		if(getUnitIncentive().doubleValue() > 0) {
+			setIncentive(getUnitIncentive().multiply(getDrillingQty()));
+		}
+		else {
+			setIncentive(getDayIncentive());
+		}
+		
+		for(MTripSheetSalary salary : getSalaryEntries()) {
+			salary.setDrillingQty(drillingQty);
+			salary.saveEx();
+		}
+		
+	}
+	
+	public List<MTripSheetSalary> getSalaryEntries() {
+		String whereClause = "TF_TripSheet_ID = ? ";
+		List<MTripSheetSalary> list = new Query(getCtx(), MTripSheetSalary.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_TripSheet_ID())
+				.list();
+		return list;
+	}
+	
+	public void processAdditionalLabourSalaries() {
+		for(MTripSheetSalary s : getSalaryEntries()) {
+			s.processIt();
+			s.saveEx();
+		}
+	}
+	
+	public void reverseAdditionalLabourSalaries() {
+		for(MTripSheetSalary s : getSalaryEntries()) {
+			s.reverseIt();
+			s.saveEx();
+		}
+		
+		List<MEmployeeSalaryOld> list = new Query(getCtx(), MEmployeeSalaryOld.Table_Name, "TF_TripSheet_ID = ? AND DocStatus IN ('CO') ", get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_TripSheet_ID())
+				.list();
+		
+		for(MEmployeeSalaryOld salary : list) {						
+			salary.reverseIt();
+			salary.setDocStatus(MEmployeeSalary.DOCSTATUS_Voided);
+			salary.setProcessed(true);
+			salary.saveEx();
 		}
 	}
 }

@@ -32,7 +32,7 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210618L;
+	private static final long serialVersionUID = 20210623L;
 
     /** Standard Constructor */
     public X_TF_TripSheetProduct (Properties ctx, int TF_TripSheetProduct_ID, String trxName)
@@ -129,6 +129,23 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set No of Load.
+		@param NoOfLoad No of Load	  */
+	public void setNoOfLoad (BigDecimal NoOfLoad)
+	{
+		set_Value (COLUMNNAME_NoOfLoad, NoOfLoad);
+	}
+
+	/** Get No of Load.
+		@return No of Load	  */
+	public BigDecimal getNoOfLoad () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_NoOfLoad);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException

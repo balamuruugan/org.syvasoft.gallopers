@@ -33,7 +33,7 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210601L;
+	private static final long serialVersionUID = 20210623L;
 
     /** Standard Constructor */
     public X_TF_Employee_Salary (Properties ctx, int TF_Employee_Salary_ID, String trxName)
@@ -499,15 +499,15 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 		return bd;
 	}
 
-	/** Set Standard Wage.
-		@param Std_Wage Standard Wage	  */
+	/** Set Wage / day.
+		@param Std_Wage Wage / day	  */
 	public void setStd_Wage (BigDecimal Std_Wage)
 	{
 		set_Value (COLUMNNAME_Std_Wage, Std_Wage);
 	}
 
-	/** Get Standard Wage.
-		@return Standard Wage	  */
+	/** Get Wage / day.
+		@return Wage / day	  */
 	public BigDecimal getStd_Wage () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Std_Wage);
@@ -570,6 +570,31 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 	public int getTF_Quarry_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Quarry_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException
+    {
+		return (I_TF_TripSheet)MTable.get(getCtx(), I_TF_TripSheet.Table_Name)
+			.getPO(getTF_TripSheet_ID(), get_TrxName());	}
+
+	/** Set Trip Sheet.
+		@param TF_TripSheet_ID Trip Sheet	  */
+	public void setTF_TripSheet_ID (int TF_TripSheet_ID)
+	{
+		if (TF_TripSheet_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_TripSheet_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_TripSheet_ID, Integer.valueOf(TF_TripSheet_ID));
+	}
+
+	/** Get Trip Sheet.
+		@return Trip Sheet	  */
+	public int getTF_TripSheet_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_TripSheet_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

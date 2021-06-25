@@ -320,10 +320,10 @@ public interface I_TF_Employee_Salary
     /** Column name Std_Wage */
     public static final String COLUMNNAME_Std_Wage = "Std_Wage";
 
-	/** Set Standard Wage	  */
+	/** Set Wage / day	  */
 	public void setStd_Wage (BigDecimal Std_Wage);
 
-	/** Get Standard Wage	  */
+	/** Get Wage / day	  */
 	public BigDecimal getStd_Wage();
 
     /** Column name TF_Employee_Salary_ID */
@@ -354,6 +354,17 @@ public interface I_TF_Employee_Salary
 	public int getTF_Quarry_ID();
 
 	public I_TF_Quarry getTF_Quarry() throws RuntimeException;
+
+    /** Column name TF_TripSheet_ID */
+    public static final String COLUMNNAME_TF_TripSheet_ID = "TF_TripSheet_ID";
+
+	/** Set Trip Sheet	  */
+	public void setTF_TripSheet_ID (int TF_TripSheet_ID);
+
+	/** Get Trip Sheet	  */
+	public int getTF_TripSheet_ID();
+
+	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException;
 
     /** Column name TF_VehicleType_ID */
     public static final String COLUMNNAME_TF_VehicleType_ID = "TF_VehicleType_ID";

@@ -287,6 +287,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MEmployeeIncentiveExclude.class;
 		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
 			return MTripSheetAddionalMeter.class;
+		else if(MTripSheetSalary.Table_Name.equals(tableName))			
+			return MTripSheetSalary.class;
 		return null;
 	}
 
@@ -567,6 +569,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeIncentiveExclude(ctx, Record_ID, trxName);
 		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
 			return new MTripSheetAddionalMeter(ctx, Record_ID, trxName);
+		else if(MTripSheetSalary.Table_Name.equals(tableName))			
+			return new MTripSheetSalary(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -849,6 +853,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeIncentiveExclude(ctx, rs, trxName);
 		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
 			return new MTripSheetAddionalMeter(ctx, rs, trxName);
+		else if(MTripSheetSalary.Table_Name.equals(tableName))			
+			return new MTripSheetSalary(ctx, rs, trxName);
 		return null;
 	}
 

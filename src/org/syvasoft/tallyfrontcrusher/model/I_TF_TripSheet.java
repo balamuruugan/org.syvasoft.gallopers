@@ -256,6 +256,15 @@ public interface I_TF_TripSheet
 	  */
 	public String getDocumentNo();
 
+    /** Column name DrillingQty */
+    public static final String COLUMNNAME_DrillingQty = "DrillingQty";
+
+	/** Set Drilling Qty	  */
+	public void setDrillingQty (BigDecimal DrillingQty);
+
+	/** Get Drilling Qty	  */
+	public BigDecimal getDrillingQty();
+
     /** Column name Earned_Wage */
     public static final String COLUMNNAME_Earned_Wage = "Earned_Wage";
 

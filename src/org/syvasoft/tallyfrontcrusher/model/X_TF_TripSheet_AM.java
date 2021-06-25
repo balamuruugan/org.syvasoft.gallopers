@@ -33,7 +33,7 @@ public class X_TF_TripSheet_AM extends PO implements I_TF_TripSheet_AM, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210618L;
+	private static final long serialVersionUID = 20210623L;
 
     /** Standard Constructor */
     public X_TF_TripSheet_AM (Properties ctx, int TF_TripSheet_AM_ID, String trxName)
@@ -47,6 +47,7 @@ public class X_TF_TripSheet_AM extends PO implements I_TF_TripSheet_AM, I_Persis
 // @#Date@
 			setOpening_Meter (Env.ZERO);
 			setPM_Machinery_ID (0);
+// @PM_Machinery_ID@
 			setProcessed (false);
 // N
 			setRunning_Meter (Env.ZERO);
