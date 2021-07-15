@@ -432,7 +432,7 @@ public class MTripSheet extends X_TF_TripSheet {
 	}
 	
 	public void updateDrillingQty() {
-		String sql = "SELECT SUM(DrillingCost) FROM TF_DrillingEntry WHERE TF_TripSheet_ID = ?";
+		String sql = "SELECT SUM(TotalFeet) FROM TF_DrillingEntry WHERE TF_TripSheet_ID = ?";
 		BigDecimal drillingQty = DB.getSQLValueBDEx(get_TrxName(), sql, getTF_TripSheet_ID());
 		setDrillingQty(drillingQty);
 		
