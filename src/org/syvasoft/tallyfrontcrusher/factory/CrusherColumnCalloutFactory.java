@@ -48,6 +48,7 @@ import org.syvasoft.tallyfrontcrusher.model.TF_MElementValue;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInvoice;
 import org.syvasoft.tallyfrontcrusher.model.TF_MJournal;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
+import org.syvasoft.tallyfrontcrusher.model.TF_MOrderLine;
 import org.syvasoft.tallyfrontcrusher.model.TF_MPayment;
 import org.syvasoft.tallyfrontcrusher.model.TF_MRequisitionLine;
 
@@ -148,6 +149,13 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 					columnName.equals(MTripSheet.COLUMNNAME_Rent_UOM_ID))
 				list.add(new CalloutTripSheet_SetMachineryRentInfo());
 			
+		}
+		
+		if(tableName.equals(TF_MOrderLine.Table_Name)) {
+			if(columnName.equals(TF_MOrderLine.COLUMNNAME_M_Product_ID) || 
+					columnName.equals(TF_MOrderLine.COLUMNNAME_C_UOM_ID)) {
+				list.add(new CalloutOrderLine_SetPriceUOM());
+			}
 		}
 		
 		if(tableName.equals(MTripSheetSalary.Table_Name)) {
