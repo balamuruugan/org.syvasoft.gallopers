@@ -440,6 +440,15 @@ public interface I_TF_TripSheet
 	  */
 	public BigDecimal getQty();
 
+    /** Column name QtyIncentive */
+    public static final String COLUMNNAME_QtyIncentive = "QtyIncentive";
+
+	/** Set Incentive Qty	  */
+	public void setQtyIncentive (BigDecimal QtyIncentive);
+
+	/** Get Incentive Qty	  */
+	public BigDecimal getQtyIncentive();
+
     /** Column name Rate */
     public static final String COLUMNNAME_Rate = "Rate";
 

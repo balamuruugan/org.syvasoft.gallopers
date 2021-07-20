@@ -21,25 +21,25 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for TF_TripSheetProduct
+/** Generated Interface for TF_IncentiveConfig_Applicable
  *  @author iDempiere (generated) 
  *  @version Release 5.1
  */
 @SuppressWarnings("all")
-public interface I_TF_TripSheetProduct 
+public interface I_TF_IncentiveConfig_Applicable 
 {
 
-    /** TableName=TF_TripSheetProduct */
-    public static final String Table_Name = "TF_TripSheetProduct";
+    /** TableName=TF_IncentiveConfig_Applicable */
+    public static final String Table_Name = "TF_IncentiveConfig_Applicable";
 
-    /** AD_Table_ID=1000336 */
+    /** AD_Table_ID=1000344 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 1 - Org 
+    /** AccessLevel = 3 - Client - Org 
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(1);
+    BigDecimal accessLevel = BigDecimal.valueOf(3);
 
     /** Load Meta Data */
 
@@ -79,19 +79,6 @@ public interface I_TF_TripSheetProduct
 	  * User who created this records
 	  */
 	public int getCreatedBy();
-
-    /** Column name Description */
-    public static final String COLUMNNAME_Description = "Description";
-
-	/** Set Description.
-	  * Optional short description of the record
-	  */
-	public void setDescription (String Description);
-
-	/** Get Description.
-	  * Optional short description of the record
-	  */
-	public String getDescription();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -136,79 +123,34 @@ public interface I_TF_TripSheetProduct
 
 	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException;
 
-    /** Column name NoOfLoad */
-    public static final String COLUMNNAME_NoOfLoad = "NoOfLoad";
+    /** Column name TF_IncentiveConfig_Exld_ID */
+    public static final String COLUMNNAME_TF_IncentiveConfig_Exld_ID = "TF_IncentiveConfig_Exld_ID";
 
-	/** Set No of Load	  */
-	public void setNoOfLoad (BigDecimal NoOfLoad);
+	/** Set Employee Incentive Configuration Exclude	  */
+	public void setTF_IncentiveConfig_Exld_ID (int TF_IncentiveConfig_Exld_ID);
 
-	/** Get No of Load	  */
-	public BigDecimal getNoOfLoad();
+	/** Get Employee Incentive Configuration Exclude	  */
+	public int getTF_IncentiveConfig_Exld_ID();
 
-    /** Column name QuarryProductionType */
-    public static final String COLUMNNAME_QuarryProductionType = "QuarryProductionType";
+    /** Column name TF_IncentiveConfig_Exld_UU */
+    public static final String COLUMNNAME_TF_IncentiveConfig_Exld_UU = "TF_IncentiveConfig_Exld_UU";
 
-	/** Set Quarry Production Type	  */
-	public void setQuarryProductionType (String QuarryProductionType);
+	/** Set TF_IncentiveConfig_Exld_UU	  */
+	public void setTF_IncentiveConfig_Exld_UU (String TF_IncentiveConfig_Exld_UU);
 
-	/** Get Quarry Production Type	  */
-	public String getQuarryProductionType();
+	/** Get TF_IncentiveConfig_Exld_UU	  */
+	public String getTF_IncentiveConfig_Exld_UU();
 
-    /** Column name RateMT */
-    public static final String COLUMNNAME_RateMT = "RateMT";
+    /** Column name TF_IncentiveConfig_ID */
+    public static final String COLUMNNAME_TF_IncentiveConfig_ID = "TF_IncentiveConfig_ID";
 
-	/** Set Rate / MT	  */
-	public void setRateMT (BigDecimal RateMT);
+	/** Set Employee Incentive Configuration	  */
+	public void setTF_IncentiveConfig_ID (int TF_IncentiveConfig_ID);
 
-	/** Get Rate / MT	  */
-	public BigDecimal getRateMT();
+	/** Get Employee Incentive Configuration	  */
+	public int getTF_IncentiveConfig_ID();
 
-    /** Column name Rent_Amt */
-    public static final String COLUMNNAME_Rent_Amt = "Rent_Amt";
-
-	/** Set Rent (Amount)	  */
-	public void setRent_Amt (BigDecimal Rent_Amt);
-
-	/** Get Rent (Amount)	  */
-	public BigDecimal getRent_Amt();
-
-    /** Column name TF_TripSheet_ID */
-    public static final String COLUMNNAME_TF_TripSheet_ID = "TF_TripSheet_ID";
-
-	/** Set Trip Sheet	  */
-	public void setTF_TripSheet_ID (int TF_TripSheet_ID);
-
-	/** Get Trip Sheet	  */
-	public int getTF_TripSheet_ID();
-
-	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException;
-
-    /** Column name TF_TripSheetProduct_ID */
-    public static final String COLUMNNAME_TF_TripSheetProduct_ID = "TF_TripSheetProduct_ID";
-
-	/** Set Trip Sheet Product Detail	  */
-	public void setTF_TripSheetProduct_ID (int TF_TripSheetProduct_ID);
-
-	/** Get Trip Sheet Product Detail	  */
-	public int getTF_TripSheetProduct_ID();
-
-    /** Column name TF_TripSheetProduct_UU */
-    public static final String COLUMNNAME_TF_TripSheetProduct_UU = "TF_TripSheetProduct_UU";
-
-	/** Set TF_TripSheetProduct_UU	  */
-	public void setTF_TripSheetProduct_UU (String TF_TripSheetProduct_UU);
-
-	/** Get TF_TripSheetProduct_UU	  */
-	public String getTF_TripSheetProduct_UU();
-
-    /** Column name TotalMT */
-    public static final String COLUMNNAME_TotalMT = "TotalMT";
-
-	/** Set Total MT (Manual)	  */
-	public void setTotalMT (BigDecimal TotalMT);
-
-	/** Get Total MT (Manual)	  */
-	public BigDecimal getTotalMT();
+	public I_TF_IncentiveConfig getTF_IncentiveConfig() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

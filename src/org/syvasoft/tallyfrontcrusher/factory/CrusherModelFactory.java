@@ -283,12 +283,14 @@ public class CrusherModelFactory implements IModelFactory {
 			return MEmployeeIncentive.class;
 		else if(MMachineryRentConfig.Table_Name.equals(tableName))			
 			return MMachineryRentConfig.class;
-		else if(MEmployeeIncentiveExclude.Table_Name.equals(tableName))			
-			return MEmployeeIncentiveExclude.class;
+		else if(MEmployeeIncentiveApplicable.Table_Name.equals(tableName))			
+			return MEmployeeIncentiveApplicable.class;
 		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
 			return MTripSheetAddionalMeter.class;
 		else if(MTripSheetSalary.Table_Name.equals(tableName))			
 			return MTripSheetSalary.class;
+		else if(MTripSheetProduct.Table_Name.equals(tableName))			
+			return MTripSheetProduct.class;
 		return null;
 	}
 
@@ -565,12 +567,14 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeIncentive(ctx, Record_ID, trxName);
 		else if(MMachineryRentConfig.Table_Name.equals(tableName))			
 			return new MMachineryRentConfig(ctx, Record_ID, trxName);
-		else if(MEmployeeIncentiveExclude.Table_Name.equals(tableName))			
-			return new MEmployeeIncentiveExclude(ctx, Record_ID, trxName);
+		else if(MEmployeeIncentiveApplicable.Table_Name.equals(tableName))			
+			return new MEmployeeIncentiveApplicable(ctx, Record_ID, trxName);
 		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
 			return new MTripSheetAddionalMeter(ctx, Record_ID, trxName);
 		else if(MTripSheetSalary.Table_Name.equals(tableName))			
 			return new MTripSheetSalary(ctx, Record_ID, trxName);
+		else if(MTripSheetProduct.Table_Name.equals(tableName))			
+			return new MTripSheetProduct(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -849,12 +853,14 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeIncentive(ctx, rs, trxName);
 		else if(MMachineryRentConfig.Table_Name.equals(tableName))			
 			return new MMachineryRentConfig(ctx, rs, trxName);
-		else if(MEmployeeIncentiveExclude.Table_Name.equals(tableName))			
-			return new MEmployeeIncentiveExclude(ctx, rs, trxName);
+		else if(MEmployeeIncentiveApplicable.Table_Name.equals(tableName))			
+			return new MEmployeeIncentiveApplicable(ctx, rs, trxName);
 		else if(MTripSheetAddionalMeter.Table_Name.equals(tableName))			
 			return new MTripSheetAddionalMeter(ctx, rs, trxName);
 		else if(MTripSheetSalary.Table_Name.equals(tableName))			
 			return new MTripSheetSalary(ctx, rs, trxName);
+		else if(MTripSheetProduct.Table_Name.equals(tableName))			
+			return new MTripSheetProduct(ctx, rs, trxName);
 		return null;
 	}
 

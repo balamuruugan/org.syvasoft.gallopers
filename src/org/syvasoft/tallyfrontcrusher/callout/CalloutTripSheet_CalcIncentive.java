@@ -41,7 +41,7 @@ public class CalloutTripSheet_CalcIncentive implements IColumnCallout {
 				incentiveAmt = unitIncentive.multiply(qty).setScale(2, RoundingMode.HALF_EVEN);
 		}
 		
-		
+		mTab.setValue(MTripSheet.COLUMNNAME_QtyIncentive, qty);
 		mTab.setValue(MTripSheet.COLUMNNAME_Incentive, incentiveAmt);
 		
 		return null;

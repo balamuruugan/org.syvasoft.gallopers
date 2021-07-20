@@ -35,6 +35,7 @@ import org.syvasoft.tallyfrontcrusher.model.MTaxInvoice;
 import org.syvasoft.tallyfrontcrusher.model.MToken;
 import org.syvasoft.tallyfrontcrusher.model.MTripSheet;
 import org.syvasoft.tallyfrontcrusher.model.MTripSheetAddionalMeter;
+import org.syvasoft.tallyfrontcrusher.model.MTripSheetProduct;
 import org.syvasoft.tallyfrontcrusher.model.MTripSheetSalary;
 import org.syvasoft.tallyfrontcrusher.model.MTyreAssignment;
 import org.syvasoft.tallyfrontcrusher.model.MTyreStatusChange;
@@ -681,6 +682,13 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			if(columnName.equals(MBlastingEntry.COLUMNNAME_M_Locator_ID) || columnName.equals(MBlastingEntry.COLUMNNAME_M_Product_ID)) {
 				list.add(new CalloutBlastingEntry_SetPriceUom());
 				list.add(new CalloutBlastingEntry_AvailableQty());
+			}
+		}
+		
+		if(tableName.equals(MTripSheetProduct.Table_Name)) {
+			if(columnName.equals(MTripSheetProduct.COLUMNNAME_M_Product_ID) ||
+					columnName.equals(MTripSheetProduct.COLUMNNAME_TotalMT)) {
+				list.add(new CalloutTripSheetProduct_CalcRentAmt());
 			}
 		}
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];

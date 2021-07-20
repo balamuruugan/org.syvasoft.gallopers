@@ -33,7 +33,7 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210623L;
+	private static final long serialVersionUID = 20210720L;
 
     /** Standard Constructor */
     public X_TF_TripSheet (Properties ctx, int TF_TripSheet_ID, String trxName)
@@ -628,9 +628,9 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public void setPM_Machinery_ID (int PM_Machinery_ID)
 	{
 		if (PM_Machinery_ID < 1) 
-			set_ValueNoCheck (COLUMNNAME_PM_Machinery_ID, null);
+			set_Value (COLUMNNAME_PM_Machinery_ID, null);
 		else 
-			set_ValueNoCheck (COLUMNNAME_PM_Machinery_ID, Integer.valueOf(PM_Machinery_ID));
+			set_Value (COLUMNNAME_PM_Machinery_ID, Integer.valueOf(PM_Machinery_ID));
 	}
 
 	/** Get Machinery.
@@ -742,6 +742,23 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	public BigDecimal getQty () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Qty);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Incentive Qty.
+		@param QtyIncentive Incentive Qty	  */
+	public void setQtyIncentive (BigDecimal QtyIncentive)
+	{
+		set_Value (COLUMNNAME_QtyIncentive, QtyIncentive);
+	}
+
+	/** Get Incentive Qty.
+		@return Incentive Qty	  */
+	public BigDecimal getQtyIncentive () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_QtyIncentive);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;

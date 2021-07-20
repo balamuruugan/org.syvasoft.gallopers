@@ -66,6 +66,10 @@ public class MTripSheet extends X_TF_TripSheet {
 	
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
+		if(getProductDetailIncentiveQty().doubleValue() > 0 ) {
+			updateIncentiveQty();
+		}
+		
 		setTotal_Wage(getEarned_Wage().add(getIncentive()));
 		
 		//If the Employee is created from Quick Entry
@@ -190,7 +194,8 @@ public class MTripSheet extends X_TF_TripSheet {
 			}
 						
 			//post Machinery Rent
-			if(getRent_Amt().doubleValue() > 0 && getDrillingEntries().size() == 0) {
+			if(getRent_Amt().doubleValue() > 0 && getDrillingEntries().size() == 0 &&
+					getRentEntries().size() == 0 ) {
 				int rentAccount  = getPM_Machinery().getPM_MachineryType().getC_ElementValueRentIncome_ID();
 				if(rentAccount == 0)
 					throw new AdempiereException("Please set Machinery Rent Income Account!");
@@ -217,6 +222,7 @@ public class MTripSheet extends X_TF_TripSheet {
 			}
 			
 			processDrillingEntries();
+			processRentEntries();
 			processAdditionalMeters();
 			processAdditionalLabourSalaries();
 		}
@@ -284,6 +290,40 @@ public class MTripSheet extends X_TF_TripSheet {
 				.setParameters(getTF_TripSheet_ID())
 				.list();
 		return list;
+	}
+	
+	public List<MTripSheetProduct> getRentEntries() {
+		String whereClause = "TF_TripSheet_ID = ? AND COALESCE(Rent_Amt, 0) > 0";
+		List<MTripSheetProduct> list = new Query(getCtx(), MTripSheetProduct.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_TripSheet_ID())
+				.list();
+		return list;
+	}
+	
+	private void processRentEntries() {
+		List<MTripSheetProduct> list = getRentEntries();
+		if(list.size() == 0)
+			return;
+		int rentAccount  = getPM_Machinery().getPM_MachineryType().getC_ElementValueRentIncome_ID();
+		if(rentAccount == 0)
+			throw new AdempiereException("Please set Machinery Rent Income Account!");
+		
+		for(MTripSheetProduct rent : list) {
+			MMachineryStatement ms = new MMachineryStatement(getCtx(), 0, get_TrxName());						
+			ms.setAD_Org_ID(getAD_Org_ID());
+			ms.setDateAcct(getDateReport());
+			ms.setPM_Machinery_ID(getPM_Machinery_ID());				
+			ms.setQty(rent.getTotalMT());
+			ms.setM_Product_ID(rent.getM_Product_ID());
+			ms.setC_UOM_ID(getRent_UOM_ID());
+			ms.setRate(rent.getRateMT());
+			ms.setIncome(rent.getRent_Amt());
+			ms.setDescription(rent.getDescription());
+			ms.setC_ElementValue_ID(rentAccount);
+			ms.setTF_TripSheet_ID(getTF_TripSheet_ID());
+			ms.saveEx();
+		}
 	}
 	
 	private void processDrillingEntries() {
@@ -448,6 +488,46 @@ public class MTripSheet extends X_TF_TripSheet {
 			salary.saveEx();
 		}
 		
+	}
+	
+	
+	public BigDecimal getProductDetailIncentiveQty() {
+		MEmployeeIncentive inc = MEmployeeIncentive.get(getCtx(), getAD_Org_ID(), getC_BPartner_ID());		
+		
+		if(inc == null)
+			inc = MEmployeeIncentive.get(getCtx(), getAD_Org_ID(), getC_BPartner_ID(), getC_UOM_ID());
+		
+		if(inc == null)
+			return BigDecimal.ZERO;;
+		
+		String sql = "SELECT COALESCE(SUM(TotalMT),0) FROM TF_TripSheetProduct WHERE TF_TripSheet_ID = ? AND "
+				+ " M_Product_ID IN (SELECT M_Product_ID FROM TF_IncentiveConfig_Applicable WHERE  TF_IncentiveConfig_ID=?)";
+		BigDecimal qty = DB.getSQLValueBD(get_TrxName(), sql, getTF_TripSheet_ID(), inc.get_ID());
+		return qty;
+	}
+	
+	public void updateIncentiveQty() {
+		if(getC_BPartner_ID() == 0 || getC_UOM_ID() != 1000069)
+			return;
+		
+		BigDecimal qty = getProductDetailIncentiveQty();
+		
+		if(qty.doubleValue() == 0)
+			return;
+		
+		setQtyIncentive(qty);
+		
+		BigDecimal incentiveAmt = BigDecimal.ZERO;
+		
+		boolean calcIncentive = qty.doubleValue() >= getEligibleUnit().doubleValue();
+		if(calcIncentive) {
+			if(getUnitIncentive().doubleValue() > 0)
+				incentiveAmt = qty.multiply(getUnitIncentive());
+			else if(getDayIncentive().doubleValue() > 0)
+				incentiveAmt = getDayIncentive();
+		}
+		
+		setIncentive(incentiveAmt);
 	}
 	
 	public List<MTripSheetSalary> getSalaryEntries() {

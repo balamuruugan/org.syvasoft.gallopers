@@ -32,7 +32,7 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210623L;
+	private static final long serialVersionUID = 20210720L;
 
     /** Standard Constructor */
     public X_TF_TripSheetProduct (Properties ctx, int TF_TripSheetProduct_ID, String trxName)
@@ -74,6 +74,23 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
         .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	/** Set Description.
+		@param Description 
+		Optional short description of the record
+	  */
+	public void setDescription (String Description)
+	{
+		set_Value (COLUMNNAME_Description, Description);
+	}
+
+	/** Get Description.
+		@return Optional short description of the record
+	  */
+	public String getDescription () 
+	{
+		return (String)get_Value(COLUMNNAME_Description);
+	}
 
 	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException
     {
@@ -143,6 +160,59 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 	public BigDecimal getNoOfLoad () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_NoOfLoad);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Jack Hammer = J */
+	public static final String QUARRYPRODUCTIONTYPE_JackHammer = "J";
+	/** GRAWELLER = G */
+	public static final String QUARRYPRODUCTIONTYPE_GRAWELLER = "G";
+	/** Set Quarry Production Type.
+		@param QuarryProductionType Quarry Production Type	  */
+	public void setQuarryProductionType (String QuarryProductionType)
+	{
+
+		set_Value (COLUMNNAME_QuarryProductionType, QuarryProductionType);
+	}
+
+	/** Get Quarry Production Type.
+		@return Quarry Production Type	  */
+	public String getQuarryProductionType () 
+	{
+		return (String)get_Value(COLUMNNAME_QuarryProductionType);
+	}
+
+	/** Set Rate / MT.
+		@param RateMT Rate / MT	  */
+	public void setRateMT (BigDecimal RateMT)
+	{
+		set_Value (COLUMNNAME_RateMT, RateMT);
+	}
+
+	/** Get Rate / MT.
+		@return Rate / MT	  */
+	public BigDecimal getRateMT () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_RateMT);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Rent (Amount).
+		@param Rent_Amt Rent (Amount)	  */
+	public void setRent_Amt (BigDecimal Rent_Amt)
+	{
+		set_Value (COLUMNNAME_Rent_Amt, Rent_Amt);
+	}
+
+	/** Get Rent (Amount).
+		@return Rent (Amount)	  */
+	public BigDecimal getRent_Amt () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Rent_Amt);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;

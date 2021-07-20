@@ -32,7 +32,7 @@ public class X_TF_IncentiveConfig extends PO implements I_TF_IncentiveConfig, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210602L;
+	private static final long serialVersionUID = 20210720L;
 
     /** Standard Constructor */
     public X_TF_IncentiveConfig (Properties ctx, int TF_IncentiveConfig_ID, String trxName)
@@ -168,6 +168,8 @@ public class X_TF_IncentiveConfig extends PO implements I_TF_IncentiveConfig, I_
 	public static final String INCENTIVETYPE_Day = "DA";
 	/** Month = MO */
 	public static final String INCENTIVETYPE_Month = "MO";
+	/** Meter = ME */
+	public static final String INCENTIVETYPE_Meter = "ME";
 	/** Set Incentive Type.
 		@param IncentiveType Incentive Type	  */
 	public void setIncentiveType (String IncentiveType)
@@ -191,6 +193,8 @@ public class X_TF_IncentiveConfig extends PO implements I_TF_IncentiveConfig, I_
 	public static final String INCENTIVEUOM_Day = "DA";
 	/** Month = MO */
 	public static final String INCENTIVEUOM_Month = "MO";
+	/** Meter = ME */
+	public static final String INCENTIVEUOM_Meter = "ME";
 	/** Set Incentive UOM.
 		@param IncentiveUOM Incentive UOM	  */
 	public void setIncentiveUOM (String IncentiveUOM)

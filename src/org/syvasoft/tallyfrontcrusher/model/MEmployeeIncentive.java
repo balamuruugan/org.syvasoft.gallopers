@@ -1,6 +1,7 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Properties;
 
 import org.compiere.model.Query;
