@@ -64,6 +64,21 @@ public interface I_PM_Machinery
 	  */
 	public int getAD_Org_ID();
 
+    /** Column name C_Activity_ID */
+    public static final String COLUMNNAME_C_Activity_ID = "C_Activity_ID";
+
+	/** Set Activity.
+	  * Business Activity
+	  */
+	public void setC_Activity_ID (int C_Activity_ID);
+
+	/** Get Activity.
+	  * Business Activity
+	  */
+	public int getC_Activity_ID();
+
+	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException;
+
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";
 
@@ -95,6 +110,19 @@ public interface I_PM_Machinery
 	  */
 	public int getCreatedBy();
 
+    /** Column name Description */
+    public static final String COLUMNNAME_Description = "Description";
+
+	/** Set Description.
+	  * Optional short description of the record
+	  */
+	public void setDescription (String Description);
+
+	/** Get Description.
+	  * Optional short description of the record
+	  */
+	public String getDescription();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -107,6 +135,19 @@ public interface I_PM_Machinery
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsSummary */
+    public static final String COLUMNNAME_IsSummary = "IsSummary";
+
+	/** Set Summary Level.
+	  * This is a summary entity
+	  */
+	public void setIsSummary (boolean IsSummary);
+
+	/** Get Summary Level.
+	  * This is a summary entity
+	  */
+	public boolean isSummary();
 
     /** Column name M_Product_ID */
     public static final String COLUMNNAME_M_Product_ID = "M_Product_ID";
@@ -169,6 +210,15 @@ public interface I_PM_Machinery
 
 	/** Get Purchase Date	  */
 	public Timestamp getPurchaseDate();
+
+    /** Column name QuarryProductionType */
+    public static final String COLUMNNAME_QuarryProductionType = "QuarryProductionType";
+
+	/** Set Quarry Production Type	  */
+	public void setQuarryProductionType (String QuarryProductionType);
+
+	/** Get Quarry Production Type	  */
+	public String getQuarryProductionType();
 
     /** Column name TF_RentedVehicle_ID */
     public static final String COLUMNNAME_TF_RentedVehicle_ID = "TF_RentedVehicle_ID";

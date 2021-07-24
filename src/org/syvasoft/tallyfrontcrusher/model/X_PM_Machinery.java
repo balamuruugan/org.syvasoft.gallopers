@@ -32,7 +32,7 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200612L;
+	private static final long serialVersionUID = 20210724L;
 
     /** Standard Constructor */
     public X_PM_Machinery (Properties ctx, int PM_Machinery_ID, String trxName)
@@ -43,7 +43,6 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
 			setMachineryNo (null);
 			setPM_Machinery_ID (0);
 			setPM_MachineryType_ID (0);
-			setPurchaseDate (new Timestamp( System.currentTimeMillis() ));
         } */
     }
 
@@ -75,6 +74,34 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
       return sb.toString();
     }
 
+	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_Name)
+			.getPO(getC_Activity_ID(), get_TrxName());	}
+
+	/** Set Activity.
+		@param C_Activity_ID 
+		Business Activity
+	  */
+	public void setC_Activity_ID (int C_Activity_ID)
+	{
+		if (C_Activity_ID < 1) 
+			set_Value (COLUMNNAME_C_Activity_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_Activity_ID, Integer.valueOf(C_Activity_ID));
+	}
+
+	/** Get Activity.
+		@return Business Activity
+	  */
+	public int getC_Activity_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
     {
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_Name)
@@ -101,6 +128,47 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Description.
+		@param Description 
+		Optional short description of the record
+	  */
+	public void setDescription (String Description)
+	{
+		set_Value (COLUMNNAME_Description, Description);
+	}
+
+	/** Get Description.
+		@return Optional short description of the record
+	  */
+	public String getDescription () 
+	{
+		return (String)get_Value(COLUMNNAME_Description);
+	}
+
+	/** Set Summary Level.
+		@param IsSummary 
+		This is a summary entity
+	  */
+	public void setIsSummary (boolean IsSummary)
+	{
+		set_Value (COLUMNNAME_IsSummary, Boolean.valueOf(IsSummary));
+	}
+
+	/** Get Summary Level.
+		@return This is a summary entity
+	  */
+	public boolean isSummary () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsSummary);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException
@@ -224,6 +292,25 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
 	public Timestamp getPurchaseDate () 
 	{
 		return (Timestamp)get_Value(COLUMNNAME_PurchaseDate);
+	}
+
+	/** Jack Hammer = J */
+	public static final String QUARRYPRODUCTIONTYPE_JackHammer = "J";
+	/** GRAWELLER = G */
+	public static final String QUARRYPRODUCTIONTYPE_GRAWELLER = "G";
+	/** Set Quarry Production Type.
+		@param QuarryProductionType Quarry Production Type	  */
+	public void setQuarryProductionType (String QuarryProductionType)
+	{
+
+		set_Value (COLUMNNAME_QuarryProductionType, QuarryProductionType);
+	}
+
+	/** Get Quarry Production Type.
+		@return Quarry Production Type	  */
+	public String getQuarryProductionType () 
+	{
+		return (String)get_Value(COLUMNNAME_QuarryProductionType);
 	}
 
 	public I_TF_RentedVehicle getTF_RentedVehicle() throws RuntimeException

@@ -402,6 +402,37 @@ public class TF_MProduct extends MProduct {
 			return 0;
 	}
 	
+	/** Column name C_Activity_ID */
+    public static final String COLUMNNAME_C_Activity_ID = "C_Activity_ID";
+    
+	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_Name)
+			.getPO(getC_Activity_ID(), get_TrxName());	}
+
+	/** Set Activity.
+		@param C_Activity_ID 
+		Business Activity
+	  */
+	public void setC_Activity_ID (int C_Activity_ID)
+	{
+		if (C_Activity_ID < 1) 
+			set_Value (COLUMNNAME_C_Activity_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_Activity_ID, Integer.valueOf(C_Activity_ID));
+	}
+
+	/** Get Activity.
+		@return Business Activity
+	  */
+	public int getC_Activity_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {		
 		boolean ok = super.afterSave(newRecord, success);

@@ -33,7 +33,7 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210720L;
+	private static final long serialVersionUID = 20210724L;
 
     /** Standard Constructor */
     public X_TF_TripSheet (Properties ctx, int TF_TripSheet_ID, String trxName)
@@ -78,6 +78,34 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
         .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_Name)
+			.getPO(getC_Activity_ID(), get_TrxName());	}
+
+	/** Set Activity.
+		@param C_Activity_ID 
+		Business Activity
+	  */
+	public void setC_Activity_ID (int C_Activity_ID)
+	{
+		if (C_Activity_ID < 1) 
+			set_Value (COLUMNNAME_C_Activity_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_Activity_ID, Integer.valueOf(C_Activity_ID));
+	}
+
+	/** Get Activity.
+		@return Business Activity
+	  */
+	public int getC_Activity_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
     {
@@ -565,6 +593,22 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Total Rent Amt by Product.
+		@param LineRentAmt Total Rent Amt by Product	  */
+	public void setLineRentAmt (BigDecimal LineRentAmt)
+	{
+		throw new IllegalArgumentException ("LineRentAmt is virtual column");	}
+
+	/** Get Total Rent Amt by Product.
+		@return Total Rent Amt by Product	  */
+	public BigDecimal getLineRentAmt () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_LineRentAmt);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set No of Load.
