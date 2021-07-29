@@ -59,19 +59,17 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 	@Override
 	protected String doIt() throws Exception {
 		
-		
-		
-		String whereClause ="";
-		whereClause = " WeighmentEntryType = '1SO' AND Status = 'CO' AND (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +
-				" T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = TF_WeighmentEntry.TF_WeighmentEntry_ID) OR TF_WeighmentEntry_ID = ?) "
-				+ "  ";
+		String whereClause = " WeighmentEntryType = '1SO' AND TF_WeighmentEntry.Status IN ('CO') AND (SELECT OrgType FROM AD_Org WHERE "				
+				+ "AD_Org.AD_Org_ID = TF_WeighmentEntry.AD_Org_ID) = 'C'"
+				+ " AND NOT EXISTS(SELECT C_Order.TF_WeighmentEntry_ID FROM C_Order WHERE "
+				+ "C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)";
 		
 		//+ "AND C_Order.DocStatus IN ('CO','DR','IR'))";
 		int i = 0;
 		List<MWeighmentEntry> wEntries = new Query(getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
-				.setParameters(getAD_PInstance_ID(), getRecord_ID())
 				.list();
+		
 		for(MWeighmentEntry wEntry : wEntries) {
 			if(wEntry.getDescription() != null && wEntry.getDescription().contains("ERROR:")) {
 				addLog(wEntry.get_Table_ID(), wEntry.getGrossWeightTime(), null, wEntry.getDescription(), wEntry.get_Table_ID(), wEntry.get_ID());
@@ -101,22 +99,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 					}
 					
 				}
-				if(InvoiceType != null) {
-					wEntry.setInvoiceType(InvoiceType);					
-				}
 				
-				/*
-				 * Since UOM Conversion is applied, now it is possible to convert CFT DC into TP and Non TP 
-				 * 
-				if(wEntry.getMT_UOM_ID() != wEntry.getC_UOM_ID() && createTPandNonTPInvocies) {
-					msg = wEntry.getDocumentNo() +  " : Two invoices can be created only for MT based sales!";
-					addLog(wEntry.get_Table_ID(), wEntry.getGrossWeightTime(), null, msg, wEntry.get_Table_ID(), wEntry.get_ID());
-					continue;
-				}
-				*/
-				wEntry.setCreateTwoInvoices(createTPandNonTPInvocies);
-				wEntry.saveEx();
-				wEntry.validateInvoiceType();
 								
 				if(wEntry.getPrice().doubleValue() == 0) {
 					msg = wEntry.getDocumentNo() +  " : Material Price not Set";
@@ -124,65 +107,23 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 					continue;
 				}
 				
-				List<MNote> notes = new Query(getCtx(), MNote.Table_Name, " processed = 'N' AND ad_table_id = 1000212 AND record_id = " + wEntry.getTF_WeighmentEntry_ID() , get_TrxName()).list();
+				/*List<MNote> notes = new Query(getCtx(), MNote.Table_Name, " processed = 'N' AND ad_table_id = 1000212 AND record_id = " + wEntry.getTF_WeighmentEntry_ID() , get_TrxName()).list();
 				
 				if(notes.size() > 0) {
 					msg = wEntry.getDocumentNo() +  " : Invoice cannot be generated due to pending Notice for this DC.";
 					addLog(wEntry.get_Table_ID(), wEntry.getGrossWeightTime(), null, msg, wEntry.get_Table_ID(), wEntry.get_ID());
 					continue;
-				}
-				if(!createTPandNonTPInvocies) {
-					BigDecimal billQty = null;
-					
-					//TP Weight Invoice scenario, getBilledQty returns TP Weight only 
-					if(!wEntry.isSecondary() && wEntry.getBilledQty().doubleValue() ==0) {
-						BigDecimal remainingQty = wEntry.getNetWeightUnit().subtract(wEntry.getTotalTPWeight());
-						//Remaining actual qty should only be non tp invoiced for the Without Order DC
-						//For order DC, PDC Voided should be done the balance tp weight should be tally using secondary dc 
-						if((remainingQty.doubleValue() <= 0 &&  wEntry.getC_OrderLine_ID() == 0) || wEntry.getC_OrderLine_ID() > 0) {
-							msg = "PDCVoided due to TP Weight is ZERO";
-							wEntry.setStatus(MWeighmentEntry.STATUS_PrimaryDCVoid);							
-							wEntry.saveEx();
-							
-							addLog(wEntry.get_Table_ID(), wEntry.getGrossWeightTime(), null, wEntry.getDocumentNo() + " : " + msg, wEntry.get_Table_ID(), wEntry.get_ID());
-							continue;
-						}
-						billQty = remainingQty; //non tp qty						
-					}
+				}*/ 
+				
+				//if(!createTPandNonTPInvocies) 
+				{
+				
+					BigDecimal billQty = wEntry.getNetWeightUnit();
 					
 					if(wEntry.getC_OrderLine_ID() == 0)
 						createSalesQuickEntry(wEntry, billQty, true, trx);
 					else
 						createInvoiceCustomer(wEntry, billQty, true, trx);
-				}
-				else {
-					BigDecimal tpWeight = wEntry.getTPBilledQty();
-					BigDecimal remainingQty = wEntry.getBilledQty().subtract(tpWeight);
-					
-					if(tpWeight.doubleValue() < 0) {
-						msg = wEntry.getDocumentNo() +  " : TP Weight should not be ZERO!";
-						addLog(wEntry.get_Table_ID(), wEntry.getGrossWeightTime(), null, msg, wEntry.get_Table_ID(), wEntry.get_ID());
-						continue;
-					}
-					
-					if(remainingQty.doubleValue() < 0) {
-						msg = wEntry.getDocumentNo() +  " : TP Weight should not be greater than Actual Weight!";
-						addLog(wEntry.get_Table_ID(), wEntry.getGrossWeightTime(), null, msg, wEntry.get_Table_ID(), wEntry.get_ID());
-						continue;
-					}
-					
-					if(wEntry.getC_OrderLine_ID() == 0) {
-						createSalesQuickEntry(wEntry, tpWeight, true, trx);
-						
-						if(remainingQty.doubleValue() > 0)
-							createSalesQuickEntry(wEntry, remainingQty, false, trx);						
-					}
-					else {
-						createInvoiceCustomer(wEntry, tpWeight, true, trx);
-						
-						if(remainingQty.doubleValue() > 0)
-							createInvoiceCustomer(wEntry, remainingQty, false, trx);
-					}
 				}
 			
 			}
@@ -293,48 +234,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 			ord.setItem2_ID(0);
 			ord.setItem2_Qty(BigDecimal.ZERO);
 		}
-		
-		/*
-		 * commented since vehicle rent configuration is implemented in the weighbridge app 
-		if(ord.getTF_RentedVehicle_ID() > 0) {		
-			ord.setIsLumpSumRent(false);
-			MDestination dest = new MDestination(getCtx(), ord.getTF_Destination_ID(), get_TrxName());
-			MRentedVehicle rv = new MRentedVehicle(getCtx(), ord.getTF_RentedVehicle_ID(), get_TrxName());
-			int Vendor_ID = rv.getC_BPartner_ID();					
-			BigDecimal RateMT = MLumpSumRentConfig.getRateMT(getCtx(), ord.getAD_Org_ID(), Vendor_ID, ord.getC_BPartner_ID(), ord.getItem1_ID(), 
-					ord.getTF_Destination_ID(), ord.getItem1_VehicleType_ID(), dest.getDistance(), get_TrxName());
-			BigDecimal RateKM = MLumpSumRentConfig.getRateKm(getCtx(), ord.getAD_Org_ID(), Vendor_ID, ord.getC_BPartner_ID(), ord.getItem1_ID(),
-					ord.getTF_Destination_ID(), ord.getItem1_VehicleType_ID(), dest.getDistance(), get_TrxName());
-			BigDecimal RateMTKM = MLumpSumRentConfig.getRateMTKm(getCtx(), ord.getAD_Org_ID(), Vendor_ID, ord.getC_BPartner_ID(),
-					ord.getItem1_ID(), ord.getTF_Destination_ID(), ord.getItem1_VehicleType_ID(), dest.getDistance(), get_TrxName());
-			BigDecimal RentAmt = BigDecimal.ZERO;
-			
-			if(RateMT.doubleValue() > 0) {
-				ord.setRate(RateMT);						
-				RentAmt = RateMT.multiply(qty);				
-			}
-			else if(RateKM.doubleValue() > 0) {
-				ord.setRate(RateKM);
-				RentAmt = RateKM.multiply(dest.getDistance());
-			}
-			else if(RateMTKM.doubleValue() > 0) {
-				ord.setRate(RateMTKM);
-				RentAmt = RateMTKM.multiply(ord.getDistance()).multiply(qty);
-			}
-			else {								
-				RentAmt=MLumpSumRentConfig.getLumpSumRent(getCtx(),ord.getAD_Org_ID(),Vendor_ID, ord.getC_BPartner_ID(), 
-						ord.getItem1_ID(), ord.getTF_Destination_ID(), ord.getItem1_VehicleType_ID(), dest.getDistance(), get_TrxName());
-				if(RentAmt.doubleValue() > 0)
-					ord.setIsLumpSumRent(true);
-			}
-			
-			
-			ord.setRent_Amt(RentAmt);										
-			ord.setRentMargin(BigDecimal.ZERO);
-			ord.setRentPayable(RentAmt);
-			
-		}
-		*/
+				
 		ord.setRent_Amt(wEntry.getRent_Amt());										
 		ord.setRentMargin(BigDecimal.ZERO);
 		ord.setRentPayable(wEntry.getRent_Amt());
@@ -476,7 +376,5 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		
 		trx.releaseSavepoint(sp);
 		addLog(invoice.get_Table_ID(), invoice.getCreated(), null, " Invoice No : " +  invoice.getDocumentNo() + " is created!", invoice.get_Table_ID(), invoice.get_ID());
-	}
-	
-	
+	}	
 }

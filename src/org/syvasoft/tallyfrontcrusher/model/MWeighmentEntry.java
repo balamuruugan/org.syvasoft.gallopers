@@ -525,57 +525,6 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		return totalTPWeight;
 	}
 	
-	public void validateInvoiceType() {
-		if(!getWeighmentEntryType().equals(WEIGHMENTENTRYTYPE_Sales)) 
-			return;
-		
-		BigDecimal totalTPWeight;
-		BigDecimal totalActualWeight;
-		int count = 0;
-		
-		if(getC_OrderLine_ID() == 0 && getInvoiceType().equalsIgnoreCase(INVOICETYPE_ActualWeight)) {
-			String secondaryDCs = "SELECT COUNT(*) FROM TF_WeighmentEntry WHERE TF_WeighmentEntryPrimary_ID = ? AND IsSecondary = 'Y' AND STATUS IN ('PV','CO','CL')";
-			count = DB.getSQLValue(get_TrxName(), secondaryDCs, getTF_WeighmentEntry_ID());
-		}
-		else if(getC_OrderLine_ID() > 0 && getInvoiceType().equalsIgnoreCase(INVOICETYPE_ActualWeight)){
-			String secondaryDCs = "SELECT COUNT(*) FROM TF_WeighmentEntry WHERE C_OrderLine_ID = ? AND IsSecondary = 'Y' AND STATUS IN ('PV','CO','CL')";
-			count = DB.getSQLValue(get_TrxName(), secondaryDCs, getC_OrderLine_ID());
-		}
-		
-		if(count > 0)
-			throw new AdempiereException("Please create Invoice based on the TP Weight since it has secondary DC");
-		
-		//Validate Total TP Weight against Primary Weighment Entry without Order
-		if(getTF_WeighmentEntryPrimary_ID() > 0 && getC_OrderLine_ID() == 0) {
-			int wEntry_ID = getTF_WeighmentEntryPrimary_ID() > 0 ? getTF_WeighmentEntryPrimary_ID() : getTF_WeighmentEntry_ID();
-			MWeighmentEntry primary = (MWeighmentEntry) (getTF_WeighmentEntryPrimary() != null ? getTF_WeighmentEntryPrimary() : this);
-			
-			if(primary.getInvoiceType().equals(INVOICETYPE_ActualWeight) && getInvoiceType().equalsIgnoreCase(INVOICETYPE_TPWeight))
-				throw new AdempiereException("Please change Primary DC's Invoice type to TP Weight");
-			
-			totalActualWeight = primary.getNetWeightUnit();
-			
-			String sql = "SELECT SUM(PermitIssuedQty) FROM TF_WeighmentEntry WHERE ? IN (TF_WeighmentEntryPrimary_ID, TF_WeighmentEntry_ID) "
-					+ " AND STATUS IN ('PV','CO','CL')";
-			totalTPWeight = DB.getSQLValueBD(get_TrxName(), sql, wEntry_ID);			
-		}		
-		//Validate Total TP Weight against Order Line
-		//if(getC_OrderLine_ID() > 0)
-		else  {
-			String sqlTPWeight = "SELECT SUM(PermitIssuedQty) FROM TF_WeighmentEntry WHERE C_OrderLine_ID = ? AND STATUS IN ('PV','CO','CL')";
-			totalTPWeight = DB.getSQLValueBD(get_TrxName(), sqlTPWeight, getC_OrderLine_ID());
-			
-			String sqlActualWeight = "SELECT SUM(NetWeightUnit) FROM TF_WeighmentEntry WHERE C_OrderLine_ID = ? AND STATUS IN ('PV','CO','CL') AND "
-					+ " IsSecondary='N'";
-			totalActualWeight = DB.getSQLValueBD(get_TrxName(), sqlActualWeight, getC_OrderLine_ID());			
-		}
-				
-		if(totalTPWeight.doubleValue() <= totalActualWeight.doubleValue())
-			return ;
-		//else
-			//throw new AdempiereException("Total TP Weight : "+ totalActualWeight.doubleValue() + " MT is exceeded than Actual Weight : " + totalActualWeight.doubleValue() + " MT");
-		
-	}
 	
 	@Override
 	public int getC_Order_ID() {
