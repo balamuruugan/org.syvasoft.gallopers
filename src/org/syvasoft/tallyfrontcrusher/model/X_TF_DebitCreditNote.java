@@ -33,7 +33,7 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20190106L;
+	private static final long serialVersionUID = 20210728L;
 
     /** Standard Constructor */
     public X_TF_DebitCreditNote (Properties ctx, int TF_DebitCreditNote_ID, String trxName)
@@ -41,10 +41,13 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
       super (ctx, TF_DebitCreditNote_ID, trxName);
       /** if (TF_DebitCreditNote_ID == 0)
         {
+			setAmount (Env.ZERO);
 			setC_BPartner_ID (0);
 			setC_DocType_ID (0);
 			setC_ElementValue_ID (0);
-			setC_Invoice_ID (0);
+			setDateAcct (new Timestamp( System.currentTimeMillis() ));
+// @#Date@
+			setDescription (null);
 			setDocumentNo (null);
 			setProcessed (false);
 			setTF_DebitCreditNote_ID (0);
@@ -104,7 +107,7 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_Name)
 			.getPO(getC_BPartner_ID(), get_TrxName());	}
 
-	/** Set Customer / Vendor.
+	/** Set Business Partner .
 		@param C_BPartner_ID 
 		Identifies a Business Partner
 	  */
@@ -116,7 +119,7 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 			set_ValueNoCheck (COLUMNNAME_C_BPartner_ID, Integer.valueOf(C_BPartner_ID));
 	}
 
-	/** Get Customer / Vendor.
+	/** Get Business Partner .
 		@return Identifies a Business Partner
 	  */
 	public int getC_BPartner_ID () 
@@ -160,9 +163,9 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 		return (org.compiere.model.I_C_ElementValue)MTable.get(getCtx(), org.compiere.model.I_C_ElementValue.Table_Name)
 			.getPO(getC_ElementValue_ID(), get_TrxName());	}
 
-	/** Set Account Head.
+	/** Set Account Element.
 		@param C_ElementValue_ID 
-		Account Head
+		Account Element
 	  */
 	public void setC_ElementValue_ID (int C_ElementValue_ID)
 	{
@@ -172,8 +175,8 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 			set_Value (COLUMNNAME_C_ElementValue_ID, Integer.valueOf(C_ElementValue_ID));
 	}
 
-	/** Get Account Head.
-		@return Account Head
+	/** Get Account Element.
+		@return Account Element
 	  */
 	public int getC_ElementValue_ID () 
 	{
@@ -188,7 +191,7 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 		return (org.compiere.model.I_C_Invoice)MTable.get(getCtx(), org.compiere.model.I_C_Invoice.Table_Name)
 			.getPO(getC_Invoice_ID(), get_TrxName());	}
 
-	/** Set Debit / Credit Note.
+	/** Set Invoice.
 		@param C_Invoice_ID 
 		Invoice Identifier
 	  */
@@ -200,7 +203,7 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 			set_ValueNoCheck (COLUMNNAME_C_Invoice_ID, Integer.valueOf(C_Invoice_ID));
 	}
 
-	/** Get Debit / Credit Note.
+	/** Get Invoice.
 		@return Invoice Identifier
 	  */
 	public int getC_Invoice_ID () 
@@ -217,7 +220,7 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 	  */
 	public void setDateAcct (Timestamp DateAcct)
 	{
-		set_ValueNoCheck (COLUMNNAME_DateAcct, DateAcct);
+		set_Value (COLUMNNAME_DateAcct, DateAcct);
 	}
 
 	/** Get Account Date.
@@ -277,6 +280,12 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 	public static final String DOCSTATUS_Activated = "AC";
 	/** Canceled = CA */
 	public static final String DOCSTATUS_Canceled = "CA";
+	/** Overdue = OD */
+	public static final String DOCSTATUS_Overdue = "OD";
+	/** Due = DU */
+	public static final String DOCSTATUS_Due = "DU";
+	/** Upcoming = UP */
+	public static final String DOCSTATUS_Upcoming = "UP";
 	/** Set Document Status.
 		@param DocStatus 
 		The current status of the document
@@ -389,5 +398,30 @@ public class X_TF_DebitCreditNote extends PO implements I_TF_DebitCreditNote, I_
 	public String getTF_DebitCreditNote_UU () 
 	{
 		return (String)get_Value(COLUMNNAME_TF_DebitCreditNote_UU);
+	}
+
+	public I_TF_WeighmentEntry getTF_WeighmentEntry() throws RuntimeException
+    {
+		return (I_TF_WeighmentEntry)MTable.get(getCtx(), I_TF_WeighmentEntry.Table_Name)
+			.getPO(getTF_WeighmentEntry_ID(), get_TrxName());	}
+
+	/** Set Weighment Entry.
+		@param TF_WeighmentEntry_ID Weighment Entry	  */
+	public void setTF_WeighmentEntry_ID (int TF_WeighmentEntry_ID)
+	{
+		if (TF_WeighmentEntry_ID < 1) 
+			set_Value (COLUMNNAME_TF_WeighmentEntry_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_WeighmentEntry_ID, Integer.valueOf(TF_WeighmentEntry_ID));
+	}
+
+	/** Get Weighment Entry.
+		@return Weighment Entry	  */
+	public int getTF_WeighmentEntry_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_WeighmentEntry_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 }

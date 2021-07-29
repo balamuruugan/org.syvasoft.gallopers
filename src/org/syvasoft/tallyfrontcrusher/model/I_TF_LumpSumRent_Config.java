@@ -32,7 +32,7 @@ public interface I_TF_LumpSumRent_Config
     /** TableName=TF_LumpSumRent_Config */
     public static final String Table_Name = "TF_LumpSumRent_Config";
 
-    /** AD_Table_ID=1000304 */
+    /** AD_Table_ID=1000283 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -79,6 +79,36 @@ public interface I_TF_LumpSumRent_Config
 
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException;
 
+    /** Column name C_Tax_ID */
+    public static final String COLUMNNAME_C_Tax_ID = "C_Tax_ID";
+
+	/** Set Tax.
+	  * Tax identifier
+	  */
+	public void setC_Tax_ID (int C_Tax_ID);
+
+	/** Get Tax.
+	  * Tax identifier
+	  */
+	public int getC_Tax_ID();
+
+	public org.compiere.model.I_C_Tax getC_Tax() throws RuntimeException;
+
+    /** Column name C_UOM_ID */
+    public static final String COLUMNNAME_C_UOM_ID = "C_UOM_ID";
+
+	/** Set UOM.
+	  * Unit of Measure
+	  */
+	public void setC_UOM_ID (int C_UOM_ID);
+
+	/** Get UOM.
+	  * Unit of Measure
+	  */
+	public int getC_UOM_ID();
+
+	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException;
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -95,6 +125,15 @@ public interface I_TF_LumpSumRent_Config
 	  */
 	public int getCreatedBy();
 
+    /** Column name FreightPrice */
+    public static final String COLUMNNAME_FreightPrice = "FreightPrice";
+
+	/** Set Freight Rate	  */
+	public void setFreightPrice (BigDecimal FreightPrice);
+
+	/** Get Freight Rate	  */
+	public BigDecimal getFreightPrice();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -107,6 +146,19 @@ public interface I_TF_LumpSumRent_Config
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsTaxIncluded */
+    public static final String COLUMNNAME_IsTaxIncluded = "IsTaxIncluded";
+
+	/** Set Price includes Tax.
+	  * Tax is included in the price 
+	  */
+	public void setIsTaxIncluded (boolean IsTaxIncluded);
+
+	/** Get Price includes Tax.
+	  * Tax is included in the price 
+	  */
+	public boolean isTaxIncluded();
 
     /** Column name M_Product_ID */
     public static final String COLUMNNAME_M_Product_ID = "M_Product_ID";
@@ -140,6 +192,19 @@ public interface I_TF_LumpSumRent_Config
 
 	/** Get MinKM	  */
 	public int getMinKM();
+
+    /** Column name Processed */
+    public static final String COLUMNNAME_Processed = "Processed";
+
+	/** Set Processed.
+	  * The document has been processed
+	  */
+	public void setProcessed (boolean Processed);
+
+	/** Get Processed.
+	  * The document has been processed
+	  */
+	public boolean isProcessed();
 
     /** Column name ratekm */
     public static final String COLUMNNAME_ratekm = "ratekm";
@@ -177,6 +242,15 @@ public interface I_TF_LumpSumRent_Config
 	/** Get Rent (Amount)	  */
 	public BigDecimal getRent_Amt();
 
+    /** Column name RentMargin */
+    public static final String COLUMNNAME_RentMargin = "RentMargin";
+
+	/** Set Rent Margin	  */
+	public void setRentMargin (BigDecimal RentMargin);
+
+	/** Get Rent Margin	  */
+	public BigDecimal getRentMargin();
+
     /** Column name TF_Destination_ID */
     public static final String COLUMNNAME_TF_Destination_ID = "TF_Destination_ID";
 
@@ -205,6 +279,17 @@ public interface I_TF_LumpSumRent_Config
 
 	/** Get TF_LumpSumRent_Config_UU	  */
 	public String getTF_LumpSumRent_Config_UU();
+
+    /** Column name TF_TOrder_ID */
+    public static final String COLUMNNAME_TF_TOrder_ID = "TF_TOrder_ID";
+
+	/** Set TF_Torder	  */
+	public void setTF_TOrder_ID (int TF_TOrder_ID);
+
+	/** Get TF_Torder	  */
+	public int getTF_TOrder_ID();
+
+	public I_TF_TOrder getTF_TOrder() throws RuntimeException;
 
     /** Column name TF_VehicleType_ID */
     public static final String COLUMNNAME_TF_VehicleType_ID = "TF_VehicleType_ID";

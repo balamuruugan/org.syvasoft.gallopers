@@ -224,4 +224,13 @@ public interface I_TF_SmsDeliveryLog
 
 	/** Get Valid Numbers	  */
 	public int getValidNumbers();
+	
+    /** Column name TF_SmsNotification_ID */
+    public static final String COLUMNNAME_TF_SmsNotification_ID = "TF_SmsNotification_ID";
+
+	/** Set TF_SmsNotification	  */
+	public void setTF_SmsNotification_ID (int TF_SmsNotification_ID);
+
+	/** Get TF_SmsNotification	  */
+	public int getTF_SmsNotification_ID();
 }

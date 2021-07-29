@@ -71,6 +71,45 @@ public class TF_MOrder extends MOrder {
 			 return Env.ZERO;
 		return bd;
 	}
+	
+	public static String COLUMNNAME_QtyIssued = "QtyIssued";
+	/** Set Quantity Issued.
+	@param QtyIssued Quantity Issued	  */
+	public void setQtyIssued (BigDecimal QtyIssued)
+	{
+		set_Value (COLUMNNAME_QtyIssued, QtyIssued);
+	}
+	
+	/** Get Quantity Issued.
+		@return Quantity Issued	  */
+	public BigDecimal getQtyIssued () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_QtyIssued);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	public static String COLUMNNAME_PM_Machinery_ID   = "PM_Machinery_ID";
+	/** Set Machinery.
+	@param PM_Machinery_ID Machinery	  */
+	public void setPM_Machinery_ID (int PM_Machinery_ID)
+	{
+		if (PM_Machinery_ID < 1) 
+			set_Value (COLUMNNAME_PM_Machinery_ID, null);
+		else 
+			set_Value (COLUMNNAME_PM_Machinery_ID, Integer.valueOf(PM_Machinery_ID));
+	}
+	
+	/** Get Machinery.
+		@return Machinery	  */
+	public int getPM_Machinery_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_PM_Machinery_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 
 	/** Column name Item1_C_OrderLine_ID */
     public static final String COLUMNNAME_Item1_C_OrderLine_ID = "Item1_C_OrderLine_ID";
@@ -945,6 +984,8 @@ public class TF_MOrder extends MOrder {
 		return ii.intValue();
 	}
 	
+	 
+	
 	/** Column name Item2_UOM_ID */
     public static final String COLUMNNAME_Item2_UOM_ID = "Item2_UOM_ID";
 	public org.compiere.model.I_C_UOM getItem2_UOM() throws RuntimeException
@@ -1753,66 +1794,7 @@ public class TF_MOrder extends MOrder {
 		}
 		return false;
 	}
-	
-    /** Column name M_Product_Category_ID */
-    public static final String COLUMNNAME_M_Product_Category_ID = "M_Product_Category_ID";	
-	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException
-    {
-		return (org.compiere.model.I_M_Product_Category)MTable.get(getCtx(), org.compiere.model.I_M_Product_Category.Table_Name)
-			.getPO(getM_Product_Category_ID(), get_TrxName());	}
 
-	/** Set Product Category.
-		@param M_Product_Category_ID 
-		Category of a Product
-	  */
-	public void setM_Product_Category_ID (int M_Product_Category_ID)
-	{
-		if (M_Product_Category_ID < 1) 
-			set_Value (COLUMNNAME_M_Product_Category_ID, null);
-		else 
-			set_Value (COLUMNNAME_M_Product_Category_ID, Integer.valueOf(M_Product_Category_ID));
-	}
-
-	/** Get Product Category.
-		@return Category of a Product
-	  */
-	public int getM_Product_Category_ID () 
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_M_Product_Category_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-	
-    /** Column name M_Locator_ID */	
-    public static final String COLUMNNAME_M_Locator_ID = "M_Locator_ID";
-	public org.compiere.model.I_M_Locator getM_Locator() throws RuntimeException
-    {
-		return (org.compiere.model.I_M_Locator)MTable.get(getCtx(), org.compiere.model.I_M_Locator.Table_Name)
-			.getPO(getM_Locator_ID(), get_TrxName());	}
-
-	/** Set Locator.
-		@param M_Locator_ID 
-		Warehouse Locator
-	  */
-	public void setM_Locator_ID (int M_Locator_ID)
-	{
-		if (M_Locator_ID < 1) 
-			set_Value (COLUMNNAME_M_Locator_ID, null);
-		else 
-			set_Value (COLUMNNAME_M_Locator_ID, Integer.valueOf(M_Locator_ID));
-	}
-
-	/** Get Locator.
-		@return Warehouse Locator
-	  */
-	public int getM_Locator_ID () 
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_M_Locator_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
 	
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {		
@@ -1859,8 +1841,8 @@ public class TF_MOrder extends MOrder {
 			multiplyRate = BigDecimal.ONE;
 		}
 		
-		
-		line.setPriceActual(price.multiply(multiplyRate)); // Price in Default UOM such as Tonnage
+		line.setPriceActual(price);
+		//line.setPriceActual(price.multiply(multiplyRate)); // Price in Default UOM such as Tonnage
 		line.setPriceList(price); // Price for the Sales UOM
 		line.setPriceLimit(line.getPriceActual()); // 
 		line.setPriceEntered(price); // Price for the Sales UOM
@@ -1883,6 +1865,19 @@ public class TF_MOrder extends MOrder {
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+	
+	/** Column name Terms & Conditions */
+    public static final String COLUMNNAME_TermsAndCondition = "TermsAndCondition";
+    
+	public void setTermsAndCondition (String TermsAndCondition)
+	{
+		set_Value (COLUMNNAME_TermsAndCondition, TermsAndCondition);
+	}
+
+	public String getTermsAndCondition () 
+	{		
+		return (String)get_Value(COLUMNNAME_TermsAndCondition);
 	}
 	
 	/** Column name Rent_UOM_ID */
@@ -1973,9 +1968,6 @@ public class TF_MOrder extends MOrder {
 				|| is_ValueChanged(COLUMNNAME_Item1_Tax_ID)
 				|| is_ValueChanged(COLUMNNAME_Item1_TotalLoad) || is_ValueChanged(COLUMNNAME_Item1_VehicleType_ID)
 				|| is_ValueChanged(COLUMNNAME_Item1_SandType)
-				|| is_ValueChanged(COLUMNNAME_M_Warehouse_ID)
-				|| is_ValueChanged(COLUMNNAME_M_Locator_ID)
-				|| is_ValueChanged(COLUMNNAME_M_Product_Category_ID)
 				|| is_ValueChanged(COLUMNNAME_Item1_Price) || getItem1_C_OrderLine_ID() == 0)) {
 			
 			if(getItem1_C_OrderLine_ID() > 0) 
@@ -2005,10 +1997,7 @@ public class TF_MOrder extends MOrder {
 			ordLine.setBucketRate(getItem1_BucketRate());
 			ordLine.setDescription(getItem1_Desc());
 			ordLine.setTotalLoad(getItem1_TotalLoad());
-			ordLine.setTF_VehicleType_ID(getItem1_VehicleType_ID());
-			ordLine.set_ValueOfColumn("M_WarehouseNew_ID", getM_Warehouse_ID() == 0 ? null : getM_Warehouse_ID() );
-			ordLine.set_ValueOfColumn(COLUMNNAME_M_Locator_ID, getM_Locator_ID() == 0 ? null : getM_Locator_ID());
-			ordLine.set_ValueOfColumn(COLUMNNAME_M_Product_Category_ID, getM_Product_Category_ID() ==0 ? null : getM_Product_Category_ID());
+			ordLine.setTF_VehicleType_ID(getItem1_VehicleType_ID());			
 			ordLine.saveEx();
 			
 			//FIX: Set Bucket Rate based Total amount			
@@ -2216,7 +2205,7 @@ public class TF_MOrder extends MOrder {
 			throw new AdempiereException("Please specify Rent Amount!");
 		
 		if(isSOTrx() && MSysConfig.getBooleanValue("DISCOUNT_REQUEST_ENABLED", false)) {
-			MPriceListUOM priceUOM = MPriceListUOM.getPriceListUOM(getCtx(), getItem1_ID(), getItem1_UOM_ID(), getC_BPartner_ID(), true, getDateAcct());
+			MPriceListUOM priceUOM = MPriceListUOM.getPriceListUOM(getCtx(), getItem1_ID(), getItem1_UOM_ID(), getC_BPartner_ID(),getTF_Destination_ID(), true, getDateAcct());
 			BigDecimal price=getItem1_UnitPrice();
 			BigDecimal priceMin = BigDecimal.ZERO;
 			if(priceUOM != null)
@@ -2251,7 +2240,6 @@ public class TF_MOrder extends MOrder {
 		String msg = super.completeIt();
 		purchasePermit();
 		issuePermit();		
-		
 		if(!createConsolidatedTransportInvoice)
 			createTransporterInvoice();
 		//else
@@ -2301,6 +2289,14 @@ public class TF_MOrder extends MOrder {
 		
 		if(newRecord) {
 			setDateAcct(getDateOrdered());
+			
+			String whereclause = " C_DocType_ID = ?";
+			MPrintDocSetup printdocSetup = new Query(getCtx(), MPrintDocSetup.Table_Name, whereclause, get_TrxName())
+					.setClient_ID().setParameters(getC_DocTypeTarget_ID()).first();
+			
+			if(printdocSetup != null) {
+				setTermsAndCondition(printdocSetup.getTermsConditions());
+			}
 		}
 		return super.beforeSave(newRecord);
 	}
@@ -2308,15 +2304,15 @@ public class TF_MOrder extends MOrder {
 	@Override
 	public boolean voidIt() {
 		
-		String docSubType = getC_DocTypeTarget().getDocSubTypeSO();
+		MDocType dt = (MDocType) getC_DocTypeTarget();
+		String DocSubTypeSO = dt.getDocSubTypeSO();
 		
 		//POS Order's MR and Invoice should be reversed.
-		if((!isSOTrx() && MDocType.DOCSUBTYPESO_POSOrder.equals(docSubType)) ||
-				getC_DocType_ID() == 1000050 || getC_DocType_ID() == 1000041 || getC_DocType_ID() == getC_VendorInvoiceDocType_ID() ||
+		if(getC_DocType_ID() == 1000050 || getC_DocType_ID() == 1000041 ||  DocSubTypeSO.equals("IN") ||
 				getC_DocType_ID() == GSTOrderDocType_ID(getCtx()) || getC_DocType_ID() == NonGSTOrderDocType_ID(getCtx())) {
 			//MR/Shipment reverse Correct
-			List<MInOut> inOutList = new Query(getCtx(), MInOut.Table_Name, "C_Order_ID=? AND DocStatus=? AND C_DocType_ID != ?", get_TrxName())
-				.setClient_ID().setParameters(getC_Order_ID(),DOCSTATUS_Completed, getC_VendorInvoiceDocType_ID()).list();
+			List<MInOut> inOutList = new Query(getCtx(), MInOut.Table_Name, "C_Order_ID=? AND DocStatus=? AND 'IN' != ?", get_TrxName())
+				.setClient_ID().setParameters(getC_Order_ID(),DOCSTATUS_Completed, DocSubTypeSO == null ? "" : DocSubTypeSO).list();
 			for(MInOut inout : inOutList) {
 				if(!inout.reverseCorrectIt())
 					return false;				
@@ -2327,11 +2323,21 @@ public class TF_MOrder extends MOrder {
 			List<TF_MInvoice> invList = new Query(getCtx(), TF_MInvoice.Table_Name, "C_Order_ID=? AND DocStatus=?", get_TrxName())
 				.setClient_ID().setParameters(getC_Order_ID(), DOCSTATUS_Completed).list();
 			for(TF_MInvoice inv : invList) {
+				//Keep the existing invoice no while reversing
+				if(!MSysConfig.getBooleanValue(MSysConfig.Invoice_ReverseUseNewNumber, true, getAD_Client_ID()) && invList.size() == 1) {						
+					
+					String sql = "SELECT COUNT(*) FROM C_Invoice WHERE TF_WeighmentEntry_ID = ?";
+					int revCount = DB.getSQLValue(get_TrxName(), sql, getTF_WeighmentEntry_ID());
+					revCount = revCount / 2 + 1;
+					inv.setDocumentNo(inv.getDocumentNo() + "-"+  revCount);
+					inv.saveEx();
+				}
 				if(!inv.reverseCorrectIt())
 					return false;
 				inv.saveEx();
 			}
 			
+			reverseTransportReceiptStatus();
 			
 		}
 		
@@ -2444,7 +2450,7 @@ public class TF_MOrder extends MOrder {
 		//if(getTF_RentedVehicle_ID() > 0 && getRent_Amt().doubleValue() ==0)
 		//	throw new AdempiereException("Rent (Amount) should be greater ZERO!");
 		
-		if(!isCreateTransportInvoice())
+		if(!isSOTrx() && !isCreateTransportInvoice())
 			return;
 		
 		
@@ -2464,7 +2470,6 @@ public class TF_MOrder extends MOrder {
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
 		//
 		invoice.setBPartner(bp);
-		invoice.setPaymentRule(PAYMENTRULE_OnCredit);
 		invoice.setIsSOTrx(false);		
 		
 		//Price List
@@ -2984,7 +2989,7 @@ public class TF_MOrder extends MOrder {
 			}
 		}
 	}
-	
+		
 	public void reversePurchasedPermit() {
 		if(!isSOTrx()) {
 			TF_MProduct prod = new TF_MProduct(getCtx(), getItem1_ID(), get_TrxName());
@@ -3052,13 +3057,15 @@ public class TF_MOrder extends MOrder {
 		/*if(getItem1_PermitIssued().doubleValue() <= 0)
 			throw new AdempiereException("Invalid Permit Issued!");*/
 		
+		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
 		MTRTaxInvoice inv = new MTRTaxInvoice(getCtx(),0, get_TrxName());
 		inv.setAD_Org_ID(getAD_Org_ID());
 		inv.setDateAcct(getDateAcct());
+		inv.setDocumentNo(we.getDocumentNo());
 		inv.setM_Warehouse_ID(getM_Warehouse_ID());
 		inv.setPartyName(getPartyName());
 		inv.setPostTaxToCustomer(false);
-		inv.setPostGSTAsExpense(true);
+		inv.setPostGSTAsExpense(false);
 		inv.setC_BPartner_ID(getC_BPartner_ID());
 		inv.setDateSupply(getDateAcct());
 		inv.setIsSOTrx(true);
@@ -3097,19 +3104,19 @@ public class TF_MOrder extends MOrder {
 		BigDecimal divisor = new BigDecimal(1.05);
 		divisor = divisor.setScale(2, RoundingMode.HALF_EVEN);
 		BigDecimal price = BigDecimal.ZERO;	
-		if(wEntry.isPermitSales()) {
+		//if(wEntry.isPermitSales()) {
 			if(getItem1_Price() == null || getItem1_Price().doubleValue() == 0)
 				throw new AdempiereException("Please set Item Price for " + prod.getName());
 		
 			price =getItem1_Price();
-		}
-		else {
+		//}
+		/*else {
 			if(prod.getBillPrice() == null || prod.getBillPrice().doubleValue() == 0)
 				throw new AdempiereException("Please set Bill Price for " + prod.getName());
 				
 			price = prod.getBillPrice();	
 		}
-	
+		 */
 		/*
 		if(isRentBreakup())
 		{
@@ -3447,8 +3454,8 @@ public class TF_MOrder extends MOrder {
 	}
 	
 	public static int GSTOrderDocType_ID(Properties ctx) {
-		//int DocType_ID = MSysConfig.getIntValue("GST_ORDER_ID", 1000063, Env.getAD_Client_ID(ctx));
-		int DocType_ID = MSysConfig.getIntValue("NONGST_ORDER_ID", 1000062, Env.getAD_Client_ID(ctx));
+		int DocType_ID = MSysConfig.getIntValue("GST_ORDER_ID", 1000063, Env.getAD_Client_ID(ctx));
+		//int DocType_ID = MSysConfig.getIntValue("NONGST_ORDER_ID", 1000062, Env.getAD_Client_ID(ctx));
 		return DocType_ID;
 	}
 
@@ -3457,6 +3464,7 @@ public class TF_MOrder extends MOrder {
 		return DocType_ID;
 	}
 
+	public boolean firstInvoice = true;
 	public void createInvoiceCustomer() {
 		
 		MWeighmentEntry weighment = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
@@ -3475,15 +3483,20 @@ public class TF_MOrder extends MOrder {
 		invoice.setIsSOTrx(isSOTrx());
 		invoice.setDateInvoiced(getDateAcct());
 		invoice.setDateAcct(getDateAcct());
+		
+		//fetching already generated invoice no in case of reversing and recreating the existing invoices.
+		if(weighment.getInvoiceNo() != null && firstInvoice) 
+			invoice.setDocumentNo(weighment.getInvoiceNo());
+		else if(weighment.getInvoiceNo2() != null && !firstInvoice)
+			invoice.setDocumentNo(weighment.getInvoiceNo2());
+		
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		
-		invoice.setBPartner(bp);
 		invoice.setPaymentRule(getPaymentRule());
 		invoice.setC_PaymentTerm_ID(getC_PaymentTerm_ID());
 		//
 		
-		invoice.setOrder(this);
-						
+		invoice.setBPartner(bp);				
 		invoice.setVehicleNo(getVehicleNo());
 		invoice.setDescription(getDescription());
 		
@@ -3661,15 +3674,38 @@ public class TF_MOrder extends MOrder {
 			io.saveEx();
 		}
 	}
-		
-	public int getC_VendorInvoiceDocType_ID() {
-		int DocType_ID = MSysConfig.getIntValue("VENDORINVOICE_ORDER_ID", 1000061, Env.getAD_Client_ID(getCtx()));
+	
+	public List<TF_MInvoice> getTFInvoices() {
+		String whereClause = "C_Order_ID = ? AND DocStatus IN ('CO','CL')";
+		List<TF_MInvoice> list = new Query(getCtx(), TF_MInvoice.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getC_Order_ID())
+				.list();
+		return list;
+	}
+	
+	public static int getC_VendorInvoiceDocType_ID() {
+		int DocType_ID = MSysConfig.getIntValue("VENDORINVOICE_ORDER_ID", 1000064, Env.getAD_Client_ID(Env.getCtx()));
+		return DocType_ID;
+	}
+	
+	public static int getC_TransporterInvoiceDocType_ID() {
+		int DocType_ID = MSysConfig.getIntValue("TRANSPORTER_INVOICE_ORDER_ID", 1000064, Env.getAD_Client_ID(Env.getCtx()));
+		return DocType_ID;
+	}
+	
+	public static int getC_ServiceInvoiceDocType_ID() {
+		int DocType_ID = MSysConfig.getIntValue("SERVICE_ORDER_ID", 1000068, Env.getAD_Client_ID(Env.getCtx()));
 		return DocType_ID;
 	}
 	
 	public void createInvoiceVendor() {
-						
-		if(getC_DocTypeTarget_ID() != getC_VendorInvoiceDocType_ID())
+		if(isSOTrx())
+			return;
+		
+		MDocType dt = (MDocType) getC_DocTypeTarget();
+		
+		if(dt.getDocSubTypeSO() != null && !dt.getDocSubTypeSO().equals("IN"))
 			return;
 		
 		//Invoice Header
@@ -3730,5 +3766,18 @@ public class TF_MOrder extends MOrder {
 		if (!invoice.processIt(DocAction.ACTION_Complete))
 			throw new AdempiereException("Failed when processing document - " + invoice.getProcessMsg());
 		invoice.saveEx();
+	}
+	
+	private void reverseTransportReceiptStatus() {
+		String whereClause = " C_OrderLIne_ID IN (SELECT C_OrderLine.C_OrderLine_ID FROM C_OrderLine WHERE C_OrderLine.C_Order_ID = ?)";
+		List<TF_MInOutLine> ioLists = new Query(getCtx(), TF_MInOutLine.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getC_Order_ID())
+				.list();
+		for(TF_MInOutLine ioLine : ioLists) {
+			ioLine.set_ValueOfColumn("DocStatus", MWeighmentEntry.STATUS_Unbilled);
+			ioLine.setC_OrderLine_ID(0);
+			ioLine.saveEx();
+		}
 	}
 }

@@ -32,8 +32,8 @@ public class CalloutPriceList_BPartner implements IColumnCallout {
 			bp = new TF_MBPartner(ctx, C_BPartner_ID, null);			
 		}		
 		
-		isRentInclusive = false;
-		isTaxIncluded = false;
+		isRentInclusive = bp.isRentInclusive();
+		isTaxIncluded = bp.isTaxIncluded();
 		mTab.setValue(MPriceListUOM.COLUMNNAME_IsRentInclusive, isRentInclusive);
 		mTab.setValue(MPriceListUOM.COLUMNNAME_IsTaxIncluded, isTaxIncluded);
 		

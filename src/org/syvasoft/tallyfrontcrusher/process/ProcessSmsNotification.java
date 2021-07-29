@@ -12,7 +12,7 @@ import org.compiere.model.Query;
 import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
 import org.nettyfish.sms.api.SMSUtil;
-import org.syvasoft.tallyfrontcrusher.model.MSmsReceipient;
+import org.syvasoft.tallyfrontcrusher.model.MNotificationRecipient;
 
 
 public class ProcessSmsNotification extends SvrProcess {
@@ -35,7 +35,7 @@ public class ProcessSmsNotification extends SvrProcess {
 	protected String doIt() throws Exception {
 		// TODO Auto-generated method stub
 		
-		String Sql="SELECT * FROM TF_SmsNotification WHERE IsActive='Y' AND  to_timestamp(deliverytime,'HH24:MI') :: time = to_timestamp(to_char(now(),'HH24:MI'),'HH24:MI')::time";
+		String Sql="SELECT * FROM TF_SmsNotification WHERE  IsScheduled = 'Y' AND IsSMS = 'Y' AND AND IsActive='Y' AND  to_timestamp(deliverytime,'HH24:MI') :: time = to_timestamp(to_char(now(),'HH24:MI'),'HH24:MI')::time";
 		PreparedStatement pstmt =  null;
 		PreparedStatement rpPstmt = null;
 		ResultSet rs = null;
@@ -257,7 +257,7 @@ public class ProcessSmsNotification extends SvrProcess {
 				}
 				
 				//Find Receipients
-				List<MSmsReceipient> recipients = new Query(getCtx(), MSmsReceipient.Table_Name, "TF_SmsNotification_ID = ?", get_TrxName())
+				List<MNotificationRecipient> recipients = new Query(getCtx(), MNotificationRecipient.Table_Name, "TF_SmsNotification_ID = ?", get_TrxName())
 						.setClient_ID()						
 						.setParameters(rs.getInt("TF_SmsNotification_ID"))
 						.setOnlyActiveRecords(true)
@@ -267,7 +267,7 @@ public class ProcessSmsNotification extends SvrProcess {
 				//rs2 = pstmt2.executeQuery();			
 				
 				String Receipient="";
-				for(MSmsReceipient recipient : recipients)
+				for(MNotificationRecipient recipient : recipients)
 				{
 					Receipient=recipient.getMobileNo();					
 					SMSUtil sutil=new SMSUtil();

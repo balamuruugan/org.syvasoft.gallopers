@@ -209,10 +209,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return MProductionPlant.class;
 		else if(MPriceListUOM.Table_Name.equals(tableName))			
 			return MPriceListUOM.class;
-		else if(MSmsNotification.Table_Name.equals(tableName))			
-			return MSmsNotification.class;
-		else if(MSmsReceipient.Table_Name.equals(tableName))			
-			return MSmsReceipient.class;
+		else if(MNotification.Table_Name.equals(tableName))			
+			return MNotification.class;
+		else if(MNotificationRecipient.Table_Name.equals(tableName))			
+			return MNotificationRecipient.class;
 		else if(MTRTaxInvoice.Table_Name.equals(tableName))			
 			return MTRTaxInvoice.class;
 		else if(MTRTaxInvoiceLine.Table_Name.equals(tableName))			
@@ -291,6 +291,22 @@ public class CrusherModelFactory implements IModelFactory {
 			return MTripSheetSalary.class;
 		else if(MTripSheetProduct.Table_Name.equals(tableName))			
 			return MTripSheetProduct.class;
+		else if(MPrintDocSetup.Table_Name.equals(tableName))
+			return MPrintDocSetup.class;
+		else if(MDispensePlan.Table_Name.equals(tableName))
+			return MDispensePlan.class;
+		else if(MDispensePlanLine.Table_Name.equals(tableName))
+			return MDispensePlanLine.class;
+		else if(MLumpSumRentRentMargin.Table_Name.equals(tableName))
+			return MLumpSumRentRentMargin.class;
+		else if(MTransportOrder.Table_Name.equals(tableName))
+			return MTransportOrder.class;
+		else if(MTransportOrderLine.Table_Name.equals(tableName))
+			return MTransportOrderLine.class;
+		else if(MWhatsAppMsgConfig.Table_Name.equals(tableName))
+			return MWhatsAppMsgConfig.class;
+		else if(MNotificationTriggerColumn.Table_Name.equals(tableName))
+			return MNotificationTriggerColumn.class;
 		return null;
 	}
 
@@ -493,10 +509,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MProductionPlant(ctx, Record_ID, trxName);
 		else if(MPriceListUOM.Table_Name.equals(tableName))			
 			return new MPriceListUOM(ctx, Record_ID, trxName);
-		else if(MSmsNotification.Table_Name.equals(tableName))			
-			return new MSmsNotification(ctx, Record_ID, trxName);
-		else if(MSmsReceipient.Table_Name.equals(tableName))			
-			return new MSmsReceipient(ctx, Record_ID, trxName);
+		else if(MNotification.Table_Name.equals(tableName))			
+			return new MNotification(ctx, Record_ID, trxName);
+		else if(MNotificationRecipient.Table_Name.equals(tableName))			
+			return new MNotificationRecipient(ctx, Record_ID, trxName);
 		else if(MTRTaxInvoice.Table_Name.equals(tableName))			
 			return new MTRTaxInvoice(ctx, Record_ID, trxName);
 		else if(MTRTaxInvoiceLine.Table_Name.equals(tableName))			
@@ -575,6 +591,22 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MTripSheetSalary(ctx, Record_ID, trxName);
 		else if(MTripSheetProduct.Table_Name.equals(tableName))			
 			return new MTripSheetProduct(ctx, Record_ID, trxName);
+		else if(MPrintDocSetup.Table_Name.equals(tableName))
+			return new MPrintDocSetup(ctx, Record_ID, trxName);
+		else if(MDispensePlan.Table_Name.equals(tableName))
+			return new MDispensePlan(ctx, Record_ID, trxName);
+		else if(MDispensePlanLine.Table_Name.equals(tableName))
+			return new MDispensePlanLine(ctx, Record_ID, trxName);
+		else if(MLumpSumRentRentMargin.Table_Name.equals(tableName))
+			return new MLumpSumRentRentMargin(ctx, Record_ID, trxName);
+		else if(MTransportOrder.Table_Name.equals(tableName))
+			return new MTransportOrder(ctx, Record_ID, trxName);
+		else if(MTransportOrderLine.Table_Name.equals(tableName))
+			return new MTransportOrderLine(ctx, Record_ID, trxName);
+		else if(MWhatsAppMsgConfig.Table_Name.equals(tableName))
+			return new MWhatsAppMsgConfig(ctx, Record_ID, trxName);
+		else if(MNotificationTriggerColumn.Table_Name.equals(tableName))
+			return new MNotificationTriggerColumn(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -779,10 +811,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MProductionPlant(ctx, rs, trxName);
 		else if(MPriceListUOM.Table_Name.equals(tableName))			
 			return new MPriceListUOM(ctx, rs, trxName);
-		else if(MSmsNotification.Table_Name.equals(tableName))			
-			return new MSmsNotification(ctx, rs, trxName);
-		else if(MSmsReceipient.Table_Name.equals(tableName))			
-			return new MSmsReceipient(ctx, rs, trxName);
+		else if(MNotification.Table_Name.equals(tableName))			
+			return new MNotification(ctx, rs, trxName);
+		else if(MNotificationRecipient.Table_Name.equals(tableName))			
+			return new MNotificationRecipient(ctx, rs, trxName);
 		else if(MTRTaxInvoice.Table_Name.equals(tableName))			
 			return new MTRTaxInvoice(ctx, rs, trxName);
 		else if(MTRTaxInvoiceLine.Table_Name.equals(tableName))			
@@ -861,6 +893,22 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MTripSheetSalary(ctx, rs, trxName);
 		else if(MTripSheetProduct.Table_Name.equals(tableName))			
 			return new MTripSheetProduct(ctx, rs, trxName);
+		else if(MPrintDocSetup.Table_Name.equals(tableName))
+			return new MPrintDocSetup(ctx, rs, trxName);
+		else if(MDispensePlan.Table_Name.equals(tableName))
+			return new MDispensePlan(ctx, rs, trxName);
+		else if(MDispensePlanLine.Table_Name.equals(tableName))
+			return new MDispensePlanLine(ctx, rs, trxName);
+		else if(MLumpSumRentRentMargin.Table_Name.equals(tableName))
+			return new MLumpSumRentRentMargin(ctx, rs, trxName);
+		else if(MTransportOrder.Table_Name.equals(tableName))
+			return new MTransportOrder(ctx, rs, trxName);
+		else if(MTransportOrderLine.Table_Name.equals(tableName))
+			return new MTransportOrderLine(ctx, rs, trxName);
+		else if(MWhatsAppMsgConfig.Table_Name.equals(tableName))
+			return new MWhatsAppMsgConfig(ctx, rs, trxName);
+		else if(MNotificationTriggerColumn.Table_Name.equals(tableName))
+			return new MNotificationTriggerColumn(ctx, rs, trxName);
 		return null;
 	}
 

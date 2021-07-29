@@ -113,7 +113,7 @@ public class CreateConsolidateCustomerOrderLines extends SvrProcess {
 				if(!isVehicle) {
 					// create order line
 					//the Credit Customer material price always include Royalty Pass amount
-					price = MPriceListUOM.getPrice(getCtx(), M_Product_ID, C_UOM_ID, ord.getC_BPartner_ID(), ord.isSOTrx(), ord.getDateAcct());
+					price = MPriceListUOM.getPrice(getCtx(), M_Product_ID, C_UOM_ID, ord.getC_BPartner_ID(), ord.getTF_Destination_ID(), ord.isSOTrx(), ord.getDateAcct());
 				}
 				
 				if(price == null) {

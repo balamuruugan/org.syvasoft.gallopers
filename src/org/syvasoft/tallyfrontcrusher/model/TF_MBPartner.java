@@ -2,6 +2,7 @@ package org.syvasoft.tallyfrontcrusher.model;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
@@ -16,6 +17,7 @@ import org.compiere.model.MUser;
 import org.compiere.model.Query;
 import org.compiere.model.X_I_BPartner;
 import org.compiere.process.DocAction;
+import org.compiere.util.AdempiereUserError;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 
@@ -332,6 +334,25 @@ public class TF_MBPartner extends MBPartner {
 	public void setDebitBalance (BigDecimal DebitBalance)
 	{
 		set_Value (COLUMNNAME_DebitBalance, DebitBalance);
+	}
+	
+	/** Column name EMail */
+    public static final String COLUMNNAME_EMail = "EMail";
+	/** Set EMail Address.
+	@param EMail 
+	Electronic Mail Address
+  */
+	public void setEMail (String EMail)
+	{
+		set_Value (COLUMNNAME_EMail, EMail);
+	}
+	
+	/** Get EMail Address.
+		@return Electronic Mail Address
+	  */
+	public String getEMail () 
+	{
+		return (String)get_Value(COLUMNNAME_EMail);
 	}
 	
 	/** Get Debit Balance.
@@ -794,6 +815,37 @@ public class TF_MBPartner extends MBPartner {
 
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
+		if(newRecord) {
+			String where = " Value = '" + getValue() + "'";
+			
+			TF_MBPartner bpartner = new Query(getCtx(),TF_MBPartner.Table_Name, where, get_TrxName()).first();
+			
+			if(bpartner != null) {
+				throw new AdempiereUserError("Search Key already exists");
+			}
+		}
+		else {
+			String where = " Value = '" + getValue() + "' AND C_BPartner_ID != " + getC_BPartner_ID();
+			
+			TF_MBPartner bpartner = new Query(getCtx(),TF_MBPartner.Table_Name, where, get_TrxName()).first();
+			
+			if(bpartner != null) {
+				throw new AdempiereUserError("Search Key already exists");
+			}
+		}
+		
+		String where = " Name = '" + getAddress4() + "'";
+		
+		List<MDestination> dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).list();
+		
+		if(dest.size() == 0)
+		{
+			MDestination destination = new MDestination(getCtx(), 0, get_TrxName());
+			destination.setAD_Org_ID(getAD_Org_ID());
+			destination.setName(getAddress4());
+			destination.setDistance(BigDecimal.ZERO);
+			destination.saveEx();
+		}
 		if(IsRequiredTaxInvoicePerLoad()) {
 			setTF_TaxInvoiceCycle_ID(0);
 		}
@@ -807,6 +859,7 @@ public class TF_MBPartner extends MBPartner {
 		MUser user = new MUser(getCtx(), getAD_User_ID(), get_TrxName());		
 		user.setC_BPartner_ID(getC_BPartner_ID());
 		user.setAD_Org_ID(getAD_Org_ID());
+		user.setEMail(getEMail());
 		user.setName(getContactName());
 		user.setPhone(getPhone());
 		user.setNotificationType(MUser.NOTIFICATIONTYPE_EMail);

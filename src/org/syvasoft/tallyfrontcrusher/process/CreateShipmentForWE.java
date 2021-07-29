@@ -1,4 +1,4 @@
-package org.syvasoft.tallyfrontcrusher.process;
+	package org.syvasoft.tallyfrontcrusher.process;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,7 +26,7 @@ public class CreateShipmentForWE extends SvrProcess {
 
 	@Override
 	protected String doIt() throws Exception {
-		String whereClause = " TF_WeighmentEntry.WeighmentEntryType = '1SO' AND TF_WeighmentEntry.Status IN ('CL') AND TF_WeighmentEntry.Processed='N' ";
+		String whereClause = " TF_WeighmentEntry.WeighmentEntryType = '1SO' AND TF_WeighmentEntry.Status IN ('CO','CL','PV') AND TF_WeighmentEntry.Processed='N' AND IsSecondary='N' ";
 				
 		List<MWeighmentEntry> list = new Query(getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
@@ -76,6 +76,8 @@ public class CreateShipmentForWE extends SvrProcess {
 			inout.setTF_WeighmentEntry_ID(we.getTF_WeighmentEntry_ID());
 			inout.setDescription(we.getDescription());
 			inout.setMovementType(TF_MInOut.MOVEMENTTYPE_CustomerShipment);
+			if(we.getC_OrderLine_ID() > 0)
+				inout.setC_Order_ID(order.getC_Order_ID());
 			inout.saveEx(get_TrxName());
 			
 			//Material Issue Line
@@ -85,6 +87,7 @@ public class CreateShipmentForWE extends SvrProcess {
 			ioLine.setC_UOM_ID(we.getC_UOM_ID());			
 			ioLine.setQty(we.getNetWeightUnit());
 			ioLine.setM_Locator_ID(we.getNetWeightUnit());
+			ioLine.setC_OrderLine_ID(we.getC_OrderLine_ID());
 			ioLine.saveEx(get_TrxName());
 			
 			
@@ -103,57 +106,119 @@ public class CreateShipmentForWE extends SvrProcess {
 			//Create Vehicle Rent Line for the Hired and Owned Vehicle
 			if(we.getTF_RentedVehicle() != null) {
 				MRentedVehicle rv = (MRentedVehicle) we.getTF_RentedVehicle();
-				if(rv.isOwnVehicle() || (rv.isTransporter() && rv.getC_BPartner_ID() != we.getC_BPartner_ID() )) {
+				if(rv.isOwnVehicle() || (rv.isTransporter() && rv.getC_BPartner_ID() != we.getC_BPartner_ID() && !we.isCustomerTransporter())) {
 					int Vendor_ID = rv.getC_BPartner_ID();
 					MDestination dest = new MDestination(getCtx(), we.getTF_Destination_ID(), get_TrxName());
-					BigDecimal RateMT = MLumpSumRentConfig.getRateMT(getCtx(), we.getAD_Org_ID(), Vendor_ID, we.getC_BPartner_ID(), we.getM_Product_ID(), 
-							we.getTF_Destination_ID(), we.getTF_VehicleType_ID(), dest.getDistance(), get_TrxName());
-					BigDecimal RateKM = MLumpSumRentConfig.getRateKm(getCtx(), we.getAD_Org_ID(), Vendor_ID, we.getC_BPartner_ID(), we.getM_Product_ID(), 
-							we.getTF_Destination_ID(), we.getTF_VehicleType_ID(), dest.getDistance(), get_TrxName());
-					BigDecimal RateMTKM = MLumpSumRentConfig.getRateMTKm(getCtx(), we.getAD_Org_ID(), Vendor_ID, we.getC_BPartner_ID(), we.getM_Product_ID(), 
-							we.getTF_Destination_ID(), we.getTF_VehicleType_ID(), dest.getDistance(), get_TrxName());
+					BigDecimal distance = dest.getDistance();
 					
-					int Rent_UOM_ID = 0;
 					BigDecimal qty = BigDecimal.ZERO;
 					BigDecimal price = BigDecimal.ZERO;
-					if(we.getRent_Amt().doubleValue() > 0) {
-						Rent_UOM_ID = MSysConfig.getIntValue("LOAD_UOM", 1000072, we.getAD_Client_ID());
-						qty = BigDecimal.ONE;
-						price = we.getRent_Amt();
-					}
-					else if(RateMT.doubleValue() > 0) {						
-						Rent_UOM_ID = MSysConfig.getIntValue("TONNAGE_UOM", 1000069, we.getAD_Client_ID());
-						qty = we.getNetWeightUnit();
-						price = RateMT;
-					}
-					else if(RateKM.doubleValue() > 0) {						
-						Rent_UOM_ID = MSysConfig.getIntValue("KM_UOM", 1000071, we.getAD_Client_ID());
-						qty = dest.getDistance();
-						price = RateKM;
-					}
-					else if(RateMTKM.doubleValue() > 0) {
-						//Currently the price is converted from RateMTKM to RateKM
-						//since two measurement cannot be shown as quantity. 
-						//It can be changed according to customer requirement to be shown as RateMT
-						Rent_UOM_ID = MSysConfig.getIntValue("KM_UOM", 1000071, we.getAD_Client_ID());
-						qty = dest.getDistance();
-						price = RateMTKM.multiply(we.getNetWeightUnit());
+					BigDecimal RateMTKM = BigDecimal.ZERO;
+					
+					MLumpSumRentConfig lumpsumConfig;
+					int Load_UOM_ID = MSysConfig.getIntValue("LOAD_UOM", 1000072, we.getAD_Client_ID());
+					int KM_UOM_ID = MSysConfig.getIntValue("KM_UOM", 1000071, we.getAD_Client_ID());
+					int MT_KM_UOM_ID = MSysConfig.getIntValue("MT_KM_UOM", 1000071, we.getAD_Client_ID());
+					int Rent_UOM_ID = 0;
+					int TF_LumpSumRentConfig_ID = 0;
+					BigDecimal RentMargin = BigDecimal.ZERO;
+					
+					if(!we.isRentInclusive()) {
+						lumpsumConfig = MLumpSumRentConfig.getFreightPrice(getCtx(), we.getAD_Org_ID(), Vendor_ID, we.getC_BPartner_ID(), we.getM_Product_ID(), 
+							we.getTF_Destination_ID(), we.getTF_VehicleType_ID(), dest.getDistance(), we.getFreightRule_ID(), get_TrxName());
+						price = we.getFreightPrice();
+						if(we.getFreightRule_ID() == Load_UOM_ID)
+						{
+							Rent_UOM_ID = Load_UOM_ID;
+							qty = BigDecimal.ONE;							
+						}
+						else if(we.getFreightRule_ID() == KM_UOM_ID)
+						{
+							Rent_UOM_ID = KM_UOM_ID;
+							qty = dest.getDistance();							
+						}
+						else if(we.getFreightRule_ID() == MT_KM_UOM_ID)
+						{
+							Rent_UOM_ID = MT_KM_UOM_ID;
+							qty = we.getMT();							
+							RateMTKM =  price;
+						}
+						else
+						{
+							Rent_UOM_ID = we.getFreightRule_ID();
+							qty = we.getNetWeightUnit();							
+						}
+												
+						if(lumpsumConfig != null)
+						{
+							TF_LumpSumRentConfig_ID = lumpsumConfig.getTF_LumpSumRent_Config_ID();
+							RentMargin = lumpsumConfig.getCustomerFreightMargin(we.getC_BPartner_ID());						
+						}
+						
 					}
 					else {
-						Rent_UOM_ID = MSysConfig.getIntValue("LOAD_UOM", 1000072, we.getAD_Client_ID());
-						qty = BigDecimal.ONE;
-						price = MLumpSumRentConfig.getLumpSumRent(getCtx(),we.getAD_Org_ID(),Vendor_ID, we.getC_BPartner_ID(), we.getM_Product_ID(), 
+						lumpsumConfig = MLumpSumRentConfig.getFreightConfig(getCtx(), we.getAD_Org_ID(), Vendor_ID, we.getC_BPartner_ID(), we.getM_Product_ID(), 
 								we.getTF_Destination_ID(), we.getTF_VehicleType_ID(), dest.getDistance(), get_TrxName());
+							
+						if(lumpsumConfig != null) {
+							//ioLine.set_ValueOfColumn("FreightRule", we.getFreightRule());
+							price = lumpsumConfig.getCustomerFreightPrice(we.getC_BPartner_ID());
+							
+							if(lumpsumConfig.getC_UOM_ID() == Load_UOM_ID)
+							{
+								Rent_UOM_ID = Load_UOM_ID;
+								qty = BigDecimal.ONE;
+								
+							}
+							else if(lumpsumConfig.getC_UOM_ID() == KM_UOM_ID)
+							{
+								Rent_UOM_ID = KM_UOM_ID;
+								qty = dest.getDistance();									
+							}
+							else if(lumpsumConfig.getC_UOM_ID() == MT_KM_UOM_ID)
+							{
+								Rent_UOM_ID = MT_KM_UOM_ID;
+								qty = we.getMT();									
+								RateMTKM = price;
+							}
+							else
+							{
+								Rent_UOM_ID = lumpsumConfig.getC_UOM_ID();
+								qty = we.getNetWeightUnit();									
+							}
+							TF_LumpSumRentConfig_ID = lumpsumConfig.getTF_LumpSumRent_Config_ID();
+							RentMargin = (BigDecimal) lumpsumConfig.getCustomerFreightMargin(we.getC_BPartner_ID());
+							
+							we.setTF_LumpSumRent_Config_ID(TF_LumpSumRentConfig_ID);	
+							we.saveEx(get_TrxName());
+						}
+						else {
+							Rent_UOM_ID = Load_UOM_ID;
+							qty = BigDecimal.ONE;
+							price = BigDecimal.ZERO;
+						}
 					}
+				
 					
 					ioLine = new TF_MInOutLine(inout);
 					ioLine.setM_Product_ID(rv.getM_Product_ID());
 					ioLine.setC_UOM_ID(Rent_UOM_ID);
+					ioLine.setTF_Destination_ID(we.getTF_Destination_ID());
+					ioLine.setDistance(distance);
+					ioLine.setRateMTKM(RateMTKM);
+					if(lumpsumConfig != null) {
+						ioLine.setC_Tax_ID(lumpsumConfig.getC_Tax_ID());
+						ioLine.setIsTaxIncluded(lumpsumConfig.isTaxIncluded());
+					}
 					ioLine.setQty(qty);
 					ioLine.set_ValueOfColumn("Price", price);
+					ioLine.setTF_LumpSumRent_Config_ID(TF_LumpSumRentConfig_ID);
+					ioLine.setRentMargin(RentMargin);
 					ioLine.setM_Locator_ID(qty);
 					ioLine.setDescription("Destination : " + dest.getName());
 					ioLine.saveEx(get_TrxName());
+					
+					
 				}
 			}
 			

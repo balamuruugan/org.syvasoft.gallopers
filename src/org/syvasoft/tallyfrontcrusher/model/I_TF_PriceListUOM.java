@@ -139,15 +139,24 @@ public interface I_TF_PriceListUOM
     /** Column name IsRentInclusive */
     public static final String COLUMNNAME_IsRentInclusive = "IsRentInclusive";
 
-	/** Set Rent Inclusive.
+	/** Set Freight Inclusive.
 	  * Whether Unit Price includes rent?
 	  */
 	public void setIsRentInclusive (boolean IsRentInclusive);
 
-	/** Get Rent Inclusive.
+	/** Get Freight Inclusive.
 	  * Whether Unit Price includes rent?
 	  */
 	public boolean isRentInclusive();
+
+    /** Column name IsRoyaltyPassInclusive */
+    public static final String COLUMNNAME_IsRoyaltyPassInclusive = "IsRoyaltyPassInclusive";
+
+	/** Set Royalty Pass Inclusive	  */
+	public void setIsRoyaltyPassInclusive (boolean IsRoyaltyPassInclusive);
+
+	/** Get Royalty Pass Inclusive	  */
+	public boolean isRoyaltyPassInclusive();
 
     /** Column name IsSOTrx */
     public static final String COLUMNNAME_IsSOTrx = "IsSOTrx";
@@ -220,6 +229,17 @@ public interface I_TF_PriceListUOM
 
 	/** Get Price (Min)	  */
 	public BigDecimal getPriceMin();
+
+    /** Column name TF_Destination_ID */
+    public static final String COLUMNNAME_TF_Destination_ID = "TF_Destination_ID";
+
+	/** Set Destination	  */
+	public void setTF_Destination_ID (int TF_Destination_ID);
+
+	/** Get Destination	  */
+	public int getTF_Destination_ID();
+
+	public I_TF_Destination getTF_Destination() throws RuntimeException;
 
     /** Column name TF_PriceListUOM_ID */
     public static final String COLUMNNAME_TF_PriceListUOM_ID = "TF_PriceListUOM_ID";

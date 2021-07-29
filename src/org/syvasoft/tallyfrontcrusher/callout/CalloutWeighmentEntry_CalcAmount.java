@@ -16,6 +16,7 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		BigDecimal qty = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_NetWeightUnit);
 		BigDecimal price = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_Price);
 		BigDecimal Amount = qty.multiply(price);
+		BigDecimal RentAmount = CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_Rent_Amt);
 		
 		BigDecimal GstAmt = BigDecimal.ZERO;
 		if(mTab.getValue(MWeighmentEntry.COLUMNNAME_GSTAmount) != null)
@@ -24,7 +25,7 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		BigDecimal driverTips = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_DriverTips);		
 		Boolean ApplyTax = mTab.getValueAsBoolean(MWeighmentEntry.COLUMNNAME_IsPermitSales);
 		if(ApplyTax)
-			GstAmt = Amount.multiply(new BigDecimal(0.05)).setScale(2, RoundingMode.HALF_EVEN);
+			GstAmt = RentAmount.add(Amount).multiply(new BigDecimal(0.05)).setScale(2, RoundingMode.HALF_EVEN);
 		else
 			GstAmt = BigDecimal.ZERO;
 		BigDecimal TotalAmt = Amount.add(GstAmt).subtract(driverTips);

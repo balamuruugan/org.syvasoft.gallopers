@@ -204,6 +204,17 @@ public interface I_TF_SmsDeliveryLog
 	/** Get TF_SmsDeliveryLog_UU	  */
 	public String getTF_SmsDeliveryLog_UU();
 
+    /** Column name TF_SmsNotification_ID */
+    public static final String COLUMNNAME_TF_SmsNotification_ID = "TF_SmsNotification_ID";
+
+	/** Set TF_SmsNotification	  */
+	public void setTF_SmsNotification_ID (int TF_SmsNotification_ID);
+
+	/** Get TF_SmsNotification	  */
+	public int getTF_SmsNotification_ID();
+
+	public I_TF_SmsNotification getTF_SmsNotification() throws RuntimeException;
+
     /** Column name TransactionID */
     public static final String COLUMNNAME_TransactionID = "TransactionID";
 

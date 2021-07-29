@@ -30,7 +30,7 @@ public class X_TF_SmsDeliveryLog extends PO implements I_TF_SmsDeliveryLog, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20191003L;
+	private static final long serialVersionUID = 20210524L;
 
     /** Standard Constructor */
     public X_TF_SmsDeliveryLog (Properties ctx, int TF_SmsDeliveryLog_ID, String trxName)
@@ -248,6 +248,31 @@ public class X_TF_SmsDeliveryLog extends PO implements I_TF_SmsDeliveryLog, I_Pe
 	public String getTF_SmsDeliveryLog_UU () 
 	{
 		return (String)get_Value(COLUMNNAME_TF_SmsDeliveryLog_UU);
+	}
+
+	public I_TF_SmsNotification getTF_SmsNotification() throws RuntimeException
+    {
+		return (I_TF_SmsNotification)MTable.get(getCtx(), I_TF_SmsNotification.Table_Name)
+			.getPO(getTF_SmsNotification_ID(), get_TrxName());	}
+
+	/** Set TF_SmsNotification.
+		@param TF_SmsNotification_ID TF_SmsNotification	  */
+	public void setTF_SmsNotification_ID (int TF_SmsNotification_ID)
+	{
+		if (TF_SmsNotification_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_SmsNotification_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_SmsNotification_ID, Integer.valueOf(TF_SmsNotification_ID));
+	}
+
+	/** Get TF_SmsNotification.
+		@return TF_SmsNotification	  */
+	public int getTF_SmsNotification_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_SmsNotification_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Transaction ID.

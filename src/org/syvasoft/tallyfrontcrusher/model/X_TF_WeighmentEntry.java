@@ -33,7 +33,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210301L;
+	private static final long serialVersionUID = 20210628L;
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)
@@ -41,7 +41,19 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
       super (ctx, TF_WeighmentEntry_ID, trxName);
       /** if (TF_WeighmentEntry_ID == 0)
         {
+			setCreateTwoInvoices (false);
+// N
 			setDocumentNo (null);
+			setInvoiceType (null);
+// AW
+			setIsRentInclusive (false);
+// N
+			setIsRoyaltyPassInclusive (false);
+// N
+			setIsSecondary (false);
+// N
+			setIsTaxIncluded (false);
+// N
 			setProcessed (false);
 			setStatus (null);
 // IP
@@ -134,6 +146,31 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public int getC_BPartner_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_BPartner getC_BPartnerWB() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_Name)
+			.getPO(getC_BPartnerWB_ID(), get_TrxName());	}
+
+	/** Set 3rd Party Weighbridge.
+		@param C_BPartnerWB_ID 3rd Party Weighbridge	  */
+	public void setC_BPartnerWB_ID (int C_BPartnerWB_ID)
+	{
+		if (C_BPartnerWB_ID < 1) 
+			set_Value (COLUMNNAME_C_BPartnerWB_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_BPartnerWB_ID, Integer.valueOf(C_BPartnerWB_ID));
+	}
+
+	/** Get 3rd Party Weighbridge.
+		@return 3rd Party Weighbridge	  */
+	public int getC_BPartnerWB_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartnerWB_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -282,6 +319,51 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_CompletedBy);
 	}
 
+	/** Set Create Two Invoices.
+		@param CreateTwoInvoices 
+		Create Two Invoices by TP Weight and the remaining Weight
+	  */
+	public void setCreateTwoInvoices (boolean CreateTwoInvoices)
+	{
+		set_Value (COLUMNNAME_CreateTwoInvoices, Boolean.valueOf(CreateTwoInvoices));
+	}
+
+	/** Get Create Two Invoices.
+		@return Create Two Invoices by TP Weight and the remaining Weight
+	  */
+	public boolean isCreateTwoInvoices () 
+	{
+		Object oo = get_Value(COLUMNNAME_CreateTwoInvoices);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Customer's Transporter.
+		@param CustomerTransporter Customer's Transporter	  */
+	public void setCustomerTransporter (boolean CustomerTransporter)
+	{
+		set_ValueNoCheck (COLUMNNAME_CustomerTransporter, Boolean.valueOf(CustomerTransporter));
+	}
+
+	/** Get Customer's Transporter.
+		@return Customer's Transporter	  */
+	public boolean isCustomerTransporter () 
+	{
+		Object oo = get_Value(COLUMNNAME_CustomerTransporter);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Description.
 		@param Description 
 		Optional short description of the record
@@ -333,6 +415,20 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_DocumentNo);
 	}
 
+	/** Set Driver Contact No.
+		@param DriverContact Driver Contact No	  */
+	public void setDriverContact (String DriverContact)
+	{
+		set_Value (COLUMNNAME_DriverContact, DriverContact);
+	}
+
+	/** Get Driver Contact No.
+		@return Driver Contact No	  */
+	public String getDriverContact () 
+	{
+		return (String)get_Value(COLUMNNAME_DriverContact);
+	}
+
 	/** Set Driver Name.
 		@param DriverName Driver Name	  */
 	public void setDriverName (String DriverName)
@@ -359,6 +455,107 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public BigDecimal getDriverTips () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_DriverTips);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set eWay Bill No.
+		@param eWayBillNo eWay Bill No	  */
+	public void seteWayBillNo (String eWayBillNo)
+	{
+		set_Value (COLUMNNAME_eWayBillNo, eWayBillNo);
+	}
+
+	/** Get eWay Bill No.
+		@return eWay Bill No	  */
+	public String geteWayBillNo () 
+	{
+		return (String)get_Value(COLUMNNAME_eWayBillNo);
+	}
+
+	/** Set Freight Rate.
+		@param FreightPrice Freight Rate	  */
+	public void setFreightPrice (BigDecimal FreightPrice)
+	{
+		set_Value (COLUMNNAME_FreightPrice, FreightPrice);
+	}
+
+	/** Get Freight Rate.
+		@return Freight Rate	  */
+	public BigDecimal getFreightPrice () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_FreightPrice);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	public org.compiere.model.I_C_UOM getFreightRule() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getFreightRule_ID(), get_TrxName());	}
+
+	/** Set Freight Rule.
+		@param FreightRule_ID 
+		Freight Rule
+	  */
+	public void setFreightRule_ID (int FreightRule_ID)
+	{
+		if (FreightRule_ID < 1) 
+			set_Value (COLUMNNAME_FreightRule_ID, null);
+		else 
+			set_Value (COLUMNNAME_FreightRule_ID, Integer.valueOf(FreightRule_ID));
+	}
+
+	/** Get Freight Rule.
+		@return Freight Rule
+	  */
+	public int getFreightRule_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_FreightRule_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_UOM getFreightUOM() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getFreightUOM_ID(), get_TrxName());	}
+
+	/** Set Freight UOM.
+		@param FreightUOM_ID Freight UOM	  */
+	public void setFreightUOM_ID (int FreightUOM_ID)
+	{
+		if (FreightUOM_ID < 1) 
+			set_Value (COLUMNNAME_FreightUOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_FreightUOM_ID, Integer.valueOf(FreightUOM_ID));
+	}
+
+	/** Get Freight UOM.
+		@return Freight UOM	  */
+	public int getFreightUOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_FreightUOM_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Gross Price.
+		@param GrossPrice Gross Price	  */
+	public void setGrossPrice (BigDecimal GrossPrice)
+	{
+		set_Value (COLUMNNAME_GrossPrice, GrossPrice);
+	}
+
+	/** Get Gross Price.
+		@return Gross Price	  */
+	public BigDecimal getGrossPrice () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_GrossPrice);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
@@ -412,6 +609,23 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return bd;
 	}
 
+	/** Set GST %.
+		@param GSTRate GST %	  */
+	public void setGSTRate (BigDecimal GSTRate)
+	{
+		set_ValueNoCheck (COLUMNNAME_GSTRate, GSTRate);
+	}
+
+	/** Get GST %.
+		@return GST %	  */
+	public BigDecimal getGSTRate () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_GSTRate);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Has Balance.
 		@param HasBalance 
 		Permit Sales / Non Permit Sales
@@ -453,6 +667,42 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_InvoiceNo);
 	}
 
+	/** Set 2nd Inovice No.
+		@param InvoiceNo2 2nd Inovice No	  */
+	public void setInvoiceNo2 (String InvoiceNo2)
+	{
+		set_Value (COLUMNNAME_InvoiceNo2, InvoiceNo2);
+	}
+
+	/** Get 2nd Inovice No.
+		@return 2nd Inovice No	  */
+	public String getInvoiceNo2 () 
+	{
+		return (String)get_Value(COLUMNNAME_InvoiceNo2);
+	}
+
+	/** Actual Weight = AW */
+	public static final String INVOICETYPE_ActualWeight = "AW";
+	/** TP Weight = TW */
+	public static final String INVOICETYPE_TPWeight = "TW";
+	/** Set Invoice Type.
+		@param InvoiceType 
+		Actual Weight / TP Weight
+	  */
+	public void setInvoiceType (String InvoiceType)
+	{
+
+		set_Value (COLUMNNAME_InvoiceType, InvoiceType);
+	}
+
+	/** Get Invoice Type.
+		@return Actual Weight / TP Weight
+	  */
+	public String getInvoiceType () 
+	{
+		return (String)get_Value(COLUMNNAME_InvoiceType);
+	}
+
 	/** Set Manual.
 		@param IsManual 
 		This is a manual process
@@ -489,6 +739,117 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public boolean isPermitSales () 
 	{
 		Object oo = get_Value(COLUMNNAME_IsPermitSales);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Price Confidential.
+		@param IsPriceConfidential Price Confidential	  */
+	public void setIsPriceConfidential (boolean IsPriceConfidential)
+	{
+		set_Value (COLUMNNAME_IsPriceConfidential, Boolean.valueOf(IsPriceConfidential));
+	}
+
+	/** Get Price Confidential.
+		@return Price Confidential	  */
+	public boolean isPriceConfidential () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsPriceConfidential);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Freight Inclusive.
+		@param IsRentInclusive 
+		Whether Unit Price includes rent?
+	  */
+	public void setIsRentInclusive (boolean IsRentInclusive)
+	{
+		set_Value (COLUMNNAME_IsRentInclusive, Boolean.valueOf(IsRentInclusive));
+	}
+
+	/** Get Freight Inclusive.
+		@return Whether Unit Price includes rent?
+	  */
+	public boolean isRentInclusive () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsRentInclusive);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Royalty Pass Inclusive.
+		@param IsRoyaltyPassInclusive Royalty Pass Inclusive	  */
+	public void setIsRoyaltyPassInclusive (boolean IsRoyaltyPassInclusive)
+	{
+		set_Value (COLUMNNAME_IsRoyaltyPassInclusive, Boolean.valueOf(IsRoyaltyPassInclusive));
+	}
+
+	/** Get Royalty Pass Inclusive.
+		@return Royalty Pass Inclusive	  */
+	public boolean isRoyaltyPassInclusive () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsRoyaltyPassInclusive);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Secondary.
+		@param IsSecondary Secondary	  */
+	public void setIsSecondary (boolean IsSecondary)
+	{
+		set_Value (COLUMNNAME_IsSecondary, Boolean.valueOf(IsSecondary));
+	}
+
+	/** Get Secondary.
+		@return Secondary	  */
+	public boolean isSecondary () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsSecondary);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Price includes Tax.
+		@param IsTaxIncluded 
+		Tax is included in the price 
+	  */
+	public void setIsTaxIncluded (boolean IsTaxIncluded)
+	{
+		set_Value (COLUMNNAME_IsTaxIncluded, Boolean.valueOf(IsTaxIncluded));
+	}
+
+	/** Get Price includes Tax.
+		@return Tax is included in the price 
+	  */
+	public boolean isTaxIncluded () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsTaxIncluded);
 		if (oo != null) 
 		{
 			 if (oo instanceof Boolean) 
@@ -591,6 +952,20 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public String getMDPNo () 
 	{
 		return (String)get_Value(COLUMNNAME_MDPNo);
+	}
+
+	/** Set ML No.
+		@param MLNo ML No	  */
+	public void setMLNo (String MLNo)
+	{
+		set_Value (COLUMNNAME_MLNo, MLNo);
+	}
+
+	/** Get ML No.
+		@return ML No	  */
+	public String getMLNo () 
+	{
+		return (String)get_Value(COLUMNNAME_MLNo);
 	}
 
 	/** Set Net Weight (Kg).
@@ -713,7 +1088,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String PAYMENTRULE_DirectDeposit = "T";
 	/** Check = S */
 	public static final String PAYMENTRULE_Check = "S";
-	/** Credit = P */
+	/** On Credit = P */
 	public static final String PAYMENTRULE_OnCredit = "P";
 	/** Direct Debit = D */
 	public static final String PAYMENTRULE_DirectDebit = "D";
@@ -739,15 +1114,15 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_PaymentRule);
 	}
 
-	/** Set Permit Issued Qty.
-		@param PermitIssuedQty Permit Issued Qty	  */
+	/** Set TP Weight.
+		@param PermitIssuedQty TP Weight	  */
 	public void setPermitIssuedQty (BigDecimal PermitIssuedQty)
 	{
 		set_Value (COLUMNNAME_PermitIssuedQty, PermitIssuedQty);
 	}
 
-	/** Get Permit Issued Qty.
-		@return Permit Issued Qty	  */
+	/** Get TP Weight.
+		@return TP Weight	  */
 	public BigDecimal getPermitIssuedQty () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_PermitIssuedQty);
@@ -790,6 +1165,20 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_Phone);
 	}
 
+	/** Set PIT No.
+		@param PITNo PIT No	  */
+	public void setPITNo (String PITNo)
+	{
+		set_Value (COLUMNNAME_PITNo, PITNo);
+	}
+
+	/** Get PIT No.
+		@return PIT No	  */
+	public String getPITNo () 
+	{
+		return (String)get_Value(COLUMNNAME_PITNo);
+	}
+
 	/** Set Price.
 		@param Price 
 		Price
@@ -808,6 +1197,33 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set Primary Document No.
+		@param PrimaryDocumentNo Primary Document No	  */
+	public void setPrimaryDocumentNo (String PrimaryDocumentNo)
+	{
+		set_Value (COLUMNNAME_PrimaryDocumentNo, PrimaryDocumentNo);
+	}
+
+	/** Get Primary Document No.
+		@return Primary Document No	  */
+	public String getPrimaryDocumentNo () 
+	{
+		return (String)get_Value(COLUMNNAME_PrimaryDocumentNo);
+	}
+
+	/** Set PrimaryDocumentNo2.
+		@param PrimaryDocumentNo2 PrimaryDocumentNo2	  */
+	public void setPrimaryDocumentNo2 (String PrimaryDocumentNo2)
+	{
+		throw new IllegalArgumentException ("PrimaryDocumentNo2 is virtual column");	}
+
+	/** Get PrimaryDocumentNo2.
+		@return PrimaryDocumentNo2	  */
+	public String getPrimaryDocumentNo2 () 
+	{
+		return (String)get_Value(COLUMNNAME_PrimaryDocumentNo2);
 	}
 
 	/** Set Processed.
@@ -868,9 +1284,37 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return bd;
 	}
 
+	/** Set TP No.
+		@param RoyaltyNo TP No	  */
+	public void setRoyaltyNo (String RoyaltyNo)
+	{
+		set_Value (COLUMNNAME_RoyaltyNo, RoyaltyNo);
+	}
+
+	/** Get TP No.
+		@return TP No	  */
+	public String getRoyaltyNo () 
+	{
+		return (String)get_Value(COLUMNNAME_RoyaltyNo);
+	}
+
+	/** Set Shipment To.
+		@param ShipmentTo Shipment To	  */
+	public void setShipmentTo (String ShipmentTo)
+	{
+		set_Value (COLUMNNAME_ShipmentTo, ShipmentTo);
+	}
+
+	/** Get Shipment To.
+		@return Shipment To	  */
+	public String getShipmentTo () 
+	{
+		return (String)get_Value(COLUMNNAME_ShipmentTo);
+	}
+
 	/** In Progress = IP */
 	public static final String STATUS_InProgress = "IP";
-	/** Completed = CO */
+	/** Unbilled = CO */
 	public static final String STATUS_Unbilled = "CO";
 	/** Billed = CL */
 	public static final String STATUS_Billed = "CL";
@@ -878,6 +1322,8 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String STATUS_Voided = "VO";
 	/** Under Review = UR */
 	public static final String STATUS_UnderReview = "UR";
+	/** Primary DC void = PV */
+	public static final String STATUS_PrimaryDCVoid = "PV";
 	/** Set Status.
 		@param Status 
 		Status of the currently running check
@@ -1019,6 +1465,81 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public int getTF_Destination_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Destination_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_DispensePlanLine getTF_DispensePlanLine() throws RuntimeException
+    {
+		return (I_TF_DispensePlanLine)MTable.get(getCtx(), I_TF_DispensePlanLine.Table_Name)
+			.getPO(getTF_DispensePlanLine_ID(), get_TrxName());	}
+
+	/** Set Dispatch Plan Line.
+		@param TF_DispensePlanLine_ID Dispatch Plan Line	  */
+	public void setTF_DispensePlanLine_ID (int TF_DispensePlanLine_ID)
+	{
+		if (TF_DispensePlanLine_ID < 1) 
+			set_Value (COLUMNNAME_TF_DispensePlanLine_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_DispensePlanLine_ID, Integer.valueOf(TF_DispensePlanLine_ID));
+	}
+
+	/** Get Dispatch Plan Line.
+		@return Dispatch Plan Line	  */
+	public int getTF_DispensePlanLine_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_DispensePlanLine_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_LumpSumRent_Config getTF_LumpSumRent_Config() throws RuntimeException
+    {
+		return (I_TF_LumpSumRent_Config)MTable.get(getCtx(), I_TF_LumpSumRent_Config.Table_Name)
+			.getPO(getTF_LumpSumRent_Config_ID(), get_TrxName());	}
+
+	/** Set TF_LumpSumRent_Config.
+		@param TF_LumpSumRent_Config_ID TF_LumpSumRent_Config	  */
+	public void setTF_LumpSumRent_Config_ID (int TF_LumpSumRent_Config_ID)
+	{
+		if (TF_LumpSumRent_Config_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_LumpSumRent_Config_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_LumpSumRent_Config_ID, Integer.valueOf(TF_LumpSumRent_Config_ID));
+	}
+
+	/** Get TF_LumpSumRent_Config.
+		@return TF_LumpSumRent_Config	  */
+	public int getTF_LumpSumRent_Config_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_LumpSumRent_Config_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_PriceListUOM getTF_PriceListUOM() throws RuntimeException
+    {
+		return (I_TF_PriceListUOM)MTable.get(getCtx(), I_TF_PriceListUOM.Table_Name)
+			.getPO(getTF_PriceListUOM_ID(), get_TrxName());	}
+
+	/** Set Price List by UOM.
+		@param TF_PriceListUOM_ID Price List by UOM	  */
+	public void setTF_PriceListUOM_ID (int TF_PriceListUOM_ID)
+	{
+		if (TF_PriceListUOM_ID < 1) 
+			set_Value (COLUMNNAME_TF_PriceListUOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_PriceListUOM_ID, Integer.valueOf(TF_PriceListUOM_ID));
+	}
+
+	/** Get Price List by UOM.
+		@return Price List by UOM	  */
+	public int getTF_PriceListUOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_PriceListUOM_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -1179,6 +1700,31 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_TF_WeighmentEntry_UU);
 	}
 
+	public I_TF_WeighmentEntry getTF_WeighmentEntryPrimary() throws RuntimeException
+    {
+		return (I_TF_WeighmentEntry)MTable.get(getCtx(), I_TF_WeighmentEntry.Table_Name)
+			.getPO(getTF_WeighmentEntryPrimary_ID(), get_TrxName());	}
+
+	/** Set Primary Weighment Entry.
+		@param TF_WeighmentEntryPrimary_ID Primary Weighment Entry	  */
+	public void setTF_WeighmentEntryPrimary_ID (int TF_WeighmentEntryPrimary_ID)
+	{
+		if (TF_WeighmentEntryPrimary_ID < 1) 
+			set_Value (COLUMNNAME_TF_WeighmentEntryPrimary_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_WeighmentEntryPrimary_ID, Integer.valueOf(TF_WeighmentEntryPrimary_ID));
+	}
+
+	/** Get Primary Weighment Entry.
+		@return Primary Weighment Entry	  */
+	public int getTF_WeighmentEntryPrimary_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_WeighmentEntryPrimary_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Total Amount.
 		@param TotalAmt 
 		Total Amount
@@ -1199,20 +1745,10 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return bd;
 	}
 
-	/** Set Transporter.
-		@param Transporter Transporter	  */
-	public void setTransporter (String Transporter)
-	{
-		set_ValueNoCheck (COLUMNNAME_Transporter, Transporter);
-	}
-
-	/** Get Transporter.
-		@return Transporter	  */
-	public String getTransporter () 
-	{
-		return (String)get_Value(COLUMNNAME_Transporter);
-	}
-
+	public org.compiere.model.I_C_BPartner getTransporter() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_Name)
+			.getPO(getTransporter_ID(), get_TrxName());	}
 
 	/** Set Transporter.
 		@param Transporter_ID Transporter	  */
@@ -1268,9 +1804,9 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String WEIGHMENTENTRYTYPE_Input = "2PO";
 	/** Own Production Receipt = 3PR */
 	public static final String WEIGHMENTENTRYTYPE_OwnProductionReceipt = "3PR";
-	/** Quary to Crusher = 4SR */
-	public static final String WEIGHMENTENTRYTYPE_QuaryToCrusher = "4SR";
-	/** Stockyard to Crusher = 5KA */
+	/** Subcontract Production Receipt = 4SR */
+	public static final String WEIGHMENTENTRYTYPE_SubcontractProductionReceipt = "4SR";
+	/** Stock to Crusher = 5KA */
 	public static final String WEIGHMENTENTRYTYPE_StockToCrusher = "5KA";
 	/** Other Purchase = 8OP */
 	public static final String WEIGHMENTENTRYTYPE_OtherPurchase = "8OP";

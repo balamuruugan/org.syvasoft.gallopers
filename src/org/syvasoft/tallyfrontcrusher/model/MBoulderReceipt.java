@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.time.chrono.MinguoChronology;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -13,6 +14,8 @@ import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClient;
 import org.compiere.model.MCostDetail;
+import org.compiere.model.MInOut;
+import org.compiere.model.MInOutLine;
 import org.compiere.model.MInventory;
 import org.compiere.model.MInventoryLine;
 import org.compiere.model.MInvoice;
@@ -191,7 +194,6 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		invoice.setC_DocTypeTarget_ID(config.getTransporterInvoiceDocType_ID());	// AP Invoice		
 		invoice.setDateInvoiced(getDateReceipt());
 		invoice.setDateAcct(getDateAcct());
-		invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
 		//
@@ -266,7 +268,6 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		invoice.setDateAcct(getDateAcct());
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
-		invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
 		//
 		
 		invoice.setBPartner(bp);
@@ -310,11 +311,8 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		setSubcon2_Invoice_ID(invoice.getC_Invoice_ID());
 	}
 	
-	public String processIt(String DocAction) {
-		MWeighmentEntry entry = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
-		if(entry.getWeighmentEntryType().equals(MWeighmentEntry.WEIGHMENTENTRYTYPE_StockToCrusher))
-				return null;
 		
+	public String processIt(String DocAction) {
 		String m_processMsg = null;
 		TF_MProject proj = new TF_MProject(getCtx(), getC_Project_ID(), get_TrxName());		
 		if(MBoulderReceipt.DOCACTION_Prepare.equals(DocAction)) {
@@ -324,19 +322,21 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 			
 			MWarehouse warehouse = MWarehouse.get(getCtx(), getM_Warehouse_ID());
 			int defaultLocatorID = warehouse.getDefaultLocator().getM_Locator_ID();
-			
+			createSubcontractMovement();
 			if(getTF_Send_To().equals(TF_SEND_TO_SubcontractProduction)) {
-				createSubcontractMovement();						
+										
 				// to check Requires Consolidate Invoice				
 				if(!proj.isRequiredConsolidateInv())							
 					createSubcontractInvoice();
+				else
+					createSubcontractServiceReceipt();
 			
 				setDocStatus(DOCSTATUS_Completed);
 				setProcessed(true);
 				return null;
 			}
 			else if(getC_Project_ID() == 0) {
-				createSubcontractMovement();
+				
 				createInternalUseInventory();
 			}
 			else {
@@ -372,75 +372,22 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 				
 					setM_Transaction_ID(mtrx.getM_Transaction_ID());
 				}
-				/*
-				//Posting GL journal for Jobwork expense 
-				MJournal j = new MJournal(getCtx(), 0, get_TrxName());
-				j.setAD_Org_ID(getAD_Org_ID());
-				j.setDescription("Generated Jobwork Expense Journal Entry from Boulder Receipt - " + getDocumentNo());
-				j.setC_AcctSchema_ID(as.getC_AcctSchema_ID());
-				//j.setC_Currency_ID(Env.getContextAsInt(getCtx(), "$C_Currency_ID"));
-				j.setC_Currency_ID(MClient.get(Env.getCtx()).getC_Currency_ID());
-				j.setPostingType(MJournal.POSTINGTYPE_Actual);
-				j.setC_DocType_ID(1000000);
-				j.setDateDoc(getDateAcct());
-				j.setDateAcct(getDateAcct());
-				j.setDocStatus(DOCSTATUS_Drafted);
-				MPeriod period = MPeriod.get(getCtx(), getDateAcct());
-				j.setC_Period_ID(period.getC_Period_ID());
-				j.setGL_Category_ID(1000000);
-				j.setC_ConversionType_ID(114);
-				j.saveEx();
-				
-				BigDecimal amount = getQtyReceived().multiply(getJobwork_StdPrice());
-				
-				//Jobwork Expense
-				MJournalLine jl = new MJournalLine(j);
-				jl.setLine(10);			
-				jl.setAccount_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getJobworkExpenseAcct_ID());
-				jl.setC_BPartner_ID(getSubcontractor_ID());
-				jl.setM_Product_ID(getJobWork_Product_ID());			
-				jl.setUser1_ID(getTF_Quarry().getC_ElementValue_ID()); // Quarry Profit Center
-				jl.setAmtSourceDr(amount);
-				jl.setAmtAcctDr(amount);
-				jl.setIsGenerated(true);
-				jl.saveEx();
-				
-				//Jobwork Payable Clearing
-				jl = new MJournalLine(j);
-				jl.setLine(20);			
-				jl.setAccount_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getJobworkPayableClearingAcct_ID());
-				jl.setC_BPartner_ID(getSubcontractor_ID());
-				jl.setM_Product_ID(getJobWork_Product_ID());			
-				jl.setUser1_ID(getTF_Quarry().getC_ElementValue_ID()); // Quarry Profit Center
-				jl.setAmtSourceCr(amount);
-				jl.setAmtAcctCr(amount);
-				jl.setIsGenerated(true);
-				jl.saveEx();
-				
-				j.processIt(MJournal.ACTION_Complete);
-				j.saveEx();
-				setJobwork_Journal_ID(j.getGL_Journal_ID());		
-				
-				 */
-				
+			
 				// to check Requires Consolidate Invoice	
 				if(!proj.isRequiredConsolidateInv())				
 					createSubcontractInvoice();
+				else
+					createSubcontractServiceReceipt();
 			}
 			
 			setDocStatus(DOCSTATUS_Completed);
 			setProcessed(true);
 			
-			createSubcontractMovement();
-			
-			entry.setStatus(MWeighmentEntry.STATUS_Billed);
-			entry.setProcessed(true);
-			entry.saveEx();	
-			
 			if(TF_SEND_TO_Production.equals(getTF_Send_To())) {
 				m_processMsg = postCrusherProduction();
 			}			
 			
+			createTransportMaterialReceipt();
 			return m_processMsg;
 				
 		}	
@@ -540,10 +487,7 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 			rent.deleteEx(true);
 		}
 		MBoulderMovement.deleteBoulderMovement(getTF_WeighmentEntry_ID(), get_TrxName());
-		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
-		we.setProcessed(false);
-		we.setStatus(MWeighmentEntry.STATUS_Unbilled);
-		we.saveEx();
+		reverseServiceReceipts();
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);		
 	}
@@ -716,4 +660,283 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		//End Update
 		
 	}
+
+	public void createSubcontractServiceReceipt() {
+		TF_MProject proj = new TF_MProject(getCtx(), getC_Project_ID(), get_TrxName());
+		MSubcontractType st = new MSubcontractType(getCtx(), proj.getTF_SubcontractType_ID(), get_TrxName());
+		if(!st.isCreateBoulderReceipt())
+			return;
+		int invoiceItem_id = 0;
+		int priceItem_id = 0;
+		String priceItemName = null;
+		
+
+		invoiceItem_id = getJobWork_Product_ID();
+		
+		priceItem_id = getJobWork_Product_ID();
+		priceItemName = getJobWork_Product().getName();
+		
+		
+		//Subcontract Purchase Price		
+		BigDecimal purchasePrice = MJobworkProductPrice.getPrice(getCtx(), getC_Project_ID(), priceItem_id, getDateAcct()) ;
+		if(purchasePrice == null) 
+			throw new AdempiereException("Please setup Contract Price for " + priceItemName + "!");
+		
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), proj.getC_BPartner_ID(), get_TrxName());
+		
+		//Service Receipt Header		
+		TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
+		inout.materialReceipt = false;
+		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
+		inout.setIsSOTrx(false);
+		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
+		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
+		inout.setDateAcct(getDateAcct());		
+		inout.setC_BPartner_ID(bp.getC_BPartner_ID());
+		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
+		inout.setAD_User_ID(bp.getAD_User_ID());
+		inout.setM_Warehouse_ID(getM_Warehouse_ID());
+		inout.setPriorityRule(TF_MInOut.PRIORITYRULE_Medium);
+		inout.setFreightCostRule(TF_MInOut.FREIGHTCOSTRULE_FreightIncluded);
+		inout.saveEx(get_TrxName());
+		
+		//Material Receipt Line
+		MInOutLine ioLine = new MInOutLine(inout);
+		MWarehouse wh = (MWarehouse) getM_Warehouse();
+		
+		ioLine.setLine(10);
+		ioLine.setM_Product_ID(invoiceItem_id);
+		ioLine.setM_Locator_ID(wh.getDefaultLocator().get_ID());
+		
+		BigDecimal qty = getQtyReceived();		 
+		
+		ioLine.setQty(qty);
+		ioLine.setC_UOM_ID(getC_UOM_ID());
+		ioLine.set_ValueOfColumn("Price", purchasePrice);				
+		ioLine.saveEx(get_TrxName());
+		
+		//Material Receipt DocAction
+		if (!inout.processIt(DocAction.ACTION_Complete))
+			throw new AdempiereException("Failed when processing document - " + inout.getProcessMsg());
+		
+		inout.saveEx();
+		
+		
+		if(proj.getC_BPartnerSubcon2_ID() > 0) {
+			CreateSubcontract2ServiceReceipt(proj.getC_BPartnerSubcon2_ID(), proj.getM_ProductSubcon2_ID(), proj.getPriceSubcon2());
+		}
+		
+		createTransportMaterialReceipt();
+	}
+	
+	public void CreateSubcontract2ServiceReceipt(int C_BPartnerSubcon2_ID, int M_ProductSubcon2_ID, BigDecimal priceSubcon2) {
+		if(M_ProductSubcon2_ID == 0)
+			throw new AdempiereException("Please specify Product (Subcontract 2) in " + getC_Project().getName() +
+					" Subcontract to Create Subcontract 2 Invoice!");
+		
+		if(priceSubcon2 == null || priceSubcon2.doubleValue() == 0)
+			throw new AdempiereException("Please specify Contract Price (Subcontract 2) in " + getC_Project().getName() +
+					" Subcontract to Create Subcontract 2 Invoice!");
+		
+		int invoiceItem_id = M_ProductSubcon2_ID;
+		
+		//2nd subcontractor Purchase		
+		BigDecimal purchasePrice = priceSubcon2;		
+		
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), C_BPartnerSubcon2_ID, get_TrxName());
+		
+		//Service Receipt Header		
+		TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
+		inout.materialReceipt = false;
+		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
+		inout.setIsSOTrx(false);
+		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
+		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
+		inout.setDateAcct(getDateAcct());		
+		inout.setC_BPartner_ID(bp.getC_BPartner_ID());
+		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
+		inout.setAD_User_ID(bp.getAD_User_ID());
+		inout.setM_Warehouse_ID(getM_Warehouse_ID());
+		inout.setPriorityRule(TF_MInOut.PRIORITYRULE_Medium);
+		inout.setFreightCostRule(TF_MInOut.FREIGHTCOSTRULE_FreightIncluded);
+		inout.saveEx(get_TrxName());
+		
+		//Material Receipt Line
+		TF_MInOutLine ioLine = new TF_MInOutLine(inout);
+		MWarehouse wh = (MWarehouse) getM_Warehouse();
+		
+		ioLine.setLine(10);
+		ioLine.setM_Product_ID(invoiceItem_id);
+		ioLine.setM_Locator_ID(wh.getDefaultLocator().get_ID());
+		
+		BigDecimal qty = getQtyReceived();		 
+		
+		ioLine.setQty(qty);
+		ioLine.setC_UOM_ID(getC_UOM_ID());
+		ioLine.set_ValueOfColumn("Price", purchasePrice);
+		if(getC_Project_ID() > 0) {
+			TF_MProject proj = new TF_MProject(getCtx(), getC_Project_ID(), get_TrxName());
+			ioLine.setC_Tax_ID(proj.getC_Tax_ID());
+		}
+		ioLine.set_ValueOfColumn("DocStatus", "CO");
+		ioLine.saveEx(get_TrxName());
+		
+		//Material Receipt DocAction
+		if (!inout.processIt(DocAction.ACTION_Complete))
+			throw new AdempiereException("Failed when processing document - " + inout.getProcessMsg());
+		
+		inout.saveEx();
+	
+	}
+
+	public void createTransportMaterialReceipt() {
+		
+		
+		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+				
+		if(we.getTF_RentedVehicle_ID() == 0)
+			return;
+		
+		MRentedVehicle rv = new MRentedVehicle(getCtx(), we.getTF_RentedVehicle_ID(), get_TrxName());
+		if(rv.isOwnVehicle() || !rv.isTransporter())
+			return;
+		
+		//Don't Create Material Receipt for the same Transporter
+		//It stops the recursive loop
+		if(rv.getC_BPartner_ID() == getSubcontractor_ID())
+			return;
+		
+				
+		MDestination dest = new MDestination(getCtx(), we.getTF_Destination_ID(), get_TrxName());
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), rv.getC_BPartner_ID(), get_TrxName());
+		
+		TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
+		inout.materialReceipt = false;
+		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
+		inout.setIsSOTrx(false);
+		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
+		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
+		inout.setDateAcct(getDateAcct());		
+		inout.setC_BPartner_ID(rv.getC_BPartner_ID());
+		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
+		inout.setAD_User_ID(bp.getAD_User_ID());
+		inout.setM_Warehouse_ID(getM_Warehouse_ID());
+		inout.setPriorityRule(TF_MInOut.PRIORITYRULE_Medium);
+		inout.setFreightCostRule(TF_MInOut.FREIGHTCOSTRULE_FreightIncluded);
+		inout.saveEx(get_TrxName());
+		
+		//Material Receipt Line
+		TF_MInOutLine ioLine = new TF_MInOutLine(inout);
+		MWarehouse wh = (MWarehouse) getM_Warehouse();
+		
+		ioLine.setLine(10);
+		ioLine.setM_Product_ID(rv.getM_Product_ID());
+		ioLine.setM_Locator_ID(wh.getDefaultLocator().get_ID());
+			
+		
+		BigDecimal qty = BigDecimal.ZERO;
+		BigDecimal price = BigDecimal.ZERO;		
+		
+		int Vendor_ID = rv.getC_BPartner_ID();
+		
+		MLumpSumRentConfig lumpsumConfig = MLumpSumRentConfig.getFreightConfig(getCtx(), we.getAD_Org_ID(), Vendor_ID, we.getC_BPartner_ID(), we.getM_Product_ID(), 
+				we.getTF_Destination_ID(), we.getTF_VehicleType_ID(), dest.getDistance(), get_TrxName());
+				
+		int Load_UOM_ID = MSysConfig.getIntValue("LOAD_UOM", 1000072, we.getAD_Client_ID());
+		int KM_UOM_ID = MSysConfig.getIntValue("KM_UOM", 1000071, we.getAD_Client_ID());
+		int MT_KM_UOM_ID = MSysConfig.getIntValue("MT_KM_UOM", 1000071, we.getAD_Client_ID());
+		int Rent_UOM_ID = 0;
+		int TF_LumpSumRentConfig_ID = 0;
+		BigDecimal RentMargin = BigDecimal.ZERO;		
+		BigDecimal distance = dest.getDistance();
+							
+						
+		BigDecimal RateMTKM = BigDecimal.ZERO;				
+		
+		
+		if(lumpsumConfig != null) {
+			//ioLine.set_ValueOfColumn("FreightRule", we.getFreightRule());
+			price = lumpsumConfig.getCustomerFreightPrice(we.getC_BPartner_ID());
+			
+			if(lumpsumConfig.getC_UOM_ID() == Load_UOM_ID)
+			{
+				Rent_UOM_ID = Load_UOM_ID;
+				qty = BigDecimal.ONE;
+				
+			}
+			else if(lumpsumConfig.getC_UOM_ID() == KM_UOM_ID)
+			{
+				Rent_UOM_ID = KM_UOM_ID;
+				qty = dest.getDistance();									
+			}
+			else if(lumpsumConfig.getC_UOM_ID() == MT_KM_UOM_ID)
+			{
+				Rent_UOM_ID = MT_KM_UOM_ID;
+				qty = we.getMT();									
+				RateMTKM = price;
+			}
+			else
+			{
+				Rent_UOM_ID = lumpsumConfig.getC_UOM_ID();
+				qty = we.getNetWeightUnit();									
+			}
+			TF_LumpSumRentConfig_ID = lumpsumConfig.getTF_LumpSumRent_Config_ID();
+			RentMargin = (BigDecimal) lumpsumConfig.getCustomerFreightMargin(we.getC_BPartner_ID());
+			
+			we.setTF_LumpSumRent_Config_ID(TF_LumpSumRentConfig_ID);	
+			we.saveEx(get_TrxName());
+		}
+		else {
+			Rent_UOM_ID = Load_UOM_ID;
+			qty = BigDecimal.ONE;
+			price = BigDecimal.ZERO;
+		}
+		
+				 
+		
+		ioLine.setM_Product_ID(rv.getM_Product_ID());
+		ioLine.setC_UOM_ID(Rent_UOM_ID);
+		ioLine.setTF_Destination_ID(we.getTF_Destination_ID());
+		ioLine.setDistance(distance);
+		ioLine.setRateMTKM(RateMTKM);
+		ioLine.setQty(qty);
+		ioLine.set_ValueOfColumn("Price", price);
+		ioLine.setTF_LumpSumRent_Config_ID(TF_LumpSumRentConfig_ID);
+		ioLine.setRentMargin(RentMargin);
+		ioLine.setM_Locator_ID(qty);
+		ioLine.setDescription("Destination : " + dest.getName());		
+		ioLine.set_ValueOfColumn("DocStatus", MWeighmentEntry.STATUS_Unbilled);
+		//put transporter freight charge without margin.
+		if(TF_LumpSumRentConfig_ID > 0) {			
+			price = lumpsumConfig.getFreightPrice();			
+			ioLine.setC_Tax_ID(lumpsumConfig.getC_Tax_ID());
+			ioLine.setIsTaxIncluded(lumpsumConfig.isTaxIncluded());
+			ioLine.set_ValueOfColumn("TF_LumpSumRent_Config_ID", lumpsumConfig.getTF_LumpSumRent_Config_ID());
+		}		
+		ioLine.set_ValueOfColumn("DocStatus", "CO");
+		ioLine.saveEx(get_TrxName());
+		
+		
+		//Material Receipt DocAction
+		if (!inout.processIt(DocAction.ACTION_Complete))
+			throw new AdempiereException("Failed when processing document - " + inout.getProcessMsg());
+		
+		inout.saveEx();
+	}
+	
+	public void reverseServiceReceipts() {
+						
+		String whereClause = "TF_WeighmentEntry_ID = ? AND MovementType = ? AND DocStatus = 'CO'";
+		List<TF_MInOut> list = new Query(getCtx(), TF_MInOut.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_WeighmentEntry_ID(), MInOut.MOVEMENTTYPE_VendorReceipts)
+				.list();
+		for(TF_MInOut io : list) {
+			if(io.getDocStatus().equals(DOCSTATUS_Completed))
+				io.reverseCorrectIt();
+			io.saveEx();
+		}
+		
+	}
+	
 }

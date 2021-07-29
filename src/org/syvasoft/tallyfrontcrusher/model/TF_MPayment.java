@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.compiere.model.MDocType;
 import org.compiere.model.MDocTypeCounter;
 import org.compiere.model.MJournalLine;
 import org.compiere.model.MPayment;
@@ -62,6 +63,28 @@ public class TF_MPayment extends MPayment {
 	public String getCashType () 
 	{
 		return (String)get_Value(COLUMNNAME_CashType);
+	}
+	
+	/** Column name TF_WeighmentEntry_ID */
+    public static final String COLUMNNAME_TF_WeighmentEntry_ID = "TF_WeighmentEntry_ID";
+    /** Set Weighment Entry.
+	@param TF_WeighmentEntry_ID Weighment Entry	  */
+	public void setTF_WeighmentEntry_ID (int TF_WeighmentEntry_ID)
+	{
+		if (TF_WeighmentEntry_ID < 1) 
+			set_Value (COLUMNNAME_TF_WeighmentEntry_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_WeighmentEntry_ID, Integer.valueOf(TF_WeighmentEntry_ID));
+	}
+	
+	/** Get Weighment Entry.
+		@return Weighment Entry	  */
+	public int getTF_WeighmentEntry_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_WeighmentEntry_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 	
 	
@@ -717,6 +740,49 @@ public class TF_MPayment extends MPayment {
 		return ii.intValue();
 	}
 	
+    /** Column name TF_DebitCreditNote_ID */
+    public static final String COLUMNNAME_TF_DebitCreditNote_ID = "TF_DebitCreditNote_ID";
+	
+	/** Set TF_DebitCreditNote.
+	@param TF_DebitCreditNote_ID TF_DebitCreditNote	  */
+	public void setTF_DebitCreditNote_ID (int TF_DebitCreditNote_ID)
+	{
+		if (TF_DebitCreditNote_ID < 1) 
+			set_Value (COLUMNNAME_TF_DebitCreditNote_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_DebitCreditNote_ID, Integer.valueOf(TF_DebitCreditNote_ID));
+	}
+	
+	/** Get TF_DebitCreditNote.
+		@return TF_DebitCreditNote	  */
+	public int getTF_DebitCreditNote_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_DebitCreditNote_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
+		/** Set Amount.
+		@param Amount 
+		Amount in a defined currency
+	  */
+	public void setDiscountAmount2 (BigDecimal DiscountAmt2)
+	{
+		set_Value ("DiscountAmt2", DiscountAmt2);
+	}
+	
+	/** Get Amount.
+		@return Amount in a defined currency
+	  */
+	public BigDecimal getDiscountAmt2 () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value("DiscountAmt2");
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+		
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {
 		
@@ -793,6 +859,8 @@ public class TF_MPayment extends MPayment {
 			postAdvanceAdjustmentJournal();
 		if(getPM_Machinery_ID()>0)
 			createMachineryStatement();
+		createCreditNote();
+		
 		return msg;
 	}
 	@Override
@@ -801,12 +869,8 @@ public class TF_MPayment extends MPayment {
 			throw new AdempiereException("You cannot modify this entry before Reverse Correct Subcontractor Invoice!");
 		}
 		
-		//Subcontract / Job Work
-		//if(getC_Project_ID() > 0) {
-		//	MJobworkCharges.updateJobworkCharges(getCtx(), getC_Project_ID(), getC_Charge_ID(), getPayAmt().negate(), get_TrxName());
-		//}
-		
 		reverseAdvanceAdjustmentJournal();
+		reverseCreditNote();
 		
 		boolean ok = super.reverseCorrectIt();
 		ok = ok && reverseInterCashBookEntry();
@@ -1291,5 +1355,49 @@ public class TF_MPayment extends MPayment {
 		mStatement.setC_Payment_ID(getC_Payment_ID());
 		mStatement.saveEx();
 	}
+
+	
+	private void createCreditNote() {
+		if(getTF_WeighmentEntry_ID() == 0 || getDiscountAmt2().doubleValue() == 0)
+			return;
+		
+		String whereClause = "C_DocType.DocBaseType IN ('ARC','APC') AND IsSOTrx = ?";
+		MDocType dt = new Query(getCtx(), MDocType.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(isReceipt() ? "Y" : "N")
+				.first();
+		
+		MGLPostingConfig glConfig = MGLPostingConfig.getMGLPostingConfig(getCtx());
+		
+		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+		
+		MDebitCreditNote dc = new MDebitCreditNote(getCtx(), 0, get_TrxName());
+		dc.setAD_Org_ID(getAD_Org_ID());
+		dc.setDateAcct(getDateAcct());
+		dc.setC_DocType_ID(dt.getC_DocType_ID());
+		dc.setC_BPartner_ID(getC_BPartner_ID());
+		dc.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
+		dc.setC_ElementValue_ID(glConfig.getSalesDiscountAcct_ID());
+		dc.setAmount(getDiscountAmt2());
+		dc.setDescription("Discounted for " + we.getDocumentNo());
+		dc.saveEx();
+		
+		dc.processIt(DOCACTION_Complete);
+		dc.saveEx();
+		
+		setTF_DebitCreditNote_ID(dc.get_ID());
+	}
+	
+	private void reverseCreditNote() {
+		if(getTF_DebitCreditNote_ID() == 0)
+			return;
+		
+		MDebitCreditNote dc = new MDebitCreditNote(getCtx(), getTF_DebitCreditNote_ID(), get_TrxName());
+		dc.reverseIt();
+		dc.setDocumentNo(DOCSTATUS_Voided);
+		dc.setProcessed(true);
+		dc.saveEx();
+	}
+	
 		
 }

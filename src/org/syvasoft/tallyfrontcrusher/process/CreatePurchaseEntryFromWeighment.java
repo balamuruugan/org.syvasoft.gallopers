@@ -112,7 +112,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					BigDecimal price =BigDecimal.ZERO;
 					
 					MPriceListUOM pprice = MPriceListUOM.getPriceListUOM(getCtx(), wEntry.getM_Product_ID(),
-							ord.getItem1_UOM_ID(), bp.getC_BPartner_ID(), false, wEntry.getGrossWeightTime());
+							ord.getItem1_UOM_ID(), bp.getC_BPartner_ID(),0, false, wEntry.getGrossWeightTime());
 					if( pprice == null)
 						throw new AdempiereException("Please configure the Purchase Price!");
 					

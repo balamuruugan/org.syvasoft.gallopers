@@ -33,7 +33,7 @@ public class X_TF_PriceListUOM extends PO implements I_TF_PriceListUOM, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200101L;
+	private static final long serialVersionUID = 20210301L;
 
     /** Standard Constructor */
     public X_TF_PriceListUOM (Properties ctx, int TF_PriceListUOM_ID, String trxName)
@@ -43,6 +43,8 @@ public class X_TF_PriceListUOM extends PO implements I_TF_PriceListUOM, I_Persis
         {
 			setC_UOM_ID (0);
 			setIsRentInclusive (false);
+// N
+			setIsRoyaltyPassInclusive (false);
 // N
 			setIsSOTrx (false);
 			setIsTaxIncluded (false);
@@ -155,7 +157,7 @@ public class X_TF_PriceListUOM extends PO implements I_TF_PriceListUOM, I_Persis
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
-	/** Set Rent Inclusive.
+	/** Set Freight Inclusive.
 		@param IsRentInclusive 
 		Whether Unit Price includes rent?
 	  */
@@ -164,12 +166,33 @@ public class X_TF_PriceListUOM extends PO implements I_TF_PriceListUOM, I_Persis
 		set_Value (COLUMNNAME_IsRentInclusive, Boolean.valueOf(IsRentInclusive));
 	}
 
-	/** Get Rent Inclusive.
+	/** Get Freight Inclusive.
 		@return Whether Unit Price includes rent?
 	  */
 	public boolean isRentInclusive () 
 	{
 		Object oo = get_Value(COLUMNNAME_IsRentInclusive);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Royalty Pass Inclusive.
+		@param IsRoyaltyPassInclusive Royalty Pass Inclusive	  */
+	public void setIsRoyaltyPassInclusive (boolean IsRoyaltyPassInclusive)
+	{
+		set_Value (COLUMNNAME_IsRoyaltyPassInclusive, Boolean.valueOf(IsRoyaltyPassInclusive));
+	}
+
+	/** Get Royalty Pass Inclusive.
+		@return Royalty Pass Inclusive	  */
+	public boolean isRoyaltyPassInclusive () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsRoyaltyPassInclusive);
 		if (oo != null) 
 		{
 			 if (oo instanceof Boolean) 
@@ -307,6 +330,31 @@ public class X_TF_PriceListUOM extends PO implements I_TF_PriceListUOM, I_Persis
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	public I_TF_Destination getTF_Destination() throws RuntimeException
+    {
+		return (I_TF_Destination)MTable.get(getCtx(), I_TF_Destination.Table_Name)
+			.getPO(getTF_Destination_ID(), get_TrxName());	}
+
+	/** Set Destination.
+		@param TF_Destination_ID Destination	  */
+	public void setTF_Destination_ID (int TF_Destination_ID)
+	{
+		if (TF_Destination_ID < 1) 
+			set_Value (COLUMNNAME_TF_Destination_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_Destination_ID, Integer.valueOf(TF_Destination_ID));
+	}
+
+	/** Get Destination.
+		@return Destination	  */
+	public int getTF_Destination_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Destination_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Price List by UOM.

@@ -473,7 +473,7 @@ public class RequisitionPOCreate extends SvrProcess
 			m_orderLine.setProduct(product);
 			m_orderLine.setM_AttributeSetInstance_ID(rLine.getM_AttributeSetInstance_ID());
 			
-			MPriceListUOM priceUOM = MPriceListUOM.getPriceListUOM(getCtx(), product.getM_Product_ID(), rLine.getC_UOM_ID(), C_BPartner_ID, false, rLine.getDateRequired());
+			MPriceListUOM priceUOM = MPriceListUOM.getPriceListUOM(getCtx(), product.getM_Product_ID(), rLine.getC_UOM_ID(), C_BPartner_ID, 0, false, rLine.getDateRequired());
 			
 			if(priceUOM != null){
 				BigDecimal price = priceUOM.getPrice();

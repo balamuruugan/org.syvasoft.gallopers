@@ -51,21 +51,26 @@ import org.syvasoft.tallyfrontcrusher.model.MAdditionalTransactionSetup;
 import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MCashCounter;
 import org.syvasoft.tallyfrontcrusher.model.MCounterTransactionSetup;
+import org.syvasoft.tallyfrontcrusher.model.MFuelIssue;
 import org.syvasoft.tallyfrontcrusher.model.MGLPostingConfig;
 import org.syvasoft.tallyfrontcrusher.model.MJobworkItemIssue;
+import org.syvasoft.tallyfrontcrusher.model.MMachinery;
 import org.syvasoft.tallyfrontcrusher.model.MTyre;
 import org.syvasoft.tallyfrontcrusher.model.MVehicleType;
 import org.syvasoft.tallyfrontcrusher.model.MWeighmentEntry;
 import org.syvasoft.tallyfrontcrusher.model.TF_MBPartner;
 import org.syvasoft.tallyfrontcrusher.model.TF_MBankAccount;
 import org.syvasoft.tallyfrontcrusher.model.TF_MCharge;
+import org.syvasoft.tallyfrontcrusher.model.TF_MInOut;
+import org.syvasoft.tallyfrontcrusher.model.TF_MInOutLine;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInvoice;
 import org.syvasoft.tallyfrontcrusher.model.TF_MJournal;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrderLine;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrg;
 import org.syvasoft.tallyfrontcrusher.model.TF_MPayment;
-
+import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
+import org.syvasoft.tallyfrontcrusher.model.TF_MProductCategory;
 
 public class CrusherEventHandler extends AbstractEventHandler {
 
@@ -74,6 +79,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 	protected void initialize() {
 		//Document Events
 		registerTableEvent(IEventTopics.DOC_AFTER_COMPLETE, TF_MInvoice.Table_Name);
+		registerTableEvent(IEventTopics.DOC_AFTER_COMPLETE, MInOut.Table_Name);
 		registerTableEvent(IEventTopics.DOC_AFTER_REVERSECORRECT, TF_MInvoice.Table_Name);
 		registerTableEvent(IEventTopics.DOC_AFTER_COMPLETE, MOrder.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MOrder.Table_Name);
@@ -102,7 +108,9 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			int COA_ID = DB.getSQLValue(null, sql, Env.getAD_Client_ID(Env.getCtx()));
 			Env.setContext(Env.getCtx(), "#C_Element_ID", COA_ID);
 			TF_MOrg org = new TF_MOrg(Env.getCtx(), Env.getAD_Org_ID(Env.getCtx()), null);
-			Env.setContext(Env.getCtx(), "#OrgType", org.getOrgType());			
+			Env.setContext(Env.getCtx(), "#OrgType", org.getOrgType());
+			MUser user = new MUser(Env.getCtx(),  Env.getAD_User_ID(Env.getCtx()), null);
+			Env.setContext(Env.getCtx(), "#C_BPartnerCustomer_ID", user.getC_BPartner_ID());
 			return;
 		}
 		
@@ -204,6 +212,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_TonePerBucket, oLine.getTonePerBucket());
 					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_BucketRate, oLine.getBucketRate());
 					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_TotalLoad, oLine.getTotalLoad());
+					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_TF_WeighmentEntry_ID, oLine.getTF_WeighmentEntry_ID() == 0 ? null : oLine.getTF_WeighmentEntry_ID());
 					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_TF_VehicleType_ID, oLine.getTF_VehicleType_ID() == 0 ? null : oLine.getTF_VehicleType_ID());
 				}
 			}
@@ -243,7 +252,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 						int M_Product_ID = ctransSetup.getCounterProduct_ID(ord.getAD_Org_ID(), src_Product_ID);					
 						ord.set_ValueOfColumn(TF_MOrder.COLUMNNAME_Item1_ID, M_Product_ID);					
 						MWarehouse wh = (MWarehouse) o.getM_Warehouse();
-						ord.set_ValueOfColumn(TF_MOrder.COLUMNNAME_M_Locator_ID, wh.getDefaultLocator().getM_Locator_ID());
+						//ord.set_ValueOfColumn(TF_MOrder.COLUMNNAME_M_Locator_ID, wh.getDefaultLocator().getM_Locator_ID());
 					}
 					
 					MOrder srcOrder = new MOrder(ord.getCtx(), ref_Order_ID, ord.get_TrxName());
@@ -277,7 +286,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					
 					oLine.setM_Product_ID(M_Product_ID);					
 					MWarehouse wh = (MWarehouse) o.getM_Warehouse();
-					oLine.set_ValueOfColumn(TF_MOrder.COLUMNNAME_M_Locator_ID, wh.getDefaultLocator().getM_Locator_ID());
+				//	oLine.set_ValueOfColumn(TF_MOrder.COLUMNNAME_M_Locator_ID, wh.getDefaultLocator().getM_Locator_ID());
 					
 					
 					oLine.setPriceActual(srcLine.getPriceActual());
@@ -402,8 +411,82 @@ public class CrusherEventHandler extends AbstractEventHandler {
 				ioLine.saveEx();
 			}
 		}
+		else if(po instanceof MInOut) {
+			MInOut inout = (MInOut) po;
+			
+			if(event.getTopic().equals(IEventTopics.DOC_AFTER_COMPLETE)) {
+				issueDiesel(inout);
+			}
+		}
+		else if(po.get_TableName().equals(MInOutLine.Table_Name)) {
+			
+			MInOutLine iLine = (MInOutLine) po;
+			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
+				if (iLine.getC_OrderLine_ID() > 0) {
+					TF_MOrderLine oLine = new TF_MOrderLine(Env.getCtx(), iLine.getC_OrderLine_ID(), iLine.get_TrxName());
+					
+					if(oLine.getPM_Machinery_ID() > 0) {
+						iLine.set_ValueOfColumn("PM_Machinery_ID", oLine.getPM_Machinery_ID());
+					}
+					if(oLine.getQtyIssued().doubleValue() > 0) {
+						iLine.set_ValueOfColumn("QtyIssued", oLine.getQtyIssued());
+					}
+				}
+			}
+		}
 	}
 	
+	private void issueDiesel(MInOut inout) {
+		
+		if(!inout.isSOTrx()) {
+			List<TF_MInOutLine> inoutlines = new Query(inout.getCtx(), TF_MInOutLine.Table_Name, "m_inout_id = " + inout.getM_InOut_ID(), inout.get_TrxName()).list();
+			
+			for (TF_MInOutLine inoutline : inoutlines)
+			{
+				if(inoutline.getPM_Machinery_ID() > 0 && inoutline.getQtyIssued().doubleValue() > 0) {
+					MFuelIssue issue = new MFuelIssue(inout.getCtx(), 0, inout.get_TrxName());
+					
+					issue.setDateAcct(inout.getDateAcct());
+					issue.setM_Warehouse_ID(Env.getContextAsInt(inout.getCtx(), "#M_Warehouse_ID"));
+					issue.setIssueType(MFuelIssue.ISSUETYPE_OwnExpense);
+					
+					issue.setM_Product_ID(inoutline.getM_Product_ID());
+					issue.setPM_Machinery_ID(inoutline.getPM_Machinery_ID());
+					
+					MMachinery machinery = new MMachinery(inout.getCtx(), inoutline.getPM_Machinery_ID(), null);				
+					issue.setVehicle_ID(machinery.getM_Product_ID());
+					
+					int Product_Category_ID = 0;
+					TF_MProduct prod=new TF_MProduct(inout.getCtx(), inoutline.getM_Product_ID(), null);
+					Product_Category_ID=prod.getM_Product_Category_ID();
+					TF_MProductCategory prodc=new TF_MProductCategory(inout.getCtx(), Product_Category_ID, null);
+					if(prodc!=null) {
+						issue.setAccount_ID(prodc.getSpareExpensesAcct_ID() > 0 ? prodc.getSpareExpensesAcct_ID() : null);
+					}
+					
+					BigDecimal amount = BigDecimal.ZERO;
+					if(inoutline.getQtyIssued().doubleValue() > 0 && inoutline.getPrice().doubleValue() > 0) {
+						amount = inoutline.getQtyIssued().multiply(inoutline.getPrice());
+					}	
+					
+					issue.setRate(inoutline.getPrice());
+					issue.setQty(inoutline.getQtyIssued());
+					issue.setIsCalculated(true);
+					issue.validateStock = false;
+					issue.setAmt(amount);
+					issue.setDocStatus(MFuelIssue.DOCSTATUS_Drafted);
+					issue.setM_InOut_ID(inoutline.getM_InOut_ID());
+					issue.saveEx();
+					issue.processIt(DocAction.ACTION_Complete);
+					issue.saveEx();
+					
+					inoutline.set_ValueNoCheck("TF_Fuel_Issue_ID", issue.getTF_Fuel_Issue_ID());
+					inoutline.saveEx();
+				}
+			}			
+		}
+	}
+
 	private void postJobworkExpenseVarianceJournal(MInvoice inv) {		
 		MInvoiceLine[] lines = inv.getLines();
 		
