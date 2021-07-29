@@ -1795,6 +1795,65 @@ public class TF_MOrder extends MOrder {
 		return false;
 	}
 
+	 /** Column name M_Product_Category_ID */
+    public static final String COLUMNNAME_M_Product_Category_ID = "M_Product_Category_ID";	
+	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException
+    {
+		return (org.compiere.model.I_M_Product_Category)MTable.get(getCtx(), org.compiere.model.I_M_Product_Category.Table_Name)
+			.getPO(getM_Product_Category_ID(), get_TrxName());	}
+
+	/** Set Product Category.
+		@param M_Product_Category_ID 
+		Category of a Product
+	  */
+	public void setM_Product_Category_ID (int M_Product_Category_ID)
+	{
+		if (M_Product_Category_ID < 1) 
+			set_Value (COLUMNNAME_M_Product_Category_ID, null);
+		else 
+			set_Value (COLUMNNAME_M_Product_Category_ID, Integer.valueOf(M_Product_Category_ID));
+	}
+
+	/** Get Product Category.
+		@return Category of a Product
+	  */
+	public int getM_Product_Category_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_M_Product_Category_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
+    /** Column name M_Locator_ID */	
+    public static final String COLUMNNAME_M_Locator_ID = "M_Locator_ID";
+	public org.compiere.model.I_M_Locator getM_Locator() throws RuntimeException
+    {
+		return (org.compiere.model.I_M_Locator)MTable.get(getCtx(), org.compiere.model.I_M_Locator.Table_Name)
+			.getPO(getM_Locator_ID(), get_TrxName());	}
+
+	/** Set Locator.
+		@param M_Locator_ID 
+		Warehouse Locator
+	  */
+	public void setM_Locator_ID (int M_Locator_ID)
+	{
+		if (M_Locator_ID < 1) 
+			set_Value (COLUMNNAME_M_Locator_ID, null);
+		else 
+			set_Value (COLUMNNAME_M_Locator_ID, Integer.valueOf(M_Locator_ID));
+	}
+
+	/** Get Locator.
+		@return Warehouse Locator
+	  */
+	public int getM_Locator_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_M_Locator_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 	
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {		
@@ -1968,6 +2027,9 @@ public class TF_MOrder extends MOrder {
 				|| is_ValueChanged(COLUMNNAME_Item1_Tax_ID)
 				|| is_ValueChanged(COLUMNNAME_Item1_TotalLoad) || is_ValueChanged(COLUMNNAME_Item1_VehicleType_ID)
 				|| is_ValueChanged(COLUMNNAME_Item1_SandType)
+				|| is_ValueChanged(COLUMNNAME_M_Warehouse_ID)
+				|| is_ValueChanged(COLUMNNAME_M_Locator_ID)
+				|| is_ValueChanged(COLUMNNAME_M_Product_Category_ID)
 				|| is_ValueChanged(COLUMNNAME_Item1_Price) || getItem1_C_OrderLine_ID() == 0)) {
 			
 			if(getItem1_C_OrderLine_ID() > 0) 
@@ -1997,7 +2059,11 @@ public class TF_MOrder extends MOrder {
 			ordLine.setBucketRate(getItem1_BucketRate());
 			ordLine.setDescription(getItem1_Desc());
 			ordLine.setTotalLoad(getItem1_TotalLoad());
-			ordLine.setTF_VehicleType_ID(getItem1_VehicleType_ID());			
+			ordLine.setTF_VehicleType_ID(getItem1_VehicleType_ID());
+			ordLine.set_ValueOfColumn("M_WarehouseNew_ID", getM_Warehouse_ID() == 0 ? null : getM_Warehouse_ID() );
+			ordLine.set_ValueOfColumn(COLUMNNAME_M_Locator_ID, getM_Locator_ID() == 0 ? null : getM_Locator_ID());
+			ordLine.set_ValueOfColumn(COLUMNNAME_M_Product_Category_ID, getM_Product_Category_ID() ==0 ? null : getM_Product_Category_ID());
+
 			ordLine.saveEx();
 			
 			//FIX: Set Bucket Rate based Total amount			
@@ -2308,11 +2374,12 @@ public class TF_MOrder extends MOrder {
 		String DocSubTypeSO = dt.getDocSubTypeSO();
 		
 		//POS Order's MR and Invoice should be reversed.
-		if(getC_DocType_ID() == 1000050 || getC_DocType_ID() == 1000041 ||  DocSubTypeSO.equals("IN") ||
+		if((!isSOTrx() && MDocType.DOCSUBTYPESO_POSOrder.equals(DocSubTypeSO)) ||
+				getC_DocType_ID() == 1000050 || getC_DocType_ID() == 1000041 || getC_DocType_ID() == getC_VendorInvoiceDocType_ID() ||
 				getC_DocType_ID() == GSTOrderDocType_ID(getCtx()) || getC_DocType_ID() == NonGSTOrderDocType_ID(getCtx())) {
 			//MR/Shipment reverse Correct
-			List<MInOut> inOutList = new Query(getCtx(), MInOut.Table_Name, "C_Order_ID=? AND DocStatus=? AND 'IN' != ?", get_TrxName())
-				.setClient_ID().setParameters(getC_Order_ID(),DOCSTATUS_Completed, DocSubTypeSO == null ? "" : DocSubTypeSO).list();
+			List<MInOut> inOutList = new Query(getCtx(), MInOut.Table_Name, "C_Order_ID=? AND DocStatus=? AND C_DocType_ID != ?", get_TrxName())
+				.setClient_ID().setParameters(getC_Order_ID(),DOCSTATUS_Completed, getC_VendorInvoiceDocType_ID()).list();
 			for(MInOut inout : inOutList) {
 				if(!inout.reverseCorrectIt())
 					return false;				
@@ -2470,6 +2537,7 @@ public class TF_MOrder extends MOrder {
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
 		//
 		invoice.setBPartner(bp);
+		invoice.setPaymentRule(PAYMENTRULE_OnCredit);
 		invoice.setIsSOTrx(false);		
 		
 		//Price List
@@ -3454,8 +3522,8 @@ public class TF_MOrder extends MOrder {
 	}
 	
 	public static int GSTOrderDocType_ID(Properties ctx) {
-		int DocType_ID = MSysConfig.getIntValue("GST_ORDER_ID", 1000063, Env.getAD_Client_ID(ctx));
-		//int DocType_ID = MSysConfig.getIntValue("NONGST_ORDER_ID", 1000062, Env.getAD_Client_ID(ctx));
+		//int DocType_ID = MSysConfig.getIntValue("GST_ORDER_ID", 1000063, Env.getAD_Client_ID(ctx));
+		int DocType_ID = MSysConfig.getIntValue("NONGST_ORDER_ID", 1000062, Env.getAD_Client_ID(ctx));
 		return DocType_ID;
 	}
 
@@ -3496,7 +3564,8 @@ public class TF_MOrder extends MOrder {
 		invoice.setC_PaymentTerm_ID(getC_PaymentTerm_ID());
 		//
 		
-		invoice.setBPartner(bp);				
+		invoice.setBPartner(bp);	
+		invoice.setOrder(this);
 		invoice.setVehicleNo(getVehicleNo());
 		invoice.setDescription(getDescription());
 		
@@ -3684,11 +3753,6 @@ public class TF_MOrder extends MOrder {
 		return list;
 	}
 	
-	public static int getC_VendorInvoiceDocType_ID() {
-		int DocType_ID = MSysConfig.getIntValue("VENDORINVOICE_ORDER_ID", 1000064, Env.getAD_Client_ID(Env.getCtx()));
-		return DocType_ID;
-	}
-	
 	public static int getC_TransporterInvoiceDocType_ID() {
 		int DocType_ID = MSysConfig.getIntValue("TRANSPORTER_INVOICE_ORDER_ID", 1000064, Env.getAD_Client_ID(Env.getCtx()));
 		return DocType_ID;
@@ -3699,8 +3763,13 @@ public class TF_MOrder extends MOrder {
 		return DocType_ID;
 	}
 	
+	public int getC_VendorInvoiceDocType_ID() {
+		int DocType_ID = MSysConfig.getIntValue("VENDORINVOICE_ORDER_ID", 1000061, Env.getAD_Client_ID(getCtx()));
+		return DocType_ID;
+	}
+	
 	public void createInvoiceVendor() {
-		if(isSOTrx())
+		if(getC_DocTypeTarget_ID() != getC_VendorInvoiceDocType_ID())
 			return;
 		
 		MDocType dt = (MDocType) getC_DocTypeTarget();
