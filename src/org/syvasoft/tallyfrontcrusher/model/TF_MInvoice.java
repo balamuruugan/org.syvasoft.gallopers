@@ -19,6 +19,7 @@ import org.adempiere.exceptions.DBException;
 import org.compiere.model.I_C_InvoiceLine;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MClient;
+import org.compiere.model.MDocType;
 import org.compiere.model.MInOutLine;
 import org.compiere.model.MInvoice;
 import org.compiere.model.MInvoiceLine;
@@ -29,6 +30,7 @@ import org.compiere.model.MPeriod;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MProduct;
 import org.compiere.model.MQuery;
+import org.compiere.model.MSequence;
 import org.compiere.model.MTable;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
@@ -424,22 +426,51 @@ public class TF_MInvoice extends MInvoice {
 		return ii.intValue();
 	}
 	
+	/** Column name Terms & Conditions */
+    public static final String COLUMNNAME_TermsAndCondition = "TermsAndCondition";
+    
+	public void setTermsAndCondition (String TermsAndCondition)
+	{
+		set_Value (COLUMNNAME_TermsAndCondition, TermsAndCondition);
+	}
+
+	public String getTermsAndCondition () 
+	{		
+		return (String)get_Value(COLUMNNAME_TermsAndCondition);
+	}
 	
 	
 	@Override
-	protected boolean beforeSave(boolean newRecord) {		
-		boolean result = super.beforeSave(newRecord);
+	protected boolean beforeSave(boolean newRecord) {				
 		MBPartner bp = MBPartner.get(getCtx(), getC_BPartner_ID());
-		String paymentRule = getPaymentRule();
 		setBPartner(bp);
-		setPaymentRule(paymentRule);
-		if(newRecord) {
+		if(newRecord) {			
 			if(getPaymentRule() == null)
 				setPaymentRule(PAYMENTRULE_OnCredit);
+			
+			String whereclause = " C_DocType_ID = ?";
+			MPrintDocSetup printdocSetup = new Query(getCtx(), MPrintDocSetup.Table_Name, whereclause, get_TrxName())
+					.setClient_ID().setParameters(getC_DocTypeTarget_ID()).first();
+			
+			if(printdocSetup != null) {
+				setTermsAndCondition(printdocSetup.getTermsConditions());
+			}
+			
+			if(getTF_WeighmentEntry_ID() > 0 && isSOTrx() && getDocumentNo() == null) {
+				MWeighmentEntry wentry = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+				
+				if(wentry.getC_DocTypeInvoice_ID() == getC_DocType_ID()) {
+						MSequence seq = new MSequence(getCtx(), wentry.getInvoiceSeq_Id(), get_TrxName());
+						String documentNo = MSequence.getDocumentNoFromSeq(seq, get_TrxName(), this);
+						setDocumentNo(documentNo);
+				}
+			}
 		}
+				
+		boolean result = super.beforeSave(newRecord);
 		return result;
 	}
-
+	
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {		
 		success = super.afterSave(newRecord, success);		
@@ -537,6 +568,7 @@ public class TF_MInvoice extends MInvoice {
 		completeWeighmentEntriesForConsolidateInvoice();
 		createCounterInvoice();
 		createMatchInvReceipts();
+		createMatchInvReceipts2();
 		
 		return msg;
 	}
@@ -888,6 +920,33 @@ public class TF_MInvoice extends MInvoice {
 		
 	}
 	
+	
+	public void createMatchInvReceipts2() {
+		if(getC_Order_ID() == 0)
+			return;
+		
+		String st = getC_Order().getC_DocTypeTarget().getDocSubTypeSO();
+		if(st!=null && !st.equals("IN"))
+			return;
+		
+		String whereClause = " C_OrderLine_ID = ? ";				
+				
+		for(MInvoiceLine invLine : getLines()) {
+			//if(!invLine.getM_Product().getProductType().equals(TF_MProduct.PRODUCTTYPE_Item))
+			//	continue;
+			List<TF_MInOutLine> ioLines = new Query(getCtx(), TF_MInOutLine.Table_Name, whereClause, get_TrxName())
+					.setClient_ID()
+					.setParameters(invLine.getC_OrderLine_ID())
+					.list();
+			for(MInOutLine ioLine : ioLines) {			
+				MMatchInv match = new MMatchInv (invLine, null, ioLine.getQtyEntered());
+				match.setM_InOutLine_ID(ioLine.getM_InOutLine_ID());
+				match.saveEx(get_TrxName());				
+			}
+		}
+		
+	}
+	
 	public void reverseConsolidateInvLineReceipts() {
 		if(getDateTo() == null || getDateFrom() == null || isSOTrx())
 			return;
@@ -896,6 +955,15 @@ public class TF_MInvoice extends MInvoice {
 	}
 	
 	public void completeWeighmentEntriesForConsolidateInvoice() {
+		//Standard Sales Order Invoice
+		if(getTF_WeighmentEntry_ID() > 0 && isSOTrx()) {
+			MWeighmentEntry wEntry = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+			if(wEntry.getC_Order_ID() == getC_Order_ID()) {
+				wEntry.close();
+				wEntry.saveEx();
+			}
+		}
+		
 		if(getTF_WeighmentEntry_ID() > 0 || isSOTrx())
 			return;
 		if(getDateTo() == null || getDateFrom() == null)
@@ -913,7 +981,16 @@ public class TF_MInvoice extends MInvoice {
 		}
 	}
 	
-	public void reverseConsolidateInvoice() {	
+	public void reverseConsolidateInvoice() {
+		//Standard Sales Order Invoice
+		if(getTF_WeighmentEntry_ID() > 0 && isSOTrx()) {
+			MWeighmentEntry wEntry = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+			if(wEntry.getC_Order_ID() == getC_Order_ID()) {
+				wEntry.reverse();
+				wEntry.saveEx();
+			}
+		}
+		
 		if(getTF_WeighmentEntry_ID() > 0 || isSOTrx())
 			return;
 		if(getDateTo() == null || getDateFrom() == null)

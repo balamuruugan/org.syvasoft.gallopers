@@ -91,7 +91,7 @@ public class CalloutOrder_WeighmentEntry implements IColumnCallout {
 			BigDecimal price = pp.getPriceStd();
 			
 			price = MPriceListUOM.getPrice(ctx, weighment.getM_Product_ID(), uom_id,
-					weighment.getC_BPartner_ID(), isSOTrx, weighment.getGrossWeightTime());
+					weighment.getC_BPartner_ID(),weighment.getTF_Destination_ID(), isSOTrx, weighment.getGrossWeightTime());
 			
 			if(weighment.getPrice() != null && weighment.getPrice().doubleValue() > 0)
 				price = weighment.getPrice();
@@ -153,7 +153,7 @@ public class CalloutOrder_WeighmentEntry implements IColumnCallout {
 					
 			}
 			
-			mTab.setValue(TF_MOrder.COLUMNNAME_OnAccount, false);
+			mTab.setValue(TF_MOrder.COLUMNNAME_OnAccount, weighment.isGST());
 			
 			mTab.setValue(TF_MOrder.COLUMNNAME_VehicleNo, weighment.getVehicleNo());
 			

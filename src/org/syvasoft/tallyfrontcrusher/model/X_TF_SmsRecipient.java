@@ -30,7 +30,7 @@ public class X_TF_SmsRecipient extends PO implements I_TF_SmsRecipient, I_Persis
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20191003L;
+	private static final long serialVersionUID = 20210519L;
 
     /** Standard Constructor */
     public X_TF_SmsRecipient (Properties ctx, int TF_SmsRecipient_ID, String trxName)
@@ -38,7 +38,6 @@ public class X_TF_SmsRecipient extends PO implements I_TF_SmsRecipient, I_Persis
       super (ctx, TF_SmsRecipient_ID, trxName);
       /** if (TF_SmsRecipient_ID == 0)
         {
-			setMobileNo (null);
 			setTF_SmsRecipient_ID (0);
         } */
     }
@@ -125,6 +124,20 @@ public class X_TF_SmsRecipient extends PO implements I_TF_SmsRecipient, I_Persis
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set WhatsApp Chat Id.
+		@param ChatId WhatsApp Chat Id	  */
+	public void setChatId (String ChatId)
+	{
+		set_Value (COLUMNNAME_ChatId, ChatId);
+	}
+
+	/** Get WhatsApp Chat Id.
+		@return WhatsApp Chat Id	  */
+	public String getChatId () 
+	{
+		return (String)get_Value(COLUMNNAME_ChatId);
 	}
 
 	/** Set Description.

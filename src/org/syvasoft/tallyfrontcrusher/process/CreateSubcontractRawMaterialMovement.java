@@ -25,90 +25,89 @@ public class CreateSubcontractRawMaterialMovement extends SvrProcess {
 		
 		//Quarry Production to Crusher Production Raw Material movements		
 		//MSubcontractMaterialMovement.createRawmaterialMovementsFromWeighment(get_TrxName());
-		String whereClause = "WeighmentEntryType = '4SR' AND C_Project_ID IS NOT NULL AND Status='CO' AND Processed='N' AND TareWeightTime IS NOT NULL AND GrossWeightTime IS NOT NULL"
-				+ " AND NOT EXISTS(SELECT TF_Boulder_Receipt.TF_WeighmentEntry_ID FROM TF_Boulder_Receipt WHERE  TF_Boulder_Receipt.TF_WeighmentEntry_ID = "
-				+ "TF_WeighmentEntry.TF_WeighmentEntry_ID)";
+		String whereClause = "WeighmentEntryType = '4SR' AND C_Project_ID IS NOT NULL AND Status='CO' AND Processed='N' AND TareWeightTime IS NOT NULL AND GrossWeightTime IS NOT NULL AND IsSecondary='N'";
 		List<MWeighmentEntry> wEntries = new Query(Env.getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
 				.list();
 		
-		for(MWeighmentEntry entry : wEntries) {			
-			TF_MProject proj = new TF_MProject(getCtx(), entry.getC_Project_ID(), get_TrxName());
-			MSubcontractType st = new MSubcontractType(getCtx(), proj.getTF_SubcontractType_ID(), get_TrxName());
-			if(!st.isIncludeRMProduction()) {
-				String desc = entry.getDescription();
-				if(desc == null)
-					desc = "";
-				if(!desc.contains("ERROR:")) {
-					entry.setDescription(desc + 
-							" | ERROR: This Subcontract does not have the weighment entry! Pls check SubcontractType configuration.");					
-				}
-				//MWeighmentErrorLog log = new MWeighmentErrorLog(getCtx(), 0, get_TrxName());
-				//log.setTF_WeighmentEntry_ID(entry.getTF_WeighmentEntry_ID());
-				//log.setMessage("ERROR: This Subcontract does not have the weighment entry! Pls check SubcontractType configuration.");
-				//log.setDateError(entry.getTareWeightTime());
-				//log.saveEx();				
-			}
-			else if(st.isCreateBoulderReceipt()) {
-				MBoulderReceipt br = new MBoulderReceipt(getCtx(), 0, get_TrxName());
-				try {
-					br.createFromWeighmentEntry(entry);
-					br.saveEx();
-					br.createSubcontractMovement();
-					br.saveEx();
-					if(!br.isProcessed()) {
-						br.processIt(MBoulderReceipt.DOCACTION_Complete);					
-						br.saveEx();					
-					}			
-									
-				}
-				catch (Exception ex) {
-					String desc = br.getDescription();
+		for(MWeighmentEntry entry : wEntries) {		
+			if(!entry.isSecondary()) {
+				TF_MProject proj = new TF_MProject(getCtx(), entry.getC_Project_ID(), get_TrxName());
+				MSubcontractType st = new MSubcontractType(getCtx(), proj.getTF_SubcontractType_ID(), get_TrxName());
+				if(!st.isIncludeRMProduction()) {
+					String desc = entry.getDescription();
 					if(desc == null)
 						desc = "";
 					if(!desc.contains("ERROR:")) {
-						br.setDescription(desc + 
-								" | ERROR: " + ex.getMessage());					
-					}					
-					br.saveEx();
+						entry.setDescription(desc + 
+								" | ERROR: This Subcontract does not have the weighment entry! Pls check SubcontractType configuration.");					
+					}
+					//MWeighmentErrorLog log = new MWeighmentErrorLog(getCtx(), 0, get_TrxName());
+					//log.setTF_WeighmentEntry_ID(entry.getTF_WeighmentEntry_ID());
+					//log.setMessage("ERROR: This Subcontract does not have the weighment entry! Pls check SubcontractType configuration.");
+					//log.setDateError(entry.getTareWeightTime());
+					//log.saveEx();				
 				}
-				entry.setStatus(MWeighmentEntry.STATUS_Billed);
-				entry.setProcessed(true);
+				else if(st.isCreateBoulderReceipt()) {
+					MBoulderReceipt br = new MBoulderReceipt(getCtx(), 0, get_TrxName());
+					try {
+						br.createFromWeighmentEntry(entry);
+						br.saveEx();
+						if(!br.isProcessed()) {
+							br.processIt(MBoulderReceipt.DOCACTION_Complete);					
+							br.saveEx();					
+						}			
+										
+					}
+					catch (Exception ex) {
+						String desc = br.getDescription();
+						if(desc == null)
+							desc = "";
+						if(!desc.contains("ERROR:")) {
+							br.setDescription(desc + 
+									" | ERROR: " + ex.getMessage());					
+						}					
+						br.saveEx();
+					}
+					entry.setStatus(MWeighmentEntry.STATUS_Billed);
+					entry.setProcessed(true);
+				}
+				else if(st.isIncludeRMProduction() && st.isTrackMaterialMovement()) {
+					MSubcontractMaterialMovement mov = new MSubcontractMaterialMovement(Env.getCtx(), 0, get_TrxName());
+					mov.setAD_Org_ID(entry.getAD_Org_ID());
+					mov.setC_Project_ID(entry.getC_Project_ID());
+					mov.setC_BPartner_ID(entry.getC_BPartner_ID());
+					mov.setM_Product_ID(entry.getM_Product_ID());
+					mov.setTF_WeighmentEntry_ID(entry.getTF_WeighmentEntry_ID());
+					mov.setMovementDate(entry.getGrossWeightTime());
+					mov.setQty_Receipt(new BigDecimal(entry.getNetWeight().doubleValue()/1000));				
+					mov.setProcessed(true);
+					mov.saveEx();
+					entry.setStatus(MWeighmentEntry.STATUS_Billed);
+					entry.setProcessed(true);					
+				}
+				entry.saveEx();	
 			}
-			else if(st.isIncludeRMProduction() && st.isTrackMaterialMovement()) {
-				MSubcontractMaterialMovement mov = new MSubcontractMaterialMovement(Env.getCtx(), 0, get_TrxName());
-				mov.setAD_Org_ID(entry.getAD_Org_ID());
-				mov.setC_Project_ID(entry.getC_Project_ID());
-				mov.setC_BPartner_ID(entry.getC_BPartner_ID());
-				mov.setM_Product_ID(entry.getM_Product_ID());
-				mov.setTF_WeighmentEntry_ID(entry.getTF_WeighmentEntry_ID());
-				mov.setMovementDate(entry.getGrossWeightTime());
-				mov.setQty_Receipt(new BigDecimal(entry.getNetWeight().doubleValue()/1000));				
-				mov.setProcessed(true);
-				mov.saveEx();
-				entry.setStatus(MWeighmentEntry.STATUS_Billed);
-				entry.setProcessed(true);					
-			}
-			entry.saveEx();	
 		}
 		
 		
 		//Own Quarry Production Receipt to Crusher Production
-		whereClause = "WeighmentEntryType = '3PR' AND Status='CO' AND Processed='N' AND TareWeightTime IS NOT NULL AND GrossWeightTime IS NOT NULL";
+		whereClause = "WeighmentEntryType = '3PR' AND Status='CO' AND Processed='N' AND TareWeightTime IS NOT NULL AND GrossWeightTime IS NOT NULL AND IsSecondary='N'";
 		wEntries = new Query(Env.getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
 				.list();
 		
 		for(MWeighmentEntry entry : wEntries) {	
 			MBoulderReceipt br = new MBoulderReceipt(getCtx(), 0, get_TrxName());
 			try {
-				br.createFromWeighmentEntry(entry);
-				br.saveEx();
-				br.createSubcontractMovement();
-				br.saveEx();
-				if(!br.isProcessed()) {
-					br.processIt(MBoulderReceipt.DOCACTION_Complete);					
-					br.saveEx();					
-				}
-								
+				if(!entry.isSecondary()) {
+					br.createFromWeighmentEntry(entry);
+					br.saveEx();
+					//br.createSubcontractMovement();
+					br.saveEx();
+					if(!br.isProcessed()) {
+						br.processIt(MBoulderReceipt.DOCACTION_Complete);					
+						br.saveEx();					
+					}
+				}				
 			}
 			catch (Exception ex) {
 				String desc = br.getDescription();

@@ -40,7 +40,7 @@ public class CalloutRequisition_SetPriceUOM implements IColumnCallout {
 			
 			BigDecimal qty = (BigDecimal) mTab.getValue(TF_MRequisitionLine.COLUMNNAME_Qty);
 			
-			MPriceListUOM priceUOM = MPriceListUOM.getPriceListUOM(ctx, product_ID, C_UOM_ID, bPartner_ID, isSOTrx, requistion.getDateRequired());
+			MPriceListUOM priceUOM = MPriceListUOM.getPriceListUOM(ctx, product_ID, C_UOM_ID, bPartner_ID,0, isSOTrx, requistion.getDateRequired());
 			
 			if(priceUOM != null){
 				BigDecimal price = priceUOM.getPrice();

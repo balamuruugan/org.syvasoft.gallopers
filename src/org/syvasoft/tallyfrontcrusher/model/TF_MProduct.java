@@ -17,6 +17,7 @@ import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
 import org.compiere.model.MTable;
 import org.compiere.model.MTax;
+import org.compiere.model.MUOMConversion;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.MWarehousePrice;
 import org.compiere.model.Query;
@@ -599,6 +600,18 @@ public class TF_MProduct extends MProduct {
 	public boolean isVehicle() {
 		MRentedVehicle rv = getTF_RentedVehicle();
 		return rv != null;
+	}
+	
+	public BigDecimal getDivideRate(int fromUOM_ID, int toUOM_ID) {
+		String whereClause = "C_UOM_ID = ? AND M_Product_ID = ? AND C_UOM_To_ID = ? ";
+		MUOMConversion uc = new Query(getCtx(), MUOMConversion.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(fromUOM_ID, getM_Product_ID(), toUOM_ID)
+				.first();
+		if(uc != null)
+			return uc.getDivideRate();
+		else
+			return BigDecimal.ONE;
 	}
 	
 	public boolean IsIssuedMeterRequired() {

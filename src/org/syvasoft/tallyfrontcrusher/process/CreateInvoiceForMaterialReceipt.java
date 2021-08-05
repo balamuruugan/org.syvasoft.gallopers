@@ -97,7 +97,7 @@ public class CreateInvoiceForMaterialReceipt extends SvrProcess {
 					" FROM	M_InOut io INNER JOIN M_InOutLine inl ON inl.M_InOut_ID=io.M_InOut_ID " +
 					" WHERE io.C_Invoice_ID = ? AND inl.M_Product_ID NOT IN (SELECT invLine.M_Product_ID FROM C_InvoiceLine invLine WHERE invLine.C_Invoice_ID = io.C_Invoice_ID ) " +
 					" AND inl.M_Product_ID NOT IN (SELECT rv.M_Product_ID FROM TF_RentedVehicle rv WHERE rv.AD_Org_ID = inl.AD_Org_ID) "  + 
-					" GROUP BY inl.M_Product_ID, inl.C_UOM_ID ";
+					" GROUP BY inl.M_Product_ID, inl.C_UOM_ID "; 
 					
 			PreparedStatement pstmt =  null;
 			ResultSet rs = null;
@@ -122,7 +122,7 @@ public class CreateInvoiceForMaterialReceipt extends SvrProcess {
 					
 					
 					MPriceListUOM pprice = MPriceListUOM.getPriceListUOM(getCtx(), rs.getInt("M_Product_ID"),
-							rs.getInt("C_UOM_ID"), invoice.getC_BPartner_ID(), false, invoice.getDateInvoiced());
+							rs.getInt("C_UOM_ID"), invoice.getC_BPartner_ID(),0, false, invoice.getDateInvoiced());
 					
 					TF_MProduct prod = new TF_MProduct(getCtx(), invLine.getM_Product_ID(), get_TrxName());
 					BigDecimal price = BigDecimal.ZERO;
@@ -192,7 +192,7 @@ public class CreateInvoiceForMaterialReceipt extends SvrProcess {
 				int TF_Destination_ID = rs.getInt("TF_Destination_ID");
 				
 				MPriceListUOM pprice = MPriceListUOM.getPriceListUOM(getCtx(), rs.getInt("M_Product_ID"),
-						rs.getInt("C_UOM_ID"), invoice.getC_BPartner_ID(), false, invoice.getDateInvoiced());
+						rs.getInt("C_UOM_ID"), invoice.getC_BPartner_ID(),0, false, invoice.getDateInvoiced());
 				
 				TF_MProduct prod = new TF_MProduct(getCtx(), invLine.getM_Product_ID(), get_TrxName());
 				

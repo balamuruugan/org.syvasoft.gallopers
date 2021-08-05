@@ -49,6 +49,8 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		// TODO Auto-generated constructor stub
 	}
 
+	public boolean validateStock = true;
+	
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		

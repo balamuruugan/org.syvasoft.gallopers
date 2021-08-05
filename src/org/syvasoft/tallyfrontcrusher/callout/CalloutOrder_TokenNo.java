@@ -87,7 +87,7 @@ public class CalloutOrder_TokenNo implements IColumnCallout {
 			BigDecimal price = pp.getPriceStd();
 			
 			price = MPriceListUOM.getPrice(ctx, token.getM_Product_ID(), uom_id,
-					token.getC_BPartner_ID(), isSOTrx, token.getDateAcct());
+					token.getC_BPartner_ID(), token.getTF_Destination_ID(), isSOTrx, token.getDateAcct());
 			
 			if(pp.getPriceList() != null && pp.getPriceList().doubleValue() > 0)
 				price = pp.getPriceList();

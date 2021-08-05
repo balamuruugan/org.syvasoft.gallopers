@@ -32,7 +32,7 @@ public interface I_TF_DebitCreditNote
     /** TableName=TF_DebitCreditNote */
     public static final String Table_Name = "TF_DebitCreditNote";
 
-    /** AD_Table_ID=1000282 */
+    /** AD_Table_ID=1000284 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -80,12 +80,12 @@ public interface I_TF_DebitCreditNote
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";
 
-	/** Set Customer / Vendor.
+	/** Set Business Partner .
 	  * Identifies a Business Partner
 	  */
 	public void setC_BPartner_ID (int C_BPartner_ID);
 
-	/** Get Customer / Vendor.
+	/** Get Business Partner .
 	  * Identifies a Business Partner
 	  */
 	public int getC_BPartner_ID();
@@ -110,13 +110,13 @@ public interface I_TF_DebitCreditNote
     /** Column name C_ElementValue_ID */
     public static final String COLUMNNAME_C_ElementValue_ID = "C_ElementValue_ID";
 
-	/** Set Account Head.
-	  * Account Head
+	/** Set Account Element.
+	  * Account Element
 	  */
 	public void setC_ElementValue_ID (int C_ElementValue_ID);
 
-	/** Get Account Head.
-	  * Account Head
+	/** Get Account Element.
+	  * Account Element
 	  */
 	public int getC_ElementValue_ID();
 
@@ -125,12 +125,12 @@ public interface I_TF_DebitCreditNote
     /** Column name C_Invoice_ID */
     public static final String COLUMNNAME_C_Invoice_ID = "C_Invoice_ID";
 
-	/** Set Debit / Credit Note.
+	/** Set Invoice.
 	  * Invoice Identifier
 	  */
 	public void setC_Invoice_ID (int C_Invoice_ID);
 
-	/** Get Debit / Credit Note.
+	/** Get Invoice.
 	  * Invoice Identifier
 	  */
 	public int getC_Invoice_ID();
@@ -257,6 +257,17 @@ public interface I_TF_DebitCreditNote
 
 	/** Get TF_DebitCreditNote_UU	  */
 	public String getTF_DebitCreditNote_UU();
+
+    /** Column name TF_WeighmentEntry_ID */
+    public static final String COLUMNNAME_TF_WeighmentEntry_ID = "TF_WeighmentEntry_ID";
+
+	/** Set Weighment Entry	  */
+	public void setTF_WeighmentEntry_ID (int TF_WeighmentEntry_ID);
+
+	/** Get Weighment Entry	  */
+	public int getTF_WeighmentEntry_ID();
+
+	public I_TF_WeighmentEntry getTF_WeighmentEntry() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";

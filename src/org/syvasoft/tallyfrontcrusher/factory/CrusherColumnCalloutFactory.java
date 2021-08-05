@@ -13,6 +13,8 @@ import org.syvasoft.tallyfrontcrusher.callout.*;
 import org.syvasoft.tallyfrontcrusher.model.MBlastingEntry;
 import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MCrusherKatingEntry;
+import org.syvasoft.tallyfrontcrusher.model.MDispensePlan;
+import org.syvasoft.tallyfrontcrusher.model.MDispensePlanLine;
 import org.syvasoft.tallyfrontcrusher.model.MDrillingEntry;
 import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryDet;
 import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryOld;
@@ -46,6 +48,7 @@ import org.syvasoft.tallyfrontcrusher.model.MWeighmentEntry;
 import org.syvasoft.tallyfrontcrusher.model.MYardEntry;
 import org.syvasoft.tallyfrontcrusher.model.MYardEntryApproveLine;
 import org.syvasoft.tallyfrontcrusher.model.TF_MElementValue;
+import org.syvasoft.tallyfrontcrusher.model.TF_MInOutLine;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInvoice;
 import org.syvasoft.tallyfrontcrusher.model.TF_MJournal;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
@@ -154,11 +157,33 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		}
 		
 		if(tableName.equals(TF_MOrderLine.Table_Name)) {
+			if(columnName.equals(TF_MOrderLine.COLUMNNAME_M_Product_ID)) {
+				list.add(new CalloutOrderLine_SetTax());
+				list.add(new CalloutOrderLine_SetDestination());
+			}
+		}
+		
+		if(tableName.equals(TF_MOrderLine.Table_Name)) {
+			if(columnName.equals(TF_MOrderLine.COLUMNNAME_M_Product_ID) || 
+					columnName.equals(TF_MOrderLine.COLUMNNAME_C_UOM_ID) ||
+					columnName.equals(TF_MOrderLine.COLUMNNAME_TF_Destination_ID)) {
+				list.add(new CalloutOrderLine_SetUnitPrice());
+				list.add(new CalloutOrderLine_SetPriceEntered());
+			}
+			
+			if(columnName.equals(TF_MOrderLine.COLUMNNAME_C_Tax_ID) || 
+					columnName.equals(TF_MOrderLine.COLUMNNAME_IsTaxIncluded) || 
+					columnName.equals(TF_MOrderLine.COLUMNNAME_UnitPrice)) {
+				list.add(new CalloutOrderLine_SetPriceEntered());
+			}
+		}
+		
+	/*	if(tableName.equals(TF_MOrderLine.Table_Name)) {
 			if(columnName.equals(TF_MOrderLine.COLUMNNAME_M_Product_ID) || 
 					columnName.equals(TF_MOrderLine.COLUMNNAME_C_UOM_ID)) {
 				list.add(new CalloutOrderLine_SetPriceUOM());
 			}
-		}
+		}*/
 		
 		if(tableName.equals(MTripSheetSalary.Table_Name)) {
 			if(columnName.equals(MTripSheetSalary.COLUMNNAME_C_BPartner_ID)) {
@@ -203,6 +228,9 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 					columnName.equals(TF_MPayment.COLUMNNAME_IsInterCashBookEntry) || 
 					columnName.equals(TF_MPayment.COLUMNNAME_C_DocType_ID))
 				list.add(new CalloutPayment_FromToBankAccount());
+			
+			if(columnName.equals(TF_MPayment.COLUMNNAME_TF_WeighmentEntry_ID) || columnName.equals(TF_MPayment.COLUMNNAME_TF_BPartner_ID))
+				list.add(new CalloutPayment_WeighmentEntry());
 		}
 		//TF_Employee_Salary - Load Salary Config
 		if(tableName.equals(MEmployeeSalaryOld.Table_Name)) {
@@ -335,6 +363,7 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			if(columnName.equals(MWeighmentEntry.COLUMNNAME_Price) || 
 					columnName.equals(MWeighmentEntry.COLUMNNAME_GSTAmount) || 
 					columnName.equals(MWeighmentEntry.COLUMNNAME_IsPermitSales) ||
+					columnName.equals(MWeighmentEntry.COLUMNNAME_Rent_Amt) ||
 					columnName.equals(MWeighmentEntry.COLUMNNAME_DriverTips)) {
 				list.add(new CalloutWeighmentEntry_CalcAmount());
 			}
@@ -370,6 +399,10 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		if(tableName.equals(TF_MOrder.Table_Name) && columnName.equals(TF_MOrder.COLUMNNAME_Rent_Amt)) {			
 			list.add(new CalloutOrder_SOUnitPriceRent());
 			list.add(new CalloutOrder_CalcRentPayable());
+		}
+		
+		if(tableName.equals(TF_MOrderLine.Table_Name) && columnName.equals(TF_MOrder.COLUMNNAME_IsRentInclusive)) {
+			list.add(new CalloutOrder_FreightUOM());
 		}
 		
 		if(tableName.equals(TF_MOrder.Table_Name) && (columnName.equals(TF_MOrder.COLUMNNAME_IsRentBreakup)
@@ -692,6 +725,50 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				list.add(new CalloutTripSheetProduct_CalcRentAmt());
 			}
 		}
+		
+		if(tableName.equals(MDispensePlan.Table_Name)) {
+			if(columnName.equals(MDispensePlan.COLUMNNAME_TF_DispensePlan_ID) || columnName.equals(MDispensePlan.COLUMNNAME_ScheduleDate)) {
+				list.add(new CalloutDispensePlan_SetScheduleDate());
+			}
+		}
+		
+	
+		if(tableName.equals(MDispensePlanLine.Table_Name)) {
+			if(columnName.equals(MDispensePlanLine.COLUMNNAME_C_OrderLine_ID)) {
+				list.add(new CalloutDispensePlanLine_SetOrderInfo());
+			}
+			
+			if(columnName.equals(MDispensePlanLine.COLUMNNAME_M_Product_ID)) {
+				list.add(new CalloutDispensePlanLine_SetUOMTax());
+			}
+			
+			if(columnName.equals(MDispensePlanLine.COLUMNNAME_DispenseQty)) {
+				list.add(new CalloutDispensePlanLine_SetBalanceDPQty());
+			}
+			
+			if(columnName.equals(MDispensePlanLine.COLUMNNAME_DateOrdered) ||
+					columnName.equals(MDispensePlanLine.COLUMNNAME_C_BPartner_ID) ||
+					columnName.equals(MDispensePlanLine.COLUMNNAME_M_Product_ID) || 
+					columnName.equals(MDispensePlanLine.COLUMNNAME_C_UOM_ID) ||
+					columnName.equals(MDispensePlanLine.COLUMNNAME_TF_Destination_ID)) {
+				list.add(new CalloutDispensePlanLine_SetUnitPrice());
+				list.add(new CalloutDispensePlanLine_SetPriceEntered());
+			}
+			
+			if(columnName.equals(MDispensePlanLine.COLUMNNAME_C_Tax_ID) || 
+					columnName.equals(MDispensePlanLine.COLUMNNAME_IsTaxIncluded) || 
+					columnName.equals(MDispensePlanLine.COLUMNNAME_UnitPrice)|| 
+					columnName.equals(MDispensePlanLine.COLUMNNAME_DispenseQty)) {
+				list.add(new CalloutDispensePlanLine_SetPriceEntered());
+			}
+		}
+			
+		if(tableName.equals(TF_MInOutLine.Table_Name)) {
+			if(columnName.equals(TF_MOrderLine.COLUMNNAME_C_UOM_ID)) {
+				list.add(new CalloutInOutLine_SetVehicleRentConfig());
+			}
+		}
+		
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 }

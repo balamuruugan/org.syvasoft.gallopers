@@ -21,7 +21,88 @@ public class TF_MOrderLine extends MOrderLine {
 		super(order);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public static String COLUMNNAME_QtyIssued = "QtyIssued";
+	/** Set Quantity Issued.
+	@param QtyIssued Quantity Issued	  */
+	public void setQtyIssued (BigDecimal QtyIssued)
+	{
+		set_Value (COLUMNNAME_QtyIssued, QtyIssued);
+	}
+	
+	/** Get Quantity Issued.
+		@return Quantity Issued	  */
+	public BigDecimal getQtyIssued () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_QtyIssued);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
 
+	public static String COLUMNNAME_PM_Machinery_ID   = "PM_Machinery_ID";
+	/** Set Machinery.
+	@param PM_Machinery_ID Machinery	  */
+	public void setPM_Machinery_ID (int PM_Machinery_ID)
+	{
+		if (PM_Machinery_ID < 1) 
+			set_Value (COLUMNNAME_PM_Machinery_ID, null);
+		else 
+			set_Value (COLUMNNAME_PM_Machinery_ID, Integer.valueOf(PM_Machinery_ID));
+	}
+	
+	/** Get Machinery.
+		@return Machinery	  */
+	public int getPM_Machinery_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_PM_Machinery_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
+	/** Column name FreightUOM_ID */
+    public static final String COLUMNNAME_FreightUOM_ID = "FreightUOM_ID";
+    
+	public void setFreightUOM_ID (int FreightUOM_ID)
+	{
+		if (FreightUOM_ID < 1) 
+			set_Value (COLUMNNAME_FreightUOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_FreightUOM_ID, Integer.valueOf(FreightUOM_ID));
+	}
+
+	public int getFreightUOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_FreightUOM_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Column name TF_WeighmentEntry_ID */
+    public static final String COLUMNNAME_TF_WeighmentEntry_ID = "TF_WeighmentEntry_ID";
+    /** Set Weighment Entry.
+	@param TF_WeighmentEntry_ID Weighment Entry	  */
+	public void setTF_WeighmentEntry_ID (int TF_WeighmentEntry_ID)
+	{
+		if (TF_WeighmentEntry_ID < 1) 
+			set_Value (COLUMNNAME_TF_WeighmentEntry_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_WeighmentEntry_ID, Integer.valueOf(TF_WeighmentEntry_ID));
+	}
+	
+	/** Get Weighment Entry.
+		@return Weighment Entry	  */
+	public int getTF_WeighmentEntry_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_WeighmentEntry_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
+	
 	public TF_MOrderLine(Properties ctx, int C_OrderLine_ID, String trxName) {
 		super(ctx, C_OrderLine_ID, trxName);
 		// TODO Auto-generated constructor stub
@@ -30,6 +111,62 @@ public class TF_MOrderLine extends MOrderLine {
 	public TF_MOrderLine(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 		// TODO Auto-generated constructor stub
+	}
+	
+	public static final String COLUMNNAME_DeliveryContact = "DeliveryContact";
+	
+	/** Set Delivery Contact.
+	@param DeliveryContact Delivery Contact	  */
+	public void setDeliveryContact (String DeliveryContact)
+	{
+		set_Value (COLUMNNAME_DeliveryContact, DeliveryContact);
+	}
+	
+	/** Get Delivery Contact.
+		@return Delivery Contact	  */
+	public String getDeliveryContact () 
+	{
+		return (String)get_Value(COLUMNNAME_DeliveryContact);
+	}
+
+	public static final String COLUMNNAME_CustomerTransporter = "CustomerTransporter";
+	
+	/** Set Customer's Transporter.
+	@param CustomerTransporter Customer's Transporter	  */
+	public void setCustomerTransporter (boolean CustomerTransporter)
+	{
+		set_Value (COLUMNNAME_CustomerTransporter, Boolean.valueOf(CustomerTransporter));
+	}
+	
+	/** Get Customer's Transporter.
+		@return Customer's Transporter	  */
+	public boolean isCustomerTransporter () 
+	{
+		Object oo = get_Value(COLUMNNAME_CustomerTransporter);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+	
+
+	public static final String COLUMNNAME_ContactPerson = "ContactPerson";
+	
+	/** Set Contact Person.
+	@param ContactPerson Contact Person	  */
+	public void setContactPerson (String ContactPerson)
+	{
+		set_Value (COLUMNNAME_ContactPerson, ContactPerson);
+	}
+	
+	/** Get Contact Person.
+		@return Contact Person	  */
+	public String getContactPerson () 
+	{
+		return (String)get_Value(COLUMNNAME_ContactPerson);
 	}
 
 	/** Column name IsUpdatePrice */
@@ -202,6 +339,147 @@ public class TF_MOrderLine extends MOrderLine {
 		return bd;
 	}
 
+    /** Column name UnitPrice */
+    public static final String COLUMNNAME_UnitPrice = "UnitPrice";
+    
+	/** Set Unit Price.
+	@param UnitPrice Unit Price	  */
+	public void setUnitPrice (BigDecimal UnitPrice)
+	{
+		set_Value (COLUMNNAME_UnitPrice, UnitPrice);
+	}
+	
+	/** Get Unit Price.
+		@return Unit Price	  */
+	public BigDecimal getUnitPrice () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_UnitPrice);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Column name TF_Destination_ID */
+    public static final String COLUMNNAME_TF_Destination_ID = "TF_Destination_ID";
+    
+	/** Set Destination.
+	@param TF_Destination_ID Destination	  */
+	public void setTF_Destination_ID (int TF_Destination_ID)
+	{
+		if (TF_Destination_ID < 1) 
+			set_Value (COLUMNNAME_TF_Destination_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_Destination_ID, Integer.valueOf(TF_Destination_ID));
+	}
+	
+	/** Get Destination.
+		@return Destination	  */
+	public int getTF_Destination_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Destination_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Column name IsTaxIncluded */
+    public static final String COLUMNNAME_IsTaxIncluded = "IsTaxIncluded";
+	/** Set Price includes Tax.
+	@param IsTaxIncluded 
+	Tax is included in the price 
+	 */
+	public void setIsTaxIncluded (boolean IsTaxIncluded)
+	{
+		set_Value (COLUMNNAME_IsTaxIncluded, Boolean.valueOf(IsTaxIncluded));
+	}
+	
+	/** Get Price includes Tax.
+		@return Tax is included in the price 
+	  */
+	public boolean isTaxIncluded () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsTaxIncluded);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+	
+
+	/** Column name IsRentInclusive */
+    public static final String COLUMNNAME_IsRentInclusive = "IsRentInclusive";
+    
+	/** Set Freight Inclusive.
+	@param IsRentInclusive 
+	Whether Unit Price includes rent?
+  */
+	public void setIsRentInclusive (boolean IsRentInclusive)
+	{
+		set_Value (COLUMNNAME_IsRentInclusive, Boolean.valueOf(IsRentInclusive));
+	}
+	
+	/** Get Freight Inclusive.
+		@return Whether Unit Price includes rent?
+	  */
+	public boolean isRentInclusive () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsRentInclusive);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+    /** Column name IsRoyaltyPassInclusive */
+    public static final String COLUMNNAME_IsRoyaltyPassInclusive = "IsRoyaltyPassInclusive";
+	/** Set Royalty Pass Inclusive.
+	@param IsRoyaltyPassInclusive Royalty Pass Inclusive	  */
+	public void setIsRoyaltyPassInclusive (boolean IsRoyaltyPassInclusive)
+	{
+		set_Value (COLUMNNAME_IsRoyaltyPassInclusive, Boolean.valueOf(IsRoyaltyPassInclusive));
+	}
+	
+	/** Get Royalty Pass Inclusive.
+		@return Royalty Pass Inclusive	  */
+	public boolean isRoyaltyPassInclusive () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsRoyaltyPassInclusive);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+	
+	public static final String COLUMNNAME_IsPriceConfidential = "IsPriceConfidential";
+	/** Set Price Confidential.
+	@param IsPriceConfidential Price Confidential	  */
+	public void setIsPriceConfidential (boolean IsPriceConfidential)
+	{
+		set_Value (COLUMNNAME_IsPriceConfidential, Boolean.valueOf(IsPriceConfidential));
+	}
+	
+	/** Get Price Confidential.
+		@return Price Confidential	  */
+	public boolean isPriceConfidential () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsPriceConfidential);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {		
 		Boolean ok = super.afterSave(newRecord, success);
@@ -219,9 +497,21 @@ public class TF_MOrderLine extends MOrderLine {
 		//everytime price list price will be updated with current price
 		TF_MOrder.addProductPricingIfNot(getM_Product_ID(), getC_Order().getM_PriceList_ID(), getC_BPartner_ID(), 
 				getQtyEntered(), getPriceEntered(), getC_Order().getDateOrdered(), getC_Order().isSOTrx());
-		int C_UOM_ID = getC_UOM_ID();		
+		int C_UOM_ID = getC_UOM_ID();
+		if(is_ValueChanged(COLUMNNAME_QtyEntered)) {
+			setQtyOrdered(getQtyEntered());
+		}
 		boolean success = super.beforeSave(newRecord);
 		setC_UOM_ID(C_UOM_ID);
+		
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
+		
+		if(bp != null) {
+			if(isPriceConfidential() && !bp.get_ValueAsBoolean(COLUMNNAME_IsPriceConfidential)) {
+				bp.set_ValueOfColumn(COLUMNNAME_IsPriceConfidential, isPriceConfidential());
+				bp.saveEx();
+			}
+		}
 		return success;
 	}
 

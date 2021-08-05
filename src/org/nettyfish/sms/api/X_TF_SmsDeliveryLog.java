@@ -20,6 +20,7 @@ package org.nettyfish.sms.api;
 import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
+import org.syvasoft.tallyfrontcrusher.model.I_TF_SmsNotification;
 
 /** Generated Model for TF_SmsDeliveryLog
  *  @author iDempiere (generated) 
@@ -262,6 +263,31 @@ public class X_TF_SmsDeliveryLog extends PO implements I_TF_SmsDeliveryLog, I_Pe
 	public int getValidNumbers () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_ValidNumbers);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
+	public I_TF_SmsNotification getTF_SmsNotification() throws RuntimeException
+    {
+		return (I_TF_SmsNotification)MTable.get(getCtx(), I_TF_SmsNotification.Table_Name)
+			.getPO(getTF_SmsNotification_ID(), get_TrxName());	}
+
+	/** Set TF_SmsNotification.
+		@param TF_SmsNotification_ID TF_SmsNotification	  */
+	public void setTF_SmsNotification_ID (int TF_SmsNotification_ID)
+	{
+		if (TF_SmsNotification_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_SmsNotification_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_SmsNotification_ID, Integer.valueOf(TF_SmsNotification_ID));
+	}
+
+	/** Get TF_SmsNotification.
+		@return TF_SmsNotification	  */
+	public int getTF_SmsNotification_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_SmsNotification_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

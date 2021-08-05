@@ -94,6 +94,15 @@ public interface I_TF_SmsRecipient
 
 	public org.compiere.model.I_AD_User getAD_User() throws RuntimeException;
 
+    /** Column name ChatId */
+    public static final String COLUMNNAME_ChatId = "ChatId";
+
+	/** Set WhatsApp Chat Id	  */
+	public void setChatId (String ChatId);
+
+	/** Get WhatsApp Chat Id	  */
+	public String getChatId();
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 

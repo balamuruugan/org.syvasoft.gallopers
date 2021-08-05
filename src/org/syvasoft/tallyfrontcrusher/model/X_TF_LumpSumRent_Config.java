@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
 import org.compiere.util.Env;
+import org.compiere.util.KeyNamePair;
 
 /** Generated Model for TF_LumpSumRent_Config
  *  @author iDempiere (generated) 
@@ -32,7 +33,7 @@ public class X_TF_LumpSumRent_Config extends PO implements I_TF_LumpSumRent_Conf
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200603L;
+	private static final long serialVersionUID = 20210619L;
 
     /** Standard Constructor */
     public X_TF_LumpSumRent_Config (Properties ctx, int TF_LumpSumRent_Config_ID, String trxName)
@@ -40,6 +41,8 @@ public class X_TF_LumpSumRent_Config extends PO implements I_TF_LumpSumRent_Conf
       super (ctx, TF_LumpSumRent_Config_ID, trxName);
       /** if (TF_LumpSumRent_Config_ID == 0)
         {
+			setProcessed (false);
+// N
 			setTF_LumpSumRent_Config_ID (0);
 			setTF_VehicleType_ID (0);
         } */
@@ -99,6 +102,103 @@ public class X_TF_LumpSumRent_Config extends PO implements I_TF_LumpSumRent_Conf
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_Tax getC_Tax() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Tax)MTable.get(getCtx(), org.compiere.model.I_C_Tax.Table_Name)
+			.getPO(getC_Tax_ID(), get_TrxName());	}
+
+	/** Set Tax.
+		@param C_Tax_ID 
+		Tax identifier
+	  */
+	public void setC_Tax_ID (int C_Tax_ID)
+	{
+		if (C_Tax_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_C_Tax_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_C_Tax_ID, Integer.valueOf(C_Tax_ID));
+	}
+
+	/** Get Tax.
+		@return Tax identifier
+	  */
+	public int getC_Tax_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Tax_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getC_UOM_ID(), get_TrxName());	}
+
+	/** Set UOM.
+		@param C_UOM_ID 
+		Unit of Measure
+	  */
+	public void setC_UOM_ID (int C_UOM_ID)
+	{
+		if (C_UOM_ID < 1) 
+			set_Value (COLUMNNAME_C_UOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_UOM_ID, Integer.valueOf(C_UOM_ID));
+	}
+
+	/** Get UOM.
+		@return Unit of Measure
+	  */
+	public int getC_UOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_UOM_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Freight Rate.
+		@param FreightPrice Freight Rate	  */
+	public void setFreightPrice (BigDecimal FreightPrice)
+	{
+		set_Value (COLUMNNAME_FreightPrice, FreightPrice);
+	}
+
+	/** Get Freight Rate.
+		@return Freight Rate	  */
+	public BigDecimal getFreightPrice () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_FreightPrice);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Price includes Tax.
+		@param IsTaxIncluded 
+		Tax is included in the price 
+	  */
+	public void setIsTaxIncluded (boolean IsTaxIncluded)
+	{
+		set_ValueNoCheck (COLUMNNAME_IsTaxIncluded, Boolean.valueOf(IsTaxIncluded));
+	}
+
+	/** Get Price includes Tax.
+		@return Tax is included in the price 
+	  */
+	public boolean isTaxIncluded () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsTaxIncluded);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException
@@ -161,6 +261,30 @@ public class X_TF_LumpSumRent_Config extends PO implements I_TF_LumpSumRent_Conf
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Processed.
+		@param Processed 
+		The document has been processed
+	  */
+	public void setProcessed (boolean Processed)
+	{
+		set_Value (COLUMNNAME_Processed, Boolean.valueOf(Processed));
+	}
+
+	/** Get Processed.
+		@return The document has been processed
+	  */
+	public boolean isProcessed () 
+	{
+		Object oo = get_Value(COLUMNNAME_Processed);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	/** Set Rate / KM.
@@ -231,6 +355,23 @@ public class X_TF_LumpSumRent_Config extends PO implements I_TF_LumpSumRent_Conf
 		return bd;
 	}
 
+	/** Set Rent Margin.
+		@param RentMargin Rent Margin	  */
+	public void setRentMargin (BigDecimal RentMargin)
+	{
+		set_Value (COLUMNNAME_RentMargin, RentMargin);
+	}
+
+	/** Get Rent Margin.
+		@return Rent Margin	  */
+	public BigDecimal getRentMargin () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_RentMargin);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	public I_TF_Destination getTF_Destination() throws RuntimeException
     {
 		return (I_TF_Destination)MTable.get(getCtx(), I_TF_Destination.Table_Name)
@@ -241,9 +382,9 @@ public class X_TF_LumpSumRent_Config extends PO implements I_TF_LumpSumRent_Conf
 	public void setTF_Destination_ID (int TF_Destination_ID)
 	{
 		if (TF_Destination_ID < 1) 
-			set_ValueNoCheck (COLUMNNAME_TF_Destination_ID, null);
+			set_Value (COLUMNNAME_TF_Destination_ID, null);
 		else 
-			set_ValueNoCheck (COLUMNNAME_TF_Destination_ID, Integer.valueOf(TF_Destination_ID));
+			set_Value (COLUMNNAME_TF_Destination_ID, Integer.valueOf(TF_Destination_ID));
 	}
 
 	/** Get Destination.
@@ -288,6 +429,31 @@ public class X_TF_LumpSumRent_Config extends PO implements I_TF_LumpSumRent_Conf
 	public String getTF_LumpSumRent_Config_UU () 
 	{
 		return (String)get_Value(COLUMNNAME_TF_LumpSumRent_Config_UU);
+	}
+
+	public I_TF_TOrder getTF_TOrder() throws RuntimeException
+    {
+		return (I_TF_TOrder)MTable.get(getCtx(), I_TF_TOrder.Table_Name)
+			.getPO(getTF_TOrder_ID(), get_TrxName());	}
+
+	/** Set TF_Torder.
+		@param TF_TOrder_ID TF_Torder	  */
+	public void setTF_TOrder_ID (int TF_TOrder_ID)
+	{
+		if (TF_TOrder_ID < 1) 
+			set_Value (COLUMNNAME_TF_TOrder_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_TOrder_ID, Integer.valueOf(TF_TOrder_ID));
+	}
+
+	/** Get TF_Torder.
+		@return TF_Torder	  */
+	public int getTF_TOrder_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_TOrder_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	public I_TF_VehicleType getTF_VehicleType() throws RuntimeException
@@ -342,4 +508,12 @@ public class X_TF_LumpSumRent_Config extends PO implements I_TF_LumpSumRent_Conf
 			 return 0;
 		return ii.intValue();
 	}
+
+    /** Get Record ID/ColumnName
+        @return ID/ColumnName pair
+      */
+    public KeyNamePair getKeyNamePair() 
+    {
+        return new KeyNamePair(get_ID(), String.valueOf(getVendor_ID()));
+    }
 }

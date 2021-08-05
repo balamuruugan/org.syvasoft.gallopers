@@ -1,5 +1,6 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
 
@@ -12,6 +13,7 @@ import org.compiere.model.MInOutLine;
 import org.compiere.model.MLocator;
 import org.compiere.model.MLocatorType;
 import org.compiere.model.MProduct;
+import org.compiere.model.MTable;
 import org.compiere.model.MUOM;
 import org.compiere.model.MWarehouse;
 import org.compiere.util.DB;
@@ -40,6 +42,244 @@ public class TF_MInOutLine extends MInOutLine {
 		// TODO Auto-generated constructor stub
 	}
 	
+	
+	
+	public static final String COLUMNNAME_TF_Fuel_Issue_ID = "TF_Fuel_Issue_ID";
+	/** Set Fuel Issue.
+	@param TF_Fuel_Issue_ID Fuel Issue	  */
+	public void setTF_Fuel_Issue_ID (int TF_Fuel_Issue_ID)
+	{
+		if (TF_Fuel_Issue_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_Fuel_Issue_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_Fuel_Issue_ID, Integer.valueOf(TF_Fuel_Issue_ID));
+	}
+	
+	/** Get Fuel Issue.
+		@return Fuel Issue	  */
+	public int getTF_Fuel_Issue_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Fuel_Issue_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Column name Distance */
+    public static final String COLUMNNAME_Distance = "Distance";
+	/** Set Distance (km).
+	@param Distance Distance (km)	  */
+	public void setDistance (BigDecimal Distance)
+	{
+		set_Value (COLUMNNAME_Distance, Distance);
+	}
+	
+	/** Get Distance (km).
+		@return Distance (km)	  */
+	public BigDecimal getDistance () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Distance);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+	
+	public static String COLUMNNAME_QtyIssued = "QtyIssued";
+	/** Set Quantity Issued.
+	@param QtyIssued Quantity Issued	  */
+	public void setQtyIssued (BigDecimal QtyIssued)
+	{
+		set_Value (COLUMNNAME_QtyIssued, QtyIssued);
+	}
+	
+	/** Get Quantity Issued.
+		@return Quantity Issued	  */
+	public BigDecimal getQtyIssued () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_QtyIssued);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+	public static String COLUMNNAME_PM_Machinery_ID = "PM_Machinery_ID";
+	/** Set Machinery.
+	@param PM_Machinery_ID Machinery	  */
+	public void setPM_Machinery_ID (int PM_Machinery_ID)
+	{
+		if (PM_Machinery_ID < 1) 
+			set_Value (COLUMNNAME_PM_Machinery_ID, null);
+		else 
+			set_Value (COLUMNNAME_PM_Machinery_ID, Integer.valueOf(PM_Machinery_ID));
+	}
+	
+	/** Get Machinery.
+		@return Machinery	  */
+	public int getPM_Machinery_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_PM_Machinery_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
+	public static String COLUMNNAME_C_Tax_ID = "C_Tax_ID";
+
+	public org.compiere.model.I_C_Tax getC_Tax() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Tax)MTable.get(getCtx(), org.compiere.model.I_C_Tax.Table_Name)
+			.getPO(getC_Tax_ID(), get_TrxName());	}
+
+	/** Set Tax.
+		@param C_Tax_ID 
+		Tax identifier
+	  */
+	public void setC_Tax_ID (int C_Tax_ID)
+	{
+		if (C_Tax_ID < 1) 
+			set_Value(COLUMNNAME_C_Tax_ID, null);
+		else 
+			set_Value(COLUMNNAME_C_Tax_ID, Integer.valueOf(C_Tax_ID));
+	}
+
+	/** Get Tax.
+		@return Tax identifier
+	  */
+	public int getC_Tax_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Tax_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
+	public static String COLUMNNAME_IsTaxIncluded = "IsTaxIncluded";
+	/** Set Price includes Tax.
+		@param IsTaxIncluded 
+		Tax is included in the price 
+	  */
+	public void setIsTaxIncluded (boolean IsTaxIncluded)
+	{
+		set_ValueNoCheck (COLUMNNAME_IsTaxIncluded, Boolean.valueOf(IsTaxIncluded));
+	}
+
+	/** Get Price includes Tax.
+		@return Tax is included in the price 
+	  */
+	public boolean isTaxIncluded () 
+	{
+		Object oo =  get_Value(COLUMNNAME_IsTaxIncluded);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	
+	/** Column name TF_Destination_ID */
+    public static final String COLUMNNAME_TF_Destination_ID = "TF_Destination_ID";
+	/** Set Destination.
+	@param TF_Destination_ID Destination	  */
+	public void setTF_Destination_ID (int TF_Destination_ID)
+	{
+		if (TF_Destination_ID < 1) 
+			set_Value (COLUMNNAME_TF_Destination_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_Destination_ID, Integer.valueOf(TF_Destination_ID));
+	}
+	
+	/** Get Destination.
+		@return Destination	  */
+	public int getTF_Destination_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Destination_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
+    /** Column name RateMTKM */
+    public static final String COLUMNNAME_RateMTKM = "RateMTKM";
+	/** Set Rate / MT / KM.
+		@param RateMTKM Rate / MT / KM	  */
+	public void setRateMTKM (BigDecimal RateMTKM)
+	{
+		set_Value (COLUMNNAME_RateMTKM, RateMTKM);
+	}
+
+	/** Get Rate / MT / KM.
+		@return Rate / MT / KM	  */
+	public BigDecimal getRateMTKM () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_RateMTKM);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+	
+	public static final String COLUMNNAME_RentMargin = "RentMargin";
+	
+	/** Set Rent Margin.
+	@param RentMargin Rent Margin	  */
+	public void setRentMargin (BigDecimal RentMargin)
+	{
+		set_Value (COLUMNNAME_RentMargin, RentMargin);
+	}
+	
+	/** Get Rent Margin.
+		@return Rent Margin	  */
+	public BigDecimal getRentMargin () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_RentMargin);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+	
+	public static final String COLUMNNAME_Price = "Price";
+	
+	/** Set Rent Margin.
+	@param RentMargin Rent Margin	  */
+	public void setPrice (BigDecimal Price)
+	{
+		set_Value (COLUMNNAME_Price, Price);
+	}
+	
+	/** Get Rent Margin.
+		@return Rent Margin	  */
+	public BigDecimal getPrice() 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Price);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+
+	public static final String COLUMNNAME_TF_LumpSumRent_Config_ID = "TF_LumpSumRent_Config_ID";
+	/** Set TF_LumpSumRent_Config.
+	@param TF_LumpSumRent_Config_ID TF_LumpSumRent_Config	  */
+	public void setTF_LumpSumRent_Config_ID (int TF_LumpSumRent_Config_ID)
+	{
+		if (TF_LumpSumRent_Config_ID < 1) 
+			set_Value(COLUMNNAME_TF_LumpSumRent_Config_ID, null);
+		else 
+			set_Value(COLUMNNAME_TF_LumpSumRent_Config_ID, Integer.valueOf(TF_LumpSumRent_Config_ID));
+	}
+	
+	
+	/** Get TF_LumpSumRent_Config.
+		@return TF_LumpSumRent_Config	  */
+	public int getTF_LumpSumRent_Config_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_LumpSumRent_Config_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		log.fine("");
