@@ -33,7 +33,7 @@ public class X_TF_TripSheet extends PO implements I_TF_TripSheet, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210724L;
+	private static final long serialVersionUID = 20210803L;
 
     /** Standard Constructor */
     public X_TF_TripSheet (Properties ctx, int TF_TripSheet_ID, String trxName)

@@ -47,6 +47,7 @@ public class CalloutFuelIssue_SetPrice implements IColumnCallout {
 		
 		int Product_Category_ID = 0;
 		TF_MProduct prod=new TF_MProduct(ctx, M_Product_ID, null);
+		mTab.setValue(TF_MProduct.COLUMNNAME_C_Activity_ID, prod.getC_Activity_ID());
 		Product_Category_ID=prod.getM_Product_Category_ID();
 		TF_MProductCategory prodc=new TF_MProductCategory(ctx, Product_Category_ID, null);
 		if(prodc!=null) {

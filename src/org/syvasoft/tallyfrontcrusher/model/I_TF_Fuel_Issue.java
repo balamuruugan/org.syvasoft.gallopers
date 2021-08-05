@@ -92,6 +92,21 @@ public interface I_TF_Fuel_Issue
 	  */
 	public BigDecimal getAmt();
 
+    /** Column name C_Activity_ID */
+    public static final String COLUMNNAME_C_Activity_ID = "C_Activity_ID";
+
+	/** Set Activity.
+	  * Business Activity
+	  */
+	public void setC_Activity_ID (int C_Activity_ID);
+
+	/** Get Activity.
+	  * Business Activity
+	  */
+	public int getC_Activity_ID();
+
+	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException;
+
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";
 
@@ -351,6 +366,8 @@ public interface I_TF_Fuel_Issue
 	  */
 	public int getM_Locator_ID();
 
+	public org.compiere.model.I_M_Locator getM_Locator() throws RuntimeException;
+
     /** Column name M_Product_Category_ID */
     public static final String COLUMNNAME_M_Product_Category_ID = "M_Product_Category_ID";
 
@@ -492,6 +509,15 @@ public interface I_TF_Fuel_Issue
 	  * Available Quantity (On Hand - Reserved)
 	  */
 	public BigDecimal getQtyAvailable();
+
+    /** Column name QuarryProductionType */
+    public static final String COLUMNNAME_QuarryProductionType = "QuarryProductionType";
+
+	/** Set Quarry Production Type	  */
+	public void setQuarryProductionType (String QuarryProductionType);
+
+	/** Get Quarry Production Type	  */
+	public String getQuarryProductionType();
 
     /** Column name Rate */
     public static final String COLUMNNAME_Rate = "Rate";

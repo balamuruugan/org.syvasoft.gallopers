@@ -34,7 +34,7 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20201210L;
+	private static final long serialVersionUID = 20210803L;
 
     /** Standard Constructor */
     public X_M_Product (Properties ctx, int M_Product_ID, String trxName)
@@ -45,6 +45,7 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 			setAggregateOSQty (Env.ZERO);
 // 0
 			setC_TaxCategory_ID (0);
+// 1000005
 			setC_UOM_ID (0);
 			setGSTRate (Env.ZERO);
 // 0
@@ -71,6 +72,8 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 // Y
 			setIsStocked (true);
 // Y
+			setIssuedMeterRequired (false);
+// N
 			setIsSummary (false);
 			setIsVerified (false);
 // N
@@ -88,6 +91,8 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 			setProductType (null);
 // I
 			setTrackSpareLife (false);
+// N
+			setTrackStockLevel (false);
 // N
 			setValue (null);
         } */
@@ -158,6 +163,34 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 		return bd;
 	}
 
+	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_Name)
+			.getPO(getC_Activity_ID(), get_TrxName());	}
+
+	/** Set Activity.
+		@param C_Activity_ID 
+		Business Activity
+	  */
+	public void setC_Activity_ID (int C_Activity_ID)
+	{
+		if (C_Activity_ID < 1) 
+			set_Value (COLUMNNAME_C_Activity_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_Activity_ID, Integer.valueOf(C_Activity_ID));
+	}
+
+	/** Get Activity.
+		@return Business Activity
+	  */
+	public int getC_Activity_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_C_RevenueRecognition getC_RevenueRecognition() throws RuntimeException
     {
 		return (org.compiere.model.I_C_RevenueRecognition)MTable.get(getCtx(), org.compiere.model.I_C_RevenueRecognition.Table_Name)
@@ -181,6 +214,34 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 	public int getC_RevenueRecognition_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_RevenueRecognition_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_UOM getC_SALES_UOM() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getC_SALES_UOM_ID(), get_TrxName());	}
+
+	/** Set Sales UOM.
+		@param C_SALES_UOM_ID 
+		Unit of Measure
+	  */
+	public void setC_SALES_UOM_ID (int C_SALES_UOM_ID)
+	{
+		if (C_SALES_UOM_ID < 1) 
+			set_Value (COLUMNNAME_C_SALES_UOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_SALES_UOM_ID, Integer.valueOf(C_SALES_UOM_ID));
+	}
+
+	/** Get Sales UOM.
+		@return Unit of Measure
+	  */
+	public int getC_SALES_UOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_SALES_UOM_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -470,6 +531,23 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 	public String getDownloadURL () 
 	{
 		return (String)get_Value(COLUMNNAME_DownloadURL);
+	}
+
+	/** Set DriverBetaPerQty.
+		@param DriverBetaPerQty DriverBetaPerQty	  */
+	public void setDriverBetaPerQty (BigDecimal DriverBetaPerQty)
+	{
+		set_Value (COLUMNNAME_DriverBetaPerQty, DriverBetaPerQty);
+	}
+
+	/** Get DriverBetaPerQty.
+		@return DriverBetaPerQty	  */
+	public BigDecimal getDriverBetaPerQty () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_DriverBetaPerQty);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Group1.
@@ -935,6 +1013,27 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 		return false;
 	}
 
+	/** Set Issued Meter Required.
+		@param IssuedMeterRequired Issued Meter Required	  */
+	public void setIssuedMeterRequired (boolean IssuedMeterRequired)
+	{
+		set_Value (COLUMNNAME_IssuedMeterRequired, Boolean.valueOf(IssuedMeterRequired));
+	}
+
+	/** Get Issued Meter Required.
+		@return Issued Meter Required	  */
+	public boolean issuedMeterRequired () 
+	{
+		Object oo = get_Value(COLUMNNAME_IssuedMeterRequired);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Summary Level.
 		@param IsSummary 
 		This is a summary entity
@@ -1026,6 +1125,26 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 			return "Y".equals(oo);
 		}
 		return false;
+	}
+
+	/** Set Logo.
+		@param Logo_ID Logo	  */
+	public void setLogo_ID (int Logo_ID)
+	{
+		if (Logo_ID < 1) 
+			set_Value (COLUMNNAME_Logo_ID, null);
+		else 
+			set_Value (COLUMNNAME_Logo_ID, Integer.valueOf(Logo_ID));
+	}
+
+	/** Get Logo.
+		@return Logo	  */
+	public int getLogo_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Logo_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Set Low Level.
@@ -1327,10 +1446,31 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 		return false;
 	}
 
+	/** Set Max Value.
+		@param MaxValue Max Value	  */
+	public void setMaxValue (BigDecimal MaxValue)
+	{
+		set_Value (COLUMNNAME_MaxValue, MaxValue);
+	}
+
+	/** Get Max Value.
+		@return Max Value	  */
+	public BigDecimal getMaxValue () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_MaxValue);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Km/litre = K */
 	public static final String MILEAGETYPE_KmLitre = "K";
 	/** litre/hr = H */
 	public static final String MILEAGETYPE_LitreHr = "H";
+	/** TPH = T */
+	public static final String MILEAGETYPE_TPH = "T";
+	/** Unit/hr = U */
+	public static final String MILEAGETYPE_UnitHr = "U";
 	/** Set Mileage Type.
 		@param MileageType Mileage Type	  */
 	public void setMileageType (String MileageType)
@@ -1344,6 +1484,23 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 	public String getMileageType () 
 	{
 		return (String)get_Value(COLUMNNAME_MileageType);
+	}
+
+	/** Set Min Value.
+		@param MinValue Min Value	  */
+	public void setMinValue (BigDecimal MinValue)
+	{
+		set_Value (COLUMNNAME_MinValue, MinValue);
+	}
+
+	/** Get Min Value.
+		@return Min Value	  */
+	public BigDecimal getMinValue () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_MinValue);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Name.
@@ -1841,6 +1998,27 @@ public class X_M_Product extends PO implements I_M_Product, I_Persistent
 	public boolean isTrackSpareLife () 
 	{
 		Object oo = get_Value(COLUMNNAME_TrackSpareLife);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Track Stock Level.
+		@param TrackStockLevel Track Stock Level	  */
+	public void setTrackStockLevel (boolean TrackStockLevel)
+	{
+		set_Value (COLUMNNAME_TrackStockLevel, Boolean.valueOf(TrackStockLevel));
+	}
+
+	/** Get Track Stock Level.
+		@return Track Stock Level	  */
+	public boolean isTrackStockLevel () 
+	{
+		Object oo = get_Value(COLUMNNAME_TrackStockLevel);
 		if (oo != null) 
 		{
 			 if (oo instanceof Boolean) 

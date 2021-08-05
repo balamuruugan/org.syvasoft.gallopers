@@ -186,6 +186,7 @@ public class MTripSheet extends X_TF_TripSheet {
 				st.setPM_Machinery_ID(getPM_Machinery_ID());
 				st.setC_ElementValue_ID(glConfig.getSalariesExpenseAcct());
 				st.setDescription(getC_BPartner().getName());
+				st.setC_Activity_ID(getC_Activity_ID());
 				BigDecimal amount = getTotal_Wage();
 				st.setExpense(amount);
 				st.setTF_TripSheet_ID(getTF_TripSheet_ID());		
@@ -218,6 +219,7 @@ public class MTripSheet extends X_TF_TripSheet {
 				ms.setIncome(getRent_Amt());
 				ms.setC_ElementValue_ID(rentAccount);
 				ms.setTF_TripSheet_ID(getTF_TripSheet_ID());
+				ms.setC_Activity_ID(getC_Activity_ID());
 				ms.saveEx();
 			}
 			
@@ -322,6 +324,7 @@ public class MTripSheet extends X_TF_TripSheet {
 			ms.setDescription(rent.getDescription());
 			ms.setC_ElementValue_ID(rentAccount);
 			ms.setTF_TripSheet_ID(getTF_TripSheet_ID());
+			ms.setC_Activity_ID(rent.getC_Activity_ID());
 			ms.saveEx();
 		}
 	}
@@ -347,6 +350,7 @@ public class MTripSheet extends X_TF_TripSheet {
 			ms.setIncome(drill.getDrillingCost());
 			ms.setDescription(desc);
 			ms.setC_ElementValue_ID(rentAccount);
+			ms.setC_Activity_ID(getC_Activity_ID());
 			ms.setTF_TripSheet_ID(getTF_TripSheet_ID());
 			ms.saveEx();
 			

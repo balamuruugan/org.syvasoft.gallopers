@@ -67,7 +67,8 @@ public class MTripSheetSalary extends X_TF_TripSheet_Salary {
 			st.setDateAcct(ts.getDateReport());
 			st.setPM_Machinery_ID(ts.getPM_Machinery_ID());
 			st.setC_ElementValue_ID(glConfig.getSalariesExpenseAcct());
-			st.setDescription(getC_BPartner().getName());			
+			st.setDescription(getC_BPartner().getName());
+			st.setC_Activity_ID(ts.getC_Activity_ID());
 			st.setExpense(totalWage);
 			st.setTF_TripSheet_ID(getTF_TripSheet_ID());		
 			st.saveEx();

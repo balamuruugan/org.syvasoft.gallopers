@@ -148,6 +148,7 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			if(columnName.equals(MTripSheet.COLUMNNAME_PM_Machinery_ID) || 
 					columnName.equals(MTripSheet.COLUMNNAME_JobWork_Product_ID) || 
 					columnName.equals(MTripSheet.COLUMNNAME_Rent_UOM_ID))
+				list.add(new CalloutTripSheet_SetActivity());
 				list.add(new CalloutTripSheet_SetMachineryRentInfo());
 			
 		}

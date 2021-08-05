@@ -32,7 +32,7 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210720L;
+	private static final long serialVersionUID = 20210803L;
 
     /** Standard Constructor */
     public X_TF_TripSheetProduct (Properties ctx, int TF_TripSheetProduct_ID, String trxName)
@@ -74,6 +74,34 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
         .append(get_ID()).append("]");
       return sb.toString();
     }
+
+	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_Name)
+			.getPO(getC_Activity_ID(), get_TrxName());	}
+
+	/** Set Activity.
+		@param C_Activity_ID 
+		Business Activity
+	  */
+	public void setC_Activity_ID (int C_Activity_ID)
+	{
+		if (C_Activity_ID < 1) 
+			set_Value (COLUMNNAME_C_Activity_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_Activity_ID, Integer.valueOf(C_Activity_ID));
+	}
+
+	/** Get Activity.
+		@return Business Activity
+	  */
+	public int getC_Activity_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 
 	/** Set Description.
 		@param Description 

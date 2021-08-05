@@ -6,9 +6,11 @@ import java.util.Properties;
 import org.adempiere.base.IColumnCallout;
 import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
+import org.syvasoft.tallyfrontcrusher.model.MMachinery;
 import org.syvasoft.tallyfrontcrusher.model.MMachineryRentConfig;
 import org.syvasoft.tallyfrontcrusher.model.MTripSheet;
 import org.syvasoft.tallyfrontcrusher.model.MTripSheetProduct;
+import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
 
 public class CalloutTripSheetProduct_CalcRentAmt implements IColumnCallout {
 
@@ -33,6 +35,21 @@ public class CalloutTripSheetProduct_CalcRentAmt implements IColumnCallout {
 		BigDecimal rentAmount = TotalMT.multiply(Rate); 
 		
 		mTab.setValue(MTripSheetProduct.COLUMNNAME_Rent_Amt, rentAmount);
+		
+		
+		//SetActivity
+		int C_Activity_ID = 0;		
+		MMachinery m = new MMachinery(ctx, PM_Machinery_ID, null);
+		C_Activity_ID = m.getC_Activity_ID();
+		
+		if(M_Product_ID > 0) {
+			TF_MProduct p = new TF_MProduct(ctx, M_Product_ID, null);
+			if(p.getC_Activity_ID() > 0)
+				C_Activity_ID= p.getC_Activity_ID();
+		}
+		
+		mTab.setValue(MTripSheet.COLUMNNAME_C_Activity_ID, C_Activity_ID);
+		
 		return null;
 	}
 
