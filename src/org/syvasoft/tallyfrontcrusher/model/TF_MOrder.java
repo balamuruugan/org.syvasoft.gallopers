@@ -3553,10 +3553,14 @@ public class TF_MOrder extends MOrder {
 		invoice.setDateAcct(getDateAcct());
 		
 		//fetching already generated invoice no in case of reversing and recreating the existing invoices.
-		if(weighment.getInvoiceNo() != null && firstInvoice) 
-			invoice.setDocumentNo(weighment.getInvoiceNo());
-		else if(weighment.getInvoiceNo2() != null && !firstInvoice)
-			invoice.setDocumentNo(weighment.getInvoiceNo2());
+		if(getC_DocTypeTarget_ID() == GSTOrderDocType_ID(getCtx())) {
+			invoice.setDocumentNo(weighment.getInvoiceNo());		
+			if(invoice.getDocumentNo() == null)
+				invoice.setDocumentNo(weighment.getDocumentNo());
+		}
+		else {
+			invoice.setDocumentNo(weighment.getDocumentNo());
+		}
 		
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		

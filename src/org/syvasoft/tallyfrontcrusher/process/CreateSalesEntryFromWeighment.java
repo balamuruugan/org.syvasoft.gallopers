@@ -298,10 +298,14 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		invoice.setDateAcct(wEntry.getGrossWeightTime());
 		
 		//fetching already generated invoice no in case of reversing and recreating the existing invoices.
-		if(wEntry.getInvoiceNo() != null && firstInvoice) 
+		if(wEntry.getInvoiceNo() != null) {
 			invoice.setDocumentNo(wEntry.getInvoiceNo());
-		else if(wEntry.getInvoiceNo2() != null && !firstInvoice)
-			invoice.setDocumentNo(wEntry.getInvoiceNo2());
+			
+			if(invoice.getDocumentNo() == null)
+				invoice.setDocumentNo(wEntry.getDocumentNo());
+		}
+		else
+			invoice.setDocumentNo(wEntry.getDocumentNo());
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		
 		invoice.setPaymentRule(order.getPaymentRule());
