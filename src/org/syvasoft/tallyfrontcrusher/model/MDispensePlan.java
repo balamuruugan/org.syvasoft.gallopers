@@ -60,7 +60,7 @@ public class MDispensePlan extends X_TF_DispensePlan {
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		if(newRecord) {
-			String where = " ScheduleDate = '" + getScheduleDate() + "'";
+			String where = " AD_Org_ID = " + getAD_Org_ID() + " AND ScheduleDate = '" + getScheduleDate() + "'";
 			
 			MDispensePlan dispensePlan = new Query(getCtx(), MDispensePlan.Table_Name, where, get_TrxName()).first();
 			
@@ -69,7 +69,7 @@ public class MDispensePlan extends X_TF_DispensePlan {
 			}
 		}
 		else {
-			String where = " ScheduleDate = '" + getScheduleDate() + "' AND TF_DispensePlan_ID != " + getTF_DispensePlan_ID();
+			String where =  " AD_Org_ID = " + getAD_Org_ID() + " AND  ScheduleDate = '" + getScheduleDate() + "' AND TF_DispensePlan_ID != " + getTF_DispensePlan_ID();
 			
 			MDispensePlan dispensePlan = new Query(getCtx(), MDispensePlan.Table_Name, where, get_TrxName()).first();
 			

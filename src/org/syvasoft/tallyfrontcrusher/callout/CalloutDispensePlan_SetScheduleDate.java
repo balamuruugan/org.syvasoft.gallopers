@@ -23,10 +23,10 @@ public class CalloutDispensePlan_SetScheduleDate implements IColumnCallout {
 		String whereClause = "";
 		String ID = mTab.get_ValueAsString(MDispensePlan.COLUMNNAME_TF_DispensePlan_ID);
 		if(ID == null) {
-			whereClause = " trunc(ScheduleDate) = '" + mTab.get_ValueAsString(MDispensePlan.COLUMNNAME_ScheduleDate) + "'";
+			whereClause = " AD_Org_ID = " + mTab.get_ValueAsString(MDispensePlan.COLUMNNAME_AD_Org_ID) + " AND trunc(ScheduleDate) = '" + mTab.get_ValueAsString(MDispensePlan.COLUMNNAME_ScheduleDate) + "'";
 		}
 		else {
-			whereClause = " trunc(ScheduleDate) = '" + mTab.get_ValueAsString(MDispensePlan.COLUMNNAME_ScheduleDate) + "' AND TF_DispensePlan_ID != '" + ID + "'";
+			whereClause = " AD_Org_ID = " + mTab.get_ValueAsString(MDispensePlan.COLUMNNAME_AD_Org_ID) + " AND trunc(ScheduleDate) = '" + mTab.get_ValueAsString(MDispensePlan.COLUMNNAME_ScheduleDate) + "' AND TF_DispensePlan_ID != '" + ID + "'";
 		}
 		
 		List<MDispensePlan> dispensePlan = new Query(Env.getCtx(), MDispensePlan.Table_Name, whereClause, null).list();
