@@ -105,9 +105,9 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 				
 			}
 			
-			if(getPaymentRule().equals(PAYMENTRULE_Cash))
+			/*if(getPaymentRule().equals(PAYMENTRULE_Cash))
 				setPaymentRule(PAYMENTRULE_OnCredit);
-			
+			*/
 			if(getTF_RentedVehicle_ID()>0) {
 				String rvwhere="COALESCE(Tareweight,0)!=? AND IsTransporter='N' AND TF_RentedVehicle_ID=?";
 				MRentedVehicle rv= new Query(getCtx(), MRentedVehicle.Table_Name, rvwhere, get_TrxName())
