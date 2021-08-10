@@ -17,6 +17,7 @@ import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
 import org.syvasoft.tallyfrontcrusher.model.MPriceListUOM;
 import org.syvasoft.tallyfrontcrusher.model.MRentedVehicle;
+import org.syvasoft.tallyfrontcrusher.model.TF_MBPartner;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInOut;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrderLine;
@@ -98,6 +99,7 @@ public class CreateConsolidateCustomerOrderLines extends SvrProcess {
 			DB.setParameters(pstmt,params.toArray());
 			rs = pstmt.executeQuery();
 			
+			TF_MBPartner bp = new TF_MBPartner(getCtx(), ord.getC_BPartner_ID(), get_TrxName());
 			while (rs.next()) {
 				int M_Product_ID = rs.getInt("M_Product_ID");
 				int C_UOM_ID = rs.getInt("C_UOM_ID");
@@ -125,7 +127,7 @@ public class CreateConsolidateCustomerOrderLines extends SvrProcess {
 				ordLine.setPriceLimit(price);
 				ordLine.setPriceEntered(price);
 				TF_MProduct prod = new TF_MProduct(getCtx(), M_Product_ID, get_TrxName());
-				ordLine.setC_Tax_ID(prod.getTax_ID(true));
+				ordLine.setC_Tax_ID(prod.getTax_ID(true, bp.isInterState()));
 				ordLine.setDescription(description);
 				ordLine.saveEx();
 			}	

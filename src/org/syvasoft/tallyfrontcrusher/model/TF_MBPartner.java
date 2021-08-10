@@ -812,6 +812,48 @@ public class TF_MBPartner extends MBPartner {
 			 return Env.ZERO;
 		return bd;
 	}
+	
+
+    /** Column name StateCode */
+    public static final String COLUMNNAME_StateCode = "StateCode";
+
+	/** Set State Code.
+	@param StateCode State Code	  */
+	public void setStateCode (String StateCode)
+	{
+		set_Value (COLUMNNAME_StateCode, StateCode);
+	}
+	
+	/** Get State Code.
+		@return State Code	  */
+	public String getStateCode () 
+	{
+		return (String)get_Value(COLUMNNAME_StateCode);
+	}
+	
+	   /** Column name IsInterState */
+    public static final String COLUMNNAME_IsInterState = "IsInterState";
+	/** Set Inter State.
+	@param IsInterState Inter State	  */
+	public void setIsInterState (boolean IsInterState)
+	{
+		set_Value (COLUMNNAME_IsInterState, Boolean.valueOf(IsInterState));
+	}
+	
+	/** Get Inter State.
+		@return Inter State	  */
+	public boolean isInterState () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsInterState);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 
 	@Override
 	protected boolean beforeSave(boolean newRecord) {

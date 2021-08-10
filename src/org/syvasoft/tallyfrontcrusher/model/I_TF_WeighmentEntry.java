@@ -77,6 +77,15 @@ public interface I_TF_WeighmentEntry
 	  */
 	public BigDecimal getAmount();
 
+    /** Column name ApplyTCS */
+    public static final String COLUMNNAME_ApplyTCS = "ApplyTCS";
+
+	/** Set Apply TCS	  */
+	public void setApplyTCS (boolean ApplyTCS);
+
+	/** Get Apply TCS	  */
+	public boolean isApplyTCS();
+
     /** Column name BillingName */
     public static final String COLUMNNAME_BillingName = "BillingName";
 
@@ -172,6 +181,15 @@ public interface I_TF_WeighmentEntry
 
 	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException;
 
+    /** Column name CashAmount */
+    public static final String COLUMNNAME_CashAmount = "CashAmount";
+
+	/** Set Cash Amount	  */
+	public void setCashAmount (BigDecimal CashAmount);
+
+	/** Get Cash Amount	  */
+	public BigDecimal getCashAmount();
+
     /** Column name ChangeAmt */
     public static final String COLUMNNAME_ChangeAmt = "ChangeAmt";
 
@@ -218,6 +236,15 @@ public interface I_TF_WeighmentEntry
 	  * Create Two Invoices by TP Weight and the remaining Weight
 	  */
 	public boolean isCreateTwoInvoices();
+
+    /** Column name CreditAmount */
+    public static final String COLUMNNAME_CreditAmount = "CreditAmount";
+
+	/** Set Credit Amount	  */
+	public void setCreditAmount (BigDecimal CreditAmount);
+
+	/** Get Credit Amount	  */
+	public BigDecimal getCreditAmount();
 
     /** Column name CustomerTransporter */
     public static final String COLUMNNAME_CustomerTransporter = "CustomerTransporter";
@@ -360,6 +387,15 @@ public interface I_TF_WeighmentEntry
 
 	/** Get Gross Weight Time	  */
 	public Timestamp getGrossWeightTime();
+
+    /** Column name GrossWeightTimeString */
+    public static final String COLUMNNAME_GrossWeightTimeString = "GrossWeightTimeString";
+
+	/** Set Gross Weight Time String	  */
+	public void setGrossWeightTimeString (String GrossWeightTimeString);
+
+	/** Get Gross Weight Time String	  */
+	public String getGrossWeightTimeString();
 
     /** Column name GSTAmount */
     public static final String COLUMNNAME_GSTAmount = "GSTAmount";
@@ -690,6 +726,17 @@ public interface I_TF_WeighmentEntry
 	/** Get PIT No	  */
 	public String getPITNo();
 
+    /** Column name PM_Machinery_ID */
+    public static final String COLUMNNAME_PM_Machinery_ID = "PM_Machinery_ID";
+
+	/** Set Machinery	  */
+	public void setPM_Machinery_ID (int PM_Machinery_ID);
+
+	/** Get Machinery	  */
+	public int getPM_Machinery_ID();
+
+	public I_PM_Machinery getPM_Machinery() throws RuntimeException;
+
     /** Column name Price */
     public static final String COLUMNNAME_Price = "Price";
 
@@ -733,6 +780,15 @@ public interface I_TF_WeighmentEntry
 	  * The document has been processed
 	  */
 	public boolean isProcessed();
+
+    /** Column name QuarryProductionType */
+    public static final String COLUMNNAME_QuarryProductionType = "QuarryProductionType";
+
+	/** Set Quarry Production Type	  */
+	public void setQuarryProductionType (String QuarryProductionType);
+
+	/** Get Quarry Production Type	  */
+	public String getQuarryProductionType();
 
     /** Column name Rent_Amt */
     public static final String COLUMNNAME_Rent_Amt = "Rent_Amt";
@@ -800,6 +856,24 @@ public interface I_TF_WeighmentEntry
 
 	/** Get Tare Weight Time	  */
 	public Timestamp getTareWeightTime();
+
+    /** Column name TareWeightTimeString */
+    public static final String COLUMNNAME_TareWeightTimeString = "TareWeightTimeString";
+
+	/** Set Tare Weight Time String	  */
+	public void setTareWeightTimeString (String TareWeightTimeString);
+
+	/** Get Tare Weight Time String	  */
+	public String getTareWeightTimeString();
+
+    /** Column name TCSAmount */
+    public static final String COLUMNNAME_TCSAmount = "TCSAmount";
+
+	/** Set TCS Amount	  */
+	public void setTCSAmount (BigDecimal TCSAmount);
+
+	/** Get TCS Amount	  */
+	public BigDecimal getTCSAmount();
 
     /** Column name TenderAmount */
     public static final String COLUMNNAME_TenderAmount = "TenderAmount";

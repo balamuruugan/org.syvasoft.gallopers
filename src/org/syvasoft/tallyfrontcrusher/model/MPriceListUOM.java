@@ -80,18 +80,18 @@ public class MPriceListUOM extends X_TF_PriceListUOM {
 	}
 	
 	public void validateUniqueness(boolean newRecord) {
-		String sql = "SELECT COUNT(*) FROM TF_PriceListUOM WHERE M_Product_ID = ? AND "
+		String sql = "SELECT COUNT(*) FROM TF_PriceListUOM WHERE AD_Org_ID = ? AND M_Product_ID = ? AND "
 				+ " C_UOM_ID = ? AND IsSOTrx = ? AND COALESCE(C_BPartner_ID,0) = ? AND COALESCE(TF_Destination_ID,0) = ? AND ValidFrom = ?" ;
 		if(!newRecord) {
 			sql += " AND TF_PriceListUOM_ID != ?";
 		}
 		int count = 0;
 		if(newRecord) {
-			count = DB.getSQLValue(get_TrxName(), sql, getM_Product_ID(), getC_UOM_ID(), 
+			count = DB.getSQLValue(get_TrxName(), sql, getAD_Org_ID(), getM_Product_ID(), getC_UOM_ID(), 
 					isSOTrx() ? "Y" : "N", getC_BPartner_ID(), getTF_Destination_ID(), getValidFrom());
 		}
 		else {
-			count = DB.getSQLValue(get_TrxName(), sql, getM_Product_ID(), getC_UOM_ID(), 
+			count = DB.getSQLValue(get_TrxName(), sql, getAD_Org_ID(), getM_Product_ID(), getC_UOM_ID(), 
 					isSOTrx() ? "Y" : "N", getC_BPartner_ID(), getTF_Destination_ID(), getValidFrom(), getTF_PriceListUOM_ID());
 		}
 		if(count > 0) {

@@ -22,6 +22,7 @@ import org.syvasoft.tallyfrontcrusher.model.MLumpSumRentConfig;
 import org.syvasoft.tallyfrontcrusher.model.MPriceListUOM;
 import org.syvasoft.tallyfrontcrusher.model.MRentedVehicle;
 import org.syvasoft.tallyfrontcrusher.model.MSubcontractType;
+import org.syvasoft.tallyfrontcrusher.model.TF_MBPartner;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInvoice;
 import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
 import org.syvasoft.tallyfrontcrusher.model.TF_MProject;
@@ -111,7 +112,7 @@ public class CreateInvoiceForMaterialReceipt extends SvrProcess {
 				DB.setParameters(pstmt,params.toArray());
 				rs = pstmt.executeQuery();
 				
-				
+				TF_MBPartner bp = new TF_MBPartner(getCtx(), invoice.getC_BPartner_ID(), get_TrxName());
 				while (rs.next()) {
 				
 					//Create Invoice Line
@@ -139,7 +140,7 @@ public class CreateInvoiceForMaterialReceipt extends SvrProcess {
 					invLine.setPriceLimit(price);
 					invLine.setPriceEntered(price);				
 				
-					invLine.setC_Tax_ID(prod.getTax_ID(true));								
+					invLine.setC_Tax_ID(prod.getTax_ID(true, bp.isInterState()));								
 					invLine.saveEx();				
 					
 					i++;
@@ -178,7 +179,7 @@ public class CreateInvoiceForMaterialReceipt extends SvrProcess {
 			params.add(invoice.getC_Invoice_ID());
 			DB.setParameters(pstmt,params.toArray());
 			rs = pstmt.executeQuery();
-			
+			TF_MBPartner bp = new TF_MBPartner(getCtx(), invoice.getC_BPartner_ID(), get_TrxName());
 			
 			while (rs.next()) {
 			
@@ -194,7 +195,7 @@ public class CreateInvoiceForMaterialReceipt extends SvrProcess {
 				MPriceListUOM pprice = MPriceListUOM.getPriceListUOM(getCtx(), rs.getInt("M_Product_ID"),
 						rs.getInt("C_UOM_ID"), invoice.getC_BPartner_ID(),0, false, invoice.getDateInvoiced());
 				
-				TF_MProduct prod = new TF_MProduct(getCtx(), invLine.getM_Product_ID(), get_TrxName());
+				TF_MProduct prod = new TF_MProduct(getCtx(), invLine.getM_Product_ID(), get_TrxName());				
 				
 				if( pprice == null && !prod.isVehicle()) {
 					throw new AdempiereException("Please configure the Purchase Price for " + prod.getName() + "!");
@@ -242,7 +243,7 @@ public class CreateInvoiceForMaterialReceipt extends SvrProcess {
 				invLine.setPriceLimit(price);
 				invLine.setPriceEntered(price);				
 			
-				invLine.setC_Tax_ID(prod.getTax_ID(true));								
+				invLine.setC_Tax_ID(prod.getTax_ID(true, bp.isInterState()));								
 				invLine.saveEx();				
 				
 				i++;

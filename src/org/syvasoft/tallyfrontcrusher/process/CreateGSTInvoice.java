@@ -150,7 +150,7 @@ public class CreateGSTInvoice extends SvrProcess {
 		
 		//Exclude Tax amount from Price
 		//TF_MProduct prod = new TF_MProduct(getCtx(), getItem1_ID(), get_TrxName());
-		MTax tax = new MTax(getCtx(), prod.getTax_ID(true), get_TrxName());				
+		MTax tax = new MTax(getCtx(), prod.getTax_ID(true, partner.isInterState()), get_TrxName());				
 		BigDecimal taxRate = tax.getRate();
 		BigDecimal hundred = new BigDecimal("100");				
 		BigDecimal priceExcludesTax = price.divide(BigDecimal.ONE

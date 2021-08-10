@@ -390,12 +390,30 @@ public class TF_MProduct extends MProduct {
 		return bd;
 	}
 	
-	public int getTax_ID(boolean isTaxIncluded) {
-		String whereClause = "Rate=? AND IsSummary=? AND ad_org_id=0";
+	public int getTax_ID(boolean isTaxIncluded, boolean isInterState) {
+		String whereClause = "Rate=? AND IsSummary=? AND IsInterState=? AND ad_org_id=0";
 		MTax tax = new Query(getCtx(), MTax.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
-				.setParameters(isTaxIncluded?getGSTRate():Env.ZERO, isTaxIncluded ? "Y" : "N")
+				.setParameters(isTaxIncluded?getGSTRate():Env.ZERO, isTaxIncluded ? "Y" : "N", isInterState)
 				.first();
+		
+		if(tax != null)
+			return tax.getC_Tax_ID();
+		else
+			return 0;
+	}
+	
+	public int getTax_ID(boolean isTaxIncluded, boolean ApplyTCS, boolean isInterState) {
+		String whereClause = "Rate=? AND IsSummary=? AND IsInterState=? AND ad_org_id=0";
+		MTax tax = new Query(getCtx(), MTax.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(isTaxIncluded?getGSTRate():Env.ZERO, isTaxIncluded ? "Y" : "N", isInterState)
+				.first();
+		
+		if(ApplyTCS) {
+			return tax.get_ValueAsInt("C_TaxTCS_ID");
+		}
+		
 		
 		if(tax != null)
 			return tax.getC_Tax_ID();

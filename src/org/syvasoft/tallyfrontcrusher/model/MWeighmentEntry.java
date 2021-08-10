@@ -318,7 +318,8 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		//if(royaltyPassQty == null)
 		//	royaltyPassQty = BigDecimal.ZERO;
 		
-		return getGSTAmount().doubleValue() > 0;
+		//return getGSTAmount().doubleValue() > 0;
+		return isPermitSales();
 	}
 	
 	/***
@@ -356,7 +357,14 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	
 	public int getC_Tax_ID() {
 		TF_MProduct p = new TF_MProduct(getCtx(), getM_Product_ID(), get_TrxName());
-		return p.getTax_ID(isGST());
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
+		
+		if(isApplyTCS()) {
+			return p.getTax_ID(true, isApplyTCS(), bp.isInterState());
+		}
+		else {
+			return p.getTax_ID(true, bp.isInterState());
+		}
 	}
 	
 	public int getM_InOut_ID() {

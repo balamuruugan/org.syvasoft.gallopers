@@ -3213,7 +3213,7 @@ public class TF_MOrder extends MOrder {
 		
 		//Exclude Tax amount from Price
 		//TF_MProduct prod = new TF_MProduct(getCtx(), getItem1_ID(), get_TrxName());
-		MTax tax = new MTax(getCtx(), prod.getTax_ID(true), get_TrxName());				
+		MTax tax = new MTax(getCtx(), prod.getTax_ID(true, partner.isInterState()), get_TrxName());				
 		BigDecimal taxRate = tax.getRate();
 		BigDecimal hundred = new BigDecimal("100");				
 		BigDecimal priceExcludesTax = price.divide(BigDecimal.ONE
@@ -3268,7 +3268,7 @@ public class TF_MOrder extends MOrder {
 			
 			
 			//Exclude Tax amount from Price
-			MTax tax2 = new MTax(getCtx(), prod2.getTax_ID(true), get_TrxName());				
+			MTax tax2 = new MTax(getCtx(), prod2.getTax_ID(true, partner.isInterState()), get_TrxName());				
 			BigDecimal taxRate2 = tax2.getRate();
 			BigDecimal hundred2 = new BigDecimal("100");				
 			BigDecimal priceExcludesTax2 = price2.divide(BigDecimal.ONE
