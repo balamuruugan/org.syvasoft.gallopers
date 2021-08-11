@@ -42,15 +42,22 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 		//String whereClause = " AD_Org_ID = ? AND TRUNC(GrossWeightTime) >= ? AND TRUNC(GrossWeightTime) <= ? AND "
 		boolean createConsolidatedPurchaseInvoice = true;
 		
-		String whereClause = " WeighmentEntryType = '2PO' AND Status = 'CO' AND Processed='N' "
+		/*String whereClause = " WeighmentEntryType = '2PO' AND Status = 'CO' AND Processed='N' "
 				+ " AND (SELECT M_Product_Category_ID FROM M_Product WHERE M_Product.M_Product_ID=TF_WeighmentEntry.M_Product_ID)=1000050"
+				+ " AND NOT EXISTS(SELECT C_Order.TF_WeighmentEntry_ID FROM C_Order WHERE "
+				+ "C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)"
+				+ " AND NOT EXISTS(SELECT M_InOut.TF_WeighmentEntry_ID FROM M_InOut WHERE "
+				+ " M_InOut.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID AND M_InOut.DocStatus IN ('CO','CL'))";*/
+		
+		String whereClause = " WeighmentEntryType = '2PO' AND Status = 'CO' AND EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +
+				" T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = TF_WeighmentEntry.TF_WeighmentEntry_ID) "
 				+ " AND NOT EXISTS(SELECT C_Order.TF_WeighmentEntry_ID FROM C_Order WHERE "
 				+ "C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)"
 				+ " AND NOT EXISTS(SELECT M_InOut.TF_WeighmentEntry_ID FROM M_InOut WHERE "
 				+ " M_InOut.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID AND M_InOut.DocStatus IN ('CO','CL'))";
 		int i = 0;
 		List<MWeighmentEntry> wEntries = new Query(getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
-				.setClient_ID().list();
+				.setClient_ID().setParameters(getAD_PInstance_ID()).list();
 		for(MWeighmentEntry wEntry : wEntries) {
 			Trx trx = Trx.get(get_TrxName(), false);
 			int C_BParner_ID = wEntry.getC_BPartner_ID();
@@ -100,7 +107,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					int uom_id = wEntry.getM_Product().getC_UOM_ID();
 					ord.setItem1_UOM_ID(ord.getItem1().getC_UOM_ID());
 					ord.setItem1_Tax_ID(1000000);
-					BigDecimal qty = wEntry.getNetWeight();
+					BigDecimal qty = wEntry.getNetWeightUnit();
 					if(uom_id == tonnage_uom_id)
 						qty = qty.divide(new BigDecimal(1000));
 					ord.setItem1_TotalLoad(BigDecimal.ONE);
@@ -116,7 +123,12 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					if( pprice == null)
 						throw new AdempiereException("Please configure the Purchase Price!");
 					
-					price = pprice.getPrice();
+					MWarehouse wh = (MWarehouse) wEntry.getM_Warehouse();
+					
+					ord.setM_Locator_ID(wh.getDefaultLocator().get_ID());
+					//price = pprice.getPrice();
+					price = wEntry.getPrice();
+					
 					ord.setItem1_Price(price);
 					ord.setItem1_UnitPrice(price);
 					ord.setItem1_Amt(ord.getItem1_Qty().multiply(ord.getItem1_Price()));
