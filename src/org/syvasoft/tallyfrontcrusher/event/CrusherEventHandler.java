@@ -126,14 +126,20 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					}
 					
 					
-					// Set Default Cash Account
+					//set Weighbridge oprator specific cash account
 					if(inv.getC_Order_ID() > 0 && inv.getPaymentRule().equals(MInvoice.PAYMENTRULE_Cash)) {
+						
 						TF_MOrder ord = new TF_MOrder(inv.getCtx(), inv.getC_Order_ID(), inv.get_TrxName());
 						MWeighmentEntry we = new MWeighmentEntry(inv.getCtx(), ord.getTF_WeighmentEntry_ID(), inv.get_TrxName());
-						if(ord.getC_BankAccount_ID() > 0) 
-							payment.setC_BankAccount_ID(ord.getC_BankAccount_ID());												
+					
+						if(ord.getC_BankAccount_ID() > 0) {
+							payment.setC_BankAccount_ID(ord.getC_BankAccount_ID());
+						}
+						else if(we.getC_BankAccount_ID() > 0) {
+							payment.setC_BankAccount_ID(we.getC_BankAccount_ID());
 						}						
 					}
+				}
 				
 
 			  if(payment.is_new() && payment.get_ValueAsInt("TF_CashCounter_ID")==0) {

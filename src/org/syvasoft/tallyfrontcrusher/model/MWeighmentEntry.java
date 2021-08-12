@@ -16,6 +16,7 @@ import org.compiere.model.MInOutLine;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MUOM;
 import org.compiere.model.MUOMConversion;
+import org.compiere.model.MUser;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
 import org.compiere.util.CLogger;
@@ -158,6 +159,14 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			setProcessed(true);
 		}
 		
+		//set AD_User_ID
+		if(newRecord) {
+			MUser user = TF_MUser.get(getCtx(), getUserName(), get_TrxName());
+			if(user != null) {
+				setAD_User_ID(user.getAD_User_ID());
+			}
+		}
+
 		boolean ok = super.beforeSave(newRecord);
 		return ok;
 	}
@@ -629,4 +638,10 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			throw new AdempiereException(ex.getMessage());
 		}	
 	}				
+
+	public int getC_BankAccount_ID() {
+		TF_MUser user = new TF_MUser(getCtx(), getAD_User_ID(), get_TrxName());
+		return user.getC_BankAccount_ID();
+	}
+
 }
