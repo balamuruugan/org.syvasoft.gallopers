@@ -30,14 +30,8 @@ import org.compiere.util.Env;
 public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Persistent 
 {
 
-	/**
-	 *
-	 */
-<<<<<<< Updated upstream
-	private static final long serialVersionUID = 20210810L;
-=======
+
 	private static final long serialVersionUID = 20210811L;
->>>>>>> Stashed changes
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)

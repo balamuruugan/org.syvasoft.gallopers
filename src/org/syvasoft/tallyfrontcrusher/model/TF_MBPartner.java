@@ -854,6 +854,27 @@ public class TF_MBPartner extends MBPartner {
 		return false;
 	}
 
+	public static final String COLUMNNAME_TF_Destination_ID = "TF_Destination_ID";
+	/** Set Destination.
+	@param TF_Destination_ID Destination	  */
+	public void setTF_Destination_ID (int TF_Destination_ID)
+	{
+		if (TF_Destination_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_Destination_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_Destination_ID, Integer.valueOf(TF_Destination_ID));
+	}
+	
+	/** Get Destination.
+		@return Destination	  */
+	public int getTF_Destination_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Destination_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
@@ -887,6 +908,10 @@ public class TF_MBPartner extends MBPartner {
 			destination.setName(getCity());
 			destination.setDistance(BigDecimal.ZERO);
 			destination.saveEx();
+			
+			if(getTF_Destination_ID() == 0) {				
+				setTF_Destination_ID(destination.getTF_Destination_ID());
+			}
 		}
 		if(IsRequiredTaxInvoicePerLoad()) {
 			setTF_TaxInvoiceCycle_ID(0);
