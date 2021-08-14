@@ -69,5 +69,22 @@ public class TF_MProductCategory extends MProductCategory {
 		return false;
 	}
 
+    /** Column name BarcodePrefix */
+    public static final String COLUMNNAME_BarcodePrefix = "BarcodePrefix";
+    
+	/** Set Barcode Prefix.
+	@param BarcodePrefix Barcode Prefix	  */
+	public void setBarcodePrefix (String BarcodePrefix)
+	{
+		set_Value (COLUMNNAME_BarcodePrefix, BarcodePrefix);
+	}
+	
+	/** Get Barcode Prefix.
+		@return Barcode Prefix	  */
+	public String getBarcodePrefix () 
+	{
+		return (String)get_Value(COLUMNNAME_BarcodePrefix);
+	}
+
 	
 }

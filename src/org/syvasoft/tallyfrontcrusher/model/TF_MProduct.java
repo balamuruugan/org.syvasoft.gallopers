@@ -452,6 +452,39 @@ public class TF_MProduct extends MProduct {
 		return ii.intValue();
 	}
 	
+    /** Column name Barcode */
+    public static final String COLUMNNAME_Barcode = "Barcode";
+    
+	/** Set Barcode.
+	@param Barcode Barcode	  */
+	public void setBarcode (String Barcode)
+	{
+		set_Value (COLUMNNAME_Barcode, Barcode);
+	}
+	
+	/** Get Barcode.
+		@return Barcode	  */
+	public String getBarcode () 
+	{
+		return (String)get_Value(COLUMNNAME_Barcode);
+	}
+
+	
+	@Override
+	protected boolean beforeSave(boolean newRecord) {
+		if(newRecord) {
+			if(getBarcode() == null) {
+				TF_MProductCategory pc = new TF_MProductCategory(getCtx(), getM_Product_Category_ID(), get_TrxName());
+				if(pc.getBarcodePrefix() != null) {
+					String sql = "SELECT TO_CHAR(COUNT(*)+1,'00000') FROM M_Product WHERE M_Product_Category_ID = ? AND Barcode IS NOT NULL";
+					String barcodeIndex = DB.getSQLValueString(get_TrxName(), sql, getM_Product_Category_ID());
+					setBarcode((pc.getBarcodePrefix() + barcodeIndex).replace(" ", ""));
+				}
+			}
+		}
+		return super.beforeSave(newRecord);
+	}
+	
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {		
 		boolean ok = super.afterSave(newRecord, success);
