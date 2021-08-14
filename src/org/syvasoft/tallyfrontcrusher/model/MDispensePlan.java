@@ -60,7 +60,7 @@ public class MDispensePlan extends X_TF_DispensePlan {
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		if(newRecord) {
-			String where = " ScheduleDate = '" + getScheduleDate() + "'";
+			String where = " AD_Org_ID = " + getAD_Org_ID() + " AND ScheduleDate = '" + getScheduleDate() + "'";
 			
 			MDispensePlan dispensePlan = new Query(getCtx(), MDispensePlan.Table_Name, where, get_TrxName()).first();
 			
@@ -69,7 +69,7 @@ public class MDispensePlan extends X_TF_DispensePlan {
 			}
 		}
 		else {
-			String where = " ScheduleDate = '" + getScheduleDate() + "' AND TF_DispensePlan_ID != " + getTF_DispensePlan_ID();
+			String where =  " AD_Org_ID = " + getAD_Org_ID() + " AND  ScheduleDate = '" + getScheduleDate() + "' AND TF_DispensePlan_ID != " + getTF_DispensePlan_ID();
 			
 			MDispensePlan dispensePlan = new Query(getCtx(), MDispensePlan.Table_Name, where, get_TrxName()).first();
 			
@@ -162,11 +162,11 @@ public class MDispensePlan extends X_TF_DispensePlan {
 			TF_MBPartner bpartner = new TF_MBPartner(getCtx(), rs.getInt(MDispensePlanLine.COLUMNNAME_C_BPartner_ID),get_TrxName());
 			
 			if(rs.getInt(MDispensePlanLine.COLUMNNAME_TF_Destination_ID) == 0) {
-				String where = " Name = '" + bpartner.getAddress4() + "'";
+			//	String where = " Name = '" + bpartner.getAddress4() + "'";
 				
-				MDestination destination = new Query(getCtx(), MDestination.Table_Name, where, null).first();
+				//MDestination destination = new Query(getCtx(), MDestination.Table_Name, where, null).first();
 				
-				dispenseLine.setTF_Destination_ID(destination.getTF_Destination_ID());
+				dispenseLine.setTF_Destination_ID(bpartner.getTF_Destination_ID());
 				//dispenseLine.setShipmentDestination(destination.getTF_Destination_ID());
 			}
 			else {

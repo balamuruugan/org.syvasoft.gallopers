@@ -129,7 +129,7 @@ public class MGenerateTaxInvoice extends X_TF_Generate_TaxInvoice{
 			//Price always includes tax
 			//Exclude Tax amount from Price
 			
-			MTax tax = new MTax(getCtx(), prod.getTax_ID(true), get_TrxName());				
+			MTax tax = new MTax(getCtx(), prod.getTax_ID(true, bp.isInterState()), get_TrxName());				
 			BigDecimal taxRate = tax.getRate();
 			BigDecimal hundred = new BigDecimal("100");				
 			BigDecimal priceExcludesTax = price.divide(BigDecimal.ONE
@@ -277,7 +277,7 @@ public class MGenerateTaxInvoice extends X_TF_Generate_TaxInvoice{
 				//Price always includes tax
 				//Exclude Tax amount from Price
 				
-				MTax tax = new MTax(getCtx(), prod.getTax_ID(true), get_TrxName());				
+				MTax tax = new MTax(getCtx(), prod.getTax_ID(true, bp.isInterState()), get_TrxName());				
 				BigDecimal taxRate = tax.getRate();
 				BigDecimal hundred = new BigDecimal("100");				
 				BigDecimal priceExcludesTax = price.divide(BigDecimal.ONE

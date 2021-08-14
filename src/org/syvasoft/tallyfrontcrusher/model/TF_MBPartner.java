@@ -812,6 +812,69 @@ public class TF_MBPartner extends MBPartner {
 			 return Env.ZERO;
 		return bd;
 	}
+	
+
+    /** Column name StateCode */
+    public static final String COLUMNNAME_StateCode = "StateCode";
+
+	/** Set State Code.
+	@param StateCode State Code	  */
+	public void setStateCode (String StateCode)
+	{
+		set_Value (COLUMNNAME_StateCode, StateCode);
+	}
+	
+	/** Get State Code.
+		@return State Code	  */
+	public String getStateCode () 
+	{
+		return (String)get_Value(COLUMNNAME_StateCode);
+	}
+	
+	   /** Column name IsInterState */
+    public static final String COLUMNNAME_IsInterState = "IsInterState";
+	/** Set Inter State.
+	@param IsInterState Inter State	  */
+	public void setIsInterState (boolean IsInterState)
+	{
+		set_Value (COLUMNNAME_IsInterState, Boolean.valueOf(IsInterState));
+	}
+	
+	/** Get Inter State.
+		@return Inter State	  */
+	public boolean isInterState () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsInterState);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	public static final String COLUMNNAME_TF_Destination_ID = "TF_Destination_ID";
+	/** Set Destination.
+	@param TF_Destination_ID Destination	  */
+	public void setTF_Destination_ID (int TF_Destination_ID)
+	{
+		if (TF_Destination_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_Destination_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_Destination_ID, Integer.valueOf(TF_Destination_ID));
+	}
+	
+	/** Get Destination.
+		@return Destination	  */
+	public int getTF_Destination_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Destination_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
@@ -834,7 +897,7 @@ public class TF_MBPartner extends MBPartner {
 			}
 		}
 		
-		String where = " Name = '" + getAddress4() + "'";
+		String where = " Name = '" + getCity() + "'";
 		
 		List<MDestination> dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).list();
 		
@@ -842,9 +905,13 @@ public class TF_MBPartner extends MBPartner {
 		{
 			MDestination destination = new MDestination(getCtx(), 0, get_TrxName());
 			destination.setAD_Org_ID(getAD_Org_ID());
-			destination.setName(getAddress4());
+			destination.setName(getCity());
 			destination.setDistance(BigDecimal.ZERO);
 			destination.saveEx();
+			
+			if(getTF_Destination_ID() == 0) {				
+				setTF_Destination_ID(destination.getTF_Destination_ID());
+			}
 		}
 		if(IsRequiredTaxInvoicePerLoad()) {
 			setTF_TaxInvoiceCycle_ID(0);
@@ -876,7 +943,7 @@ public class TF_MBPartner extends MBPartner {
 		loc.setAddress1(getAddress1());
 		loc.setAddress2(getAddress2());
 		loc.setAddress3(getAddress3());
-		loc.setAddress4(getAddress4());
+		loc.setAddress4(getCity());
 		loc.setCity(getCity());
 		loc.setPostal(getPostal());
 		loc.setRegionName(getRegionName());

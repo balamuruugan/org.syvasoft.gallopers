@@ -30,10 +30,8 @@ import org.compiere.util.Env;
 public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Persistent 
 {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 20210628L;
+
+	private static final long serialVersionUID = 20210811L;
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)
@@ -89,6 +87,34 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
       return sb.toString();
     }
 
+	public org.compiere.model.I_AD_User getAD_User() throws RuntimeException
+    {
+		return (org.compiere.model.I_AD_User)MTable.get(getCtx(), org.compiere.model.I_AD_User.Table_Name)
+			.getPO(getAD_User_ID(), get_TrxName());	}
+
+	/** Set User/Contact.
+		@param AD_User_ID 
+		User within the system - Internal or Business Partner Contact
+	  */
+	public void setAD_User_ID (int AD_User_ID)
+	{
+		if (AD_User_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_AD_User_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_AD_User_ID, Integer.valueOf(AD_User_ID));
+	}
+
+	/** Get User/Contact.
+		@return User within the system - Internal or Business Partner Contact
+	  */
+	public int getAD_User_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_AD_User_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Amount.
 		@param Amount 
 		Amount in a defined currency
@@ -107,6 +133,27 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set Apply TCS.
+		@param ApplyTCS Apply TCS	  */
+	public void setApplyTCS (boolean ApplyTCS)
+	{
+		set_ValueNoCheck (COLUMNNAME_ApplyTCS, Boolean.valueOf(ApplyTCS));
+	}
+
+	/** Get Apply TCS.
+		@return Apply TCS	  */
+	public boolean isApplyTCS () 
+	{
+		Object oo = get_Value(COLUMNNAME_ApplyTCS);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	/** Set Billing Name.
@@ -288,6 +335,22 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return ii.intValue();
 	}
 
+	/** Set Cash Amount.
+		@param CashAmount Cash Amount	  */
+	public void setCashAmount (BigDecimal CashAmount)
+	{
+		throw new IllegalArgumentException ("CashAmount is virtual column");	}
+
+	/** Get Cash Amount.
+		@return Cash Amount	  */
+	public BigDecimal getCashAmount () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_CashAmount);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set ChangeAmt.
 		@param ChangeAmt ChangeAmt	  */
 	public void setChangeAmt (BigDecimal ChangeAmt)
@@ -341,6 +404,22 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 			return "Y".equals(oo);
 		}
 		return false;
+	}
+
+	/** Set Credit Amount.
+		@param CreditAmount Credit Amount	  */
+	public void setCreditAmount (BigDecimal CreditAmount)
+	{
+		throw new IllegalArgumentException ("CreditAmount is virtual column");	}
+
+	/** Get Credit Amount.
+		@return Credit Amount	  */
+	public BigDecimal getCreditAmount () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_CreditAmount);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Customer's Transporter.
@@ -590,6 +669,19 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public Timestamp getGrossWeightTime () 
 	{
 		return (Timestamp)get_Value(COLUMNNAME_GrossWeightTime);
+	}
+
+	/** Set Gross Weight Time String.
+		@param GrossWeightTimeString Gross Weight Time String	  */
+	public void setGrossWeightTimeString (String GrossWeightTimeString)
+	{
+		throw new IllegalArgumentException ("GrossWeightTimeString is virtual column");	}
+
+	/** Get Gross Weight Time String.
+		@return Gross Weight Time String	  */
+	public String getGrossWeightTimeString () 
+	{
+		return (String)get_Value(COLUMNNAME_GrossWeightTimeString);
 	}
 
 	/** Set GST Amount.
@@ -1080,8 +1172,6 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 
 	/** PaymentRule AD_Reference_ID=195 */
 	public static final int PAYMENTRULE_AD_Reference_ID=195;
-	/** Cash = B */
-	public static final String PAYMENTRULE_Cash = "B";
 	/** Credit Card = K */
 	public static final String PAYMENTRULE_CreditCard = "K";
 	/** Direct Deposit = T */
@@ -1095,7 +1185,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULE_MixedPOSPayment = "M";
 	/** Cash  = Z */
-	public static final String PAYMENTRULE_PrepaidCash = "Z";
+	public static final String PAYMENTRULE_Cash = "Z";
 	/** Set Payment Rule.
 		@param PaymentRule 
 		How you pay the invoice
@@ -1179,6 +1269,31 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_PITNo);
 	}
 
+	public I_PM_Machinery getPM_Machinery() throws RuntimeException
+    {
+		return (I_PM_Machinery)MTable.get(getCtx(), I_PM_Machinery.Table_Name)
+			.getPO(getPM_Machinery_ID(), get_TrxName());	}
+
+	/** Set Machinery.
+		@param PM_Machinery_ID Machinery	  */
+	public void setPM_Machinery_ID (int PM_Machinery_ID)
+	{
+		if (PM_Machinery_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_PM_Machinery_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_PM_Machinery_ID, Integer.valueOf(PM_Machinery_ID));
+	}
+
+	/** Get Machinery.
+		@return Machinery	  */
+	public int getPM_Machinery_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_PM_Machinery_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	/** Set Price.
 		@param Price 
 		Price
@@ -1248,6 +1363,25 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 			return "Y".equals(oo);
 		}
 		return false;
+	}
+
+	/** Jack Hammer = J */
+	public static final String QUARRYPRODUCTIONTYPE_JackHammer = "J";
+	/** Graweller = G */
+	public static final String QUARRYPRODUCTIONTYPE_Graweller = "G";
+	/** Set Quarry Production Type.
+		@param QuarryProductionType Quarry Production Type	  */
+	public void setQuarryProductionType (String QuarryProductionType)
+	{
+
+		set_Value (COLUMNNAME_QuarryProductionType, QuarryProductionType);
+	}
+
+	/** Get Quarry Production Type.
+		@return Quarry Production Type	  */
+	public String getQuarryProductionType () 
+	{
+		return (String)get_Value(COLUMNNAME_QuarryProductionType);
 	}
 
 	/** Set Rent (Amount).
@@ -1371,6 +1505,36 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public Timestamp getTareWeightTime () 
 	{
 		return (Timestamp)get_Value(COLUMNNAME_TareWeightTime);
+	}
+
+	/** Set Tare Weight Time String.
+		@param TareWeightTimeString Tare Weight Time String	  */
+	public void setTareWeightTimeString (String TareWeightTimeString)
+	{
+		throw new IllegalArgumentException ("TareWeightTimeString is virtual column");	}
+
+	/** Get Tare Weight Time String.
+		@return Tare Weight Time String	  */
+	public String getTareWeightTimeString () 
+	{
+		return (String)get_Value(COLUMNNAME_TareWeightTimeString);
+	}
+
+	/** Set TCS Amount.
+		@param TCSAmount TCS Amount	  */
+	public void setTCSAmount (BigDecimal TCSAmount)
+	{
+		set_Value (COLUMNNAME_TCSAmount, TCSAmount);
+	}
+
+	/** Get TCS Amount.
+		@return TCS Amount	  */
+	public BigDecimal getTCSAmount () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_TCSAmount);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Tender Amount.

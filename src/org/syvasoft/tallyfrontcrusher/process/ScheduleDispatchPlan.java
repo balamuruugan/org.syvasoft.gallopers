@@ -84,38 +84,8 @@ public class ScheduleDispatchPlan extends SvrProcess {
 
 	@Override
 	protected String doIt() throws Exception {
-		
-		String sql = " trunc(scheduledate) = '" + ScheduleDate + "'";
-		
-		dispensePlan = new Query(getCtx(), MDispensePlan.Table_Name, sql, get_TrxName()).first();
-		
-		
-		if(dispensePlan == null) {
-			dispensePlan = new MDispensePlan(getCtx(), 0, get_TrxName());
-			dispensePlan.setScheduleDate(ScheduleDate);
-			dispensePlan.setDocStatus(MDispensePlan.DOCSTATUS_Drafted);
-			dispensePlan.saveEx();
-		}
-		
+		String sql = "";
 		int i = 0;
-		
-		//dispensePlanline = new MDispensePlanLine(getCtx(), 0, null);
-		
-		dispensePlan.ScheduleDate = ScheduleDate;		
-		dispensePlan.ShipmentTo = ShipmentTo;
-		dispensePlan.ShipmentDestination = ShipmentDestination;
-		dispensePlan.DispatchQty = DispenseQty;
-		dispensePlan.DeliveryContact = DeliveryContact;
-		dispensePlan.OverDeliveryQty = OverDeliveryQty;
-		dispensePlan.CarryForwardPrevDayDP = CarryForwardPrevDayDP;
-		dispensePlan.Priority = Priority;
-		dispensePlan.TF_VehicleType_ID = TF_VehicleType_ID;
-		dispensePlan.FreightUOM_ID = FreightUOM_ID;
-		dispensePlan.ShipmentAddress = ShipmentAddress;
-		dispensePlan.ShipmentRate = ShipmentRate;
-		dispensePlan.CustomerGSTIN = CustomerGSTIN;
-		dispensePlan.CustomerTransporter = CustomerTransporter;
-		dispensePlan.ArrangeTransport = ArrangeTransport;
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -140,7 +110,7 @@ public class ScheduleDispatchPlan extends SvrProcess {
 	    else {
 	    	if(c_orderlineID == 0) {
 				sql = "SELECT " + 
-						"	o.c_order_id, c_orderline_id,o.paymentrule,o.c_bpartner_id,o.dateordered,ol.tf_destination_id,ol.m_product_id,ol.m_warehouse_id,o.DocStatus," + 
+						" o.ad_org_id, o.c_order_id, c_orderline_id,o.paymentrule,o.c_bpartner_id,o.dateordered,ol.tf_destination_id,ol.m_product_id,ol.m_warehouse_id,o.DocStatus," + 
 						"	ol.description,ol.c_uom_id,ol.qtyordered,ol.qtydelivered,ol.c_tax_id,ol.istaxincluded,ol.isrentinclusive,ol.isroyaltypassinclusive,ol.customertransporter," + 
 						"	ol.unitprice,ol.priceentered,ol.discount,ol.freightamt,ol.linenetamt,o.ispriceconfidential,ol.ContactPerson,ol.DeliveryContact, ol.freightuom_id " +
 						" FROM c_order o INNER JOIN c_orderline ol ON ol.c_order_id = o.c_order_id WHERE " + 
@@ -148,7 +118,7 @@ public class ScheduleDispatchPlan extends SvrProcess {
 	    	}
 	    	else {
 	    		sql = "SELECT " + 
-						"	o.c_order_id, c_orderline_id,o.paymentrule,o.c_bpartner_id,o.dateordered,ol.tf_destination_id,ol.m_product_id,ol.m_warehouse_id,o.DocStatus," + 
+						" o.ad_org_id, o.c_order_id, c_orderline_id,o.paymentrule,o.c_bpartner_id,o.dateordered,ol.tf_destination_id,ol.m_product_id,ol.m_warehouse_id,o.DocStatus," + 
 						"	ol.description,ol.c_uom_id,ol.qtyordered,ol.qtydelivered,ol.c_tax_id,ol.istaxincluded,ol.isrentinclusive,ol.isroyaltypassinclusive,ol.customertransporter," + 
 						"	ol.unitprice,ol.priceentered,ol.discount,ol.freightamt,ol.linenetamt,o.ispriceconfidential,ol.ContactPerson,ol.DeliveryContact, ol.freightuom_id " +
 						" FROM c_order o INNER JOIN c_orderline ol ON ol.c_order_id = o.c_order_id WHERE ol.c_orderline_id = " + c_orderlineID;
@@ -160,7 +130,40 @@ public class ScheduleDispatchPlan extends SvrProcess {
 				
 				int RoleId = Env.getContextAsInt(getCtx(), "#AD_Role_ID");
 				
-				while (rs.next()) {					
+				while (rs.next()) {			
+					
+					sql = " ad_org_id = '"+ rs.getInt(TF_MOrder.COLUMNNAME_AD_Org_ID)  +"' AND trunc(scheduledate) = '" + ScheduleDate + "'";
+					
+					dispensePlan = new Query(getCtx(), MDispensePlan.Table_Name, sql, get_TrxName()).first();
+					
+					
+					if(dispensePlan == null) {
+						dispensePlan = new MDispensePlan(getCtx(), 0, get_TrxName());
+						dispensePlan.setAD_Org_ID(rs.getInt(TF_MOrder.COLUMNNAME_AD_Org_ID));
+						dispensePlan.setScheduleDate(ScheduleDate);
+						dispensePlan.setDocStatus(MDispensePlan.DOCSTATUS_Drafted);
+						dispensePlan.saveEx();
+					}
+					
+					//dispensePlanline = new MDispensePlanLine(getCtx(), 0, null);
+					
+					dispensePlan.ScheduleDate = ScheduleDate;		
+					dispensePlan.ShipmentTo = ShipmentTo;
+					dispensePlan.ShipmentDestination = ShipmentDestination;
+					dispensePlan.DispatchQty = DispenseQty;
+					dispensePlan.DeliveryContact = DeliveryContact;
+					dispensePlan.OverDeliveryQty = OverDeliveryQty;
+					dispensePlan.CarryForwardPrevDayDP = CarryForwardPrevDayDP;
+					dispensePlan.Priority = Priority;
+					dispensePlan.TF_VehicleType_ID = TF_VehicleType_ID;
+					dispensePlan.FreightUOM_ID = FreightUOM_ID;
+					dispensePlan.ShipmentAddress = ShipmentAddress;
+					dispensePlan.ShipmentRate = ShipmentRate;
+					dispensePlan.CustomerGSTIN = CustomerGSTIN;
+					dispensePlan.CustomerTransporter = CustomerTransporter;
+					dispensePlan.ArrangeTransport = ArrangeTransport;
+					
+					
 					if(rs.getString(MDispensePlan.COLUMNNAME_DocStatus).equals(MDispensePlan.DOCSTATUS_Completed)) {
 						MDispensePlanLine dispensePlanLine = dispensePlan.createDPLinesFromOrder(rs);
 						String userMsg = "";

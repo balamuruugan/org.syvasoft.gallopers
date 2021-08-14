@@ -16,6 +16,7 @@ import org.compiere.model.MInOutLine;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MUOM;
 import org.compiere.model.MUOMConversion;
+import org.compiere.model.MUser;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
 import org.compiere.util.CLogger;
@@ -105,9 +106,9 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 				
 			}
 			
-			if(getPaymentRule().equals(PAYMENTRULE_Cash))
+			/*if(getPaymentRule().equals(PAYMENTRULE_Cash))
 				setPaymentRule(PAYMENTRULE_OnCredit);
-			
+			*/
 			if(getTF_RentedVehicle_ID()>0) {
 				String rvwhere="COALESCE(Tareweight,0)!=? AND IsTransporter='N' AND TF_RentedVehicle_ID=?";
 				MRentedVehicle rv= new Query(getCtx(), MRentedVehicle.Table_Name, rvwhere, get_TrxName())
@@ -158,6 +159,14 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			setProcessed(true);
 		}
 		
+		//set AD_User_ID
+		if(newRecord) {
+			MUser user = TF_MUser.get(getCtx(), getUserName(), get_TrxName());
+			if(user != null) {
+				setAD_User_ID(user.getAD_User_ID());
+			}
+		}
+
 		boolean ok = super.beforeSave(newRecord);
 		return ok;
 	}
@@ -318,7 +327,8 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		//if(royaltyPassQty == null)
 		//	royaltyPassQty = BigDecimal.ZERO;
 		
-		return getGSTAmount().doubleValue() > 0;
+		//return getGSTAmount().doubleValue() > 0;
+		return isPermitSales();
 	}
 	
 	/***
@@ -356,7 +366,14 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	
 	public int getC_Tax_ID() {
 		TF_MProduct p = new TF_MProduct(getCtx(), getM_Product_ID(), get_TrxName());
-		return p.getTax_ID(isGST());
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
+		
+		if(isApplyTCS()) {
+			return p.getTax_ID(true, isApplyTCS(), bp.isInterState());
+		}
+		else {
+			return p.getTax_ID(true, bp.isInterState());
+		}
 	}
 	
 	public int getM_InOut_ID() {
@@ -621,4 +638,10 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			throw new AdempiereException(ex.getMessage());
 		}	
 	}				
+
+	public int getC_BankAccount_ID() {
+		TF_MUser user = new TF_MUser(getCtx(), getAD_User_ID(), get_TrxName());
+		return user.getC_BankAccount_ID();
+	}
+
 }

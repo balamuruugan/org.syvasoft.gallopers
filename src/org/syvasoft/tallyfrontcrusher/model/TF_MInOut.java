@@ -111,9 +111,6 @@ public class TF_MInOut extends MInOut {
 			
 			we.saveEx();
 			
-			if(isSOTrx() && getC_DocType_ID() == 1000055)
-				updateDispenseQty(we, false);
-			
 			if(createConsolidatedTransportInvoice)
 				createTransportMaterialReceipt();
 			createMaterialMovement(we);
@@ -123,6 +120,10 @@ public class TF_MInOut extends MInOut {
 		String error = super.completeIt();
 		// TODO Auto-generated method stub
 		
+		if(getTF_WeighmentEntry_ID() > 0) {			
+			if(isSOTrx() && getC_DocType_ID() == 1000055)
+				updateDispenseQty(we, false);
+		}
 		
 		return error;
 	}
@@ -419,13 +420,15 @@ public class TF_MInOut extends MInOut {
 	public void updateDispenseQty(MWeighmentEntry wEntry, boolean isReverse) {
 		MDispensePlanLine dispensePlanLine = new MDispensePlanLine(getCtx(), wEntry.getTF_DispensePlanLine_ID(), get_TrxName());
 		
+		TF_MOrderLine orderline = new TF_MOrderLine(getCtx(),wEntry.getC_OrderLine_ID(), get_TrxName());
+		
 		if(wEntry.getTF_DispensePlanLine_ID() > 0) {
 			if(!isReverse) {
-				dispensePlanLine.setQtyDelivered(dispensePlanLine.getQtyDelivered().add(wEntry.getNetWeightUnit()));
+				dispensePlanLine.setQtyDelivered(orderline.getQtyDelivered());
 				dispensePlanLine.setDeliveredDPQty(dispensePlanLine.getDeliveredDPQty().add(wEntry.getNetWeightUnit()));
 			}
 			else {
-				dispensePlanLine.setQtyDelivered(dispensePlanLine.getQtyDelivered().subtract(wEntry.getNetWeightUnit()));
+				dispensePlanLine.setQtyDelivered(orderline.getQtyDelivered());
 				dispensePlanLine.setDeliveredDPQty(dispensePlanLine.getDeliveredDPQty().subtract(wEntry.getNetWeightUnit()));
 			}
 			dispensePlanLine.setBalanceQty(dispensePlanLine.getQtyOrdered().subtract(dispensePlanLine.getQtyDelivered()));

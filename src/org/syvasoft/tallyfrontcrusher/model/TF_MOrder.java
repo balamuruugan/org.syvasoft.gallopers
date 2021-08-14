@@ -3213,7 +3213,7 @@ public class TF_MOrder extends MOrder {
 		
 		//Exclude Tax amount from Price
 		//TF_MProduct prod = new TF_MProduct(getCtx(), getItem1_ID(), get_TrxName());
-		MTax tax = new MTax(getCtx(), prod.getTax_ID(true), get_TrxName());				
+		MTax tax = new MTax(getCtx(), prod.getTax_ID(true, partner.isInterState()), get_TrxName());				
 		BigDecimal taxRate = tax.getRate();
 		BigDecimal hundred = new BigDecimal("100");				
 		BigDecimal priceExcludesTax = price.divide(BigDecimal.ONE
@@ -3268,7 +3268,7 @@ public class TF_MOrder extends MOrder {
 			
 			
 			//Exclude Tax amount from Price
-			MTax tax2 = new MTax(getCtx(), prod2.getTax_ID(true), get_TrxName());				
+			MTax tax2 = new MTax(getCtx(), prod2.getTax_ID(true, partner.isInterState()), get_TrxName());				
 			BigDecimal taxRate2 = tax2.getRate();
 			BigDecimal hundred2 = new BigDecimal("100");				
 			BigDecimal priceExcludesTax2 = price2.divide(BigDecimal.ONE
@@ -3553,10 +3553,14 @@ public class TF_MOrder extends MOrder {
 		invoice.setDateAcct(getDateAcct());
 		
 		//fetching already generated invoice no in case of reversing and recreating the existing invoices.
-		if(weighment.getInvoiceNo() != null && firstInvoice) 
-			invoice.setDocumentNo(weighment.getInvoiceNo());
-		else if(weighment.getInvoiceNo2() != null && !firstInvoice)
-			invoice.setDocumentNo(weighment.getInvoiceNo2());
+		if(getC_DocTypeTarget_ID() == GSTOrderDocType_ID(getCtx())) {
+			invoice.setDocumentNo(weighment.getInvoiceNo());		
+			if(invoice.getDocumentNo() == null)
+				invoice.setDocumentNo(weighment.getDocumentNo());
+		}
+		else {
+			invoice.setDocumentNo(weighment.getDocumentNo());
+		}
 		
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		

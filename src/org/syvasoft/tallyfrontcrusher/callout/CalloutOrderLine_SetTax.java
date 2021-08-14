@@ -7,6 +7,7 @@ import org.compiere.model.GridField;
 import org.compiere.model.GridTab;
 import org.compiere.model.MSysConfig;
 import org.syvasoft.tallyfrontcrusher.model.MPriceListUOM;
+import org.syvasoft.tallyfrontcrusher.model.TF_MBPartner;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrderLine;
 import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
@@ -18,9 +19,14 @@ public class CalloutOrderLine_SetTax implements IColumnCallout {
 		
 		int M_Product_ID = CalloutUtil.getIntValue(mTab, TF_MOrderLine.COLUMNNAME_M_Product_ID);
 		//boolean isTaxIncluded = (boolean)mTab.getValue(TF_MOrderLine.COLUMNNAME_IsTaxIncluded);
+		int bPartner_ID = 0;
 		
+		if(mTab.getValue(TF_MOrder.COLUMNNAME_C_BPartner_ID) != null)
+			bPartner_ID	= (int) mTab.getValue(TF_MOrder.COLUMNNAME_C_BPartner_ID);
+		
+		TF_MBPartner bp = new TF_MBPartner(ctx, bPartner_ID, null);
 		TF_MProduct product = new TF_MProduct(ctx, M_Product_ID, null);
-		mTab.setValue(TF_MOrderLine.COLUMNNAME_C_Tax_ID, product.getTax_ID(true));
+		mTab.setValue(TF_MOrderLine.COLUMNNAME_C_Tax_ID, product.getTax_ID(true, bp.isInterState()));
 		 
 		return null;
 	}
