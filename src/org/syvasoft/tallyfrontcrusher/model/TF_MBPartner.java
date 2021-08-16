@@ -875,6 +875,29 @@ public class TF_MBPartner extends MBPartner {
 		return ii.intValue();
 	}
 
+    /** Column name ApplyTCS */
+    public static final String COLUMNNAME_ApplyTCS = "ApplyTCS";
+    
+	/** Set Apply TCS.
+	@param ApplyTCS Apply TCS	  */
+	public void setApplyTCS (boolean ApplyTCS)
+	{
+		set_ValueNoCheck (COLUMNNAME_ApplyTCS, Boolean.valueOf(ApplyTCS));
+	}
+	
+	/** Get Apply TCS.
+		@return Apply TCS	  */
+	public boolean isApplyTCS () 
+	{
+		Object oo = get_Value(COLUMNNAME_ApplyTCS);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
 
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
