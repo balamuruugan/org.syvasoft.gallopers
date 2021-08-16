@@ -279,7 +279,24 @@ public class TF_MInOutLine extends MInOutLine {
 			 return 0;
 		return ii.intValue();
 	}
+	 /** Column name Barcode */
+    public static final String COLUMNNAME_Barcode = "Barcode";
+    
+	/** Set Barcode.
+	@param Barcode Barcode	  */
+	public void setBarcode (String Barcode)
+	{
+		set_Value (COLUMNNAME_Barcode, Barcode);
+	}
+	
+	/** Get Barcode.
+		@return Barcode	  */
+	public String getBarcode () 
+	{
+		return (String)get_Value(COLUMNNAME_Barcode);
+	}
 
+	
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		log.fine("");

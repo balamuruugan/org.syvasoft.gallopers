@@ -10,16 +10,15 @@ import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClient;
 import org.compiere.model.MCost;
-import org.compiere.model.MCostDetail;
 import org.compiere.model.MInventory;
 import org.compiere.model.MInventoryLine;
+import org.compiere.model.MLocator;
 import org.compiere.model.MProduct;
 import org.compiere.model.MProductCategory;
 import org.compiere.model.MTable;
 import org.compiere.model.MTax;
 import org.compiere.model.MUOMConversion;
 import org.compiere.model.MWarehouse;
-import org.compiere.model.MWarehousePrice;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
 import org.compiere.util.DB;
@@ -699,5 +698,36 @@ public class TF_MProduct extends MProduct {
 			
 		return cost;
 				
+	}
+	
+	public static MLocator getLocator(Properties ctx, int AD_Org_ID, int M_Product_ID) {
+		MLocator l = MProdCategorySetup.getM_Locator(ctx, AD_Org_ID, M_Product_ID);
+		if(l != null)
+			return l;
+		
+		String sql = "SELECT \r\n" + 
+				"	ol.M_Locator_ID\r\n" + 
+				"FROM\r\n" + 
+				"	C_Order O INNER JOIN C_OrderLine Ol\r\n" + 
+				"	 ON o.C_Order_ID = ol.C_Order_ID\r\n" + 
+				"	INNER JOIN C_DocType dt\r\n" + 
+				"	 ON dt.C_DocType_ID = o.C_DocTypeTarget_ID \r\n" + 
+				"WHERE\r\n" + 
+				"	o.AD_Org_ID = ? AND ol.M_Product_ID = ? AND dt.DocBaseType = 'POO' AND\r\n" + 
+				"	o.DocStatus IN ('CO','CL') AND ol.M_Locator_ID IS NOT NULL \r\n" +
+				"ORDER BY \r\n" + 
+				"	o.DateOrdered DESC" ;
+		
+		int M_Locator_ID = DB.getSQLValue(null, sql, AD_Org_ID, M_Product_ID);
+		
+		l = new MLocator(null, M_Locator_ID, null);
+		return l;
+		
+	}
+	
+	public static int getM_Product_ID(Properties ctx, String barcode) {
+		String sql = "SELECT M_Product_ID FROM M_Product WHERE Barcode = ? AND Barcode IS NOT NULL";
+		int M_Product_ID = DB.getSQLValue(null, sql, barcode);
+		return M_Product_ID;		
 	}
 }

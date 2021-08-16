@@ -157,6 +157,9 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		}
 		
 		if(tableName.equals(TF_MOrderLine.Table_Name)) {
+			if(columnName.equals(TF_MOrderLine.COLUMNNAME_Barcode)) 
+				list.add(new CalloutOrderLine_Barcode());
+			
 			if(columnName.equals(TF_MOrderLine.COLUMNNAME_M_Product_ID)) {
 				list.add(new CalloutOrderLine_SetTax());
 				list.add(new CalloutOrderLine_SetDestination());

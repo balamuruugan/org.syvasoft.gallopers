@@ -305,8 +305,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return MTransportOrderLine.class;
 		else if(MWhatsAppMsgConfig.Table_Name.equals(tableName))
 			return MWhatsAppMsgConfig.class;
-		else if(MNotificationTriggerColumn.Table_Name.equals(tableName))
+		else if(MNotificationTriggerColumn.Table_Name.equals(tableName))			
 			return MNotificationTriggerColumn.class;
+		else if(MProdCategorySetup.Table_Name.equals(tableName))
+			return MProdCategorySetup.class;
 		return null;
 	}
 
@@ -607,6 +609,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MWhatsAppMsgConfig(ctx, Record_ID, trxName);
 		else if(MNotificationTriggerColumn.Table_Name.equals(tableName))
 			return new MNotificationTriggerColumn(ctx, Record_ID, trxName);
+		else if(MProdCategorySetup.Table_Name.equals(tableName))
+			return new MProdCategorySetup(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -909,6 +913,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MWhatsAppMsgConfig(ctx, rs, trxName);
 		else if(MNotificationTriggerColumn.Table_Name.equals(tableName))
 			return new MNotificationTriggerColumn(ctx, rs, trxName);
+		else if(MProdCategorySetup.Table_Name.equals(tableName))
+			return new MProdCategorySetup(ctx, rs, trxName);
 		return null;
 	}
 

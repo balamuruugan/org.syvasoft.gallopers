@@ -27,4 +27,11 @@ public class CalloutUtil {
 			return (Timestamp) o;
 		return null;
 	}
+	
+	public static String getString(GridTab mTab, String columnName) {
+		Object o = mTab.getValue(columnName);
+		if(o != null)
+			return o.toString();
+		return null;
+	}
 }

@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.compiere.model.MOrder;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MSysConfig;
+import org.compiere.model.MTable;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
 
@@ -480,6 +481,37 @@ public class TF_MOrderLine extends MOrderLine {
 		}
 		return false;
 	}
+	
+    /** Column name M_Locator_ID */
+    public static final String COLUMNNAME_M_Locator_ID = "M_Locator_ID";
+	public org.compiere.model.I_M_Locator getM_Locator() throws RuntimeException
+    {
+		return (org.compiere.model.I_M_Locator)MTable.get(getCtx(), org.compiere.model.I_M_Locator.Table_Name)
+			.getPO(getM_Locator_ID(), get_TrxName());	}
+
+	/** Set Locator.
+		@param M_Locator_ID 
+		Warehouse Locator
+	  */
+	public void setM_Locator_ID (int M_Locator_ID)
+	{
+		if (M_Locator_ID < 1) 
+			set_Value (COLUMNNAME_M_Locator_ID, null);
+		else 
+			set_Value (COLUMNNAME_M_Locator_ID, Integer.valueOf(M_Locator_ID));
+	}
+
+	/** Get Locator.
+		@return Warehouse Locator
+	  */
+	public int getM_Locator_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_M_Locator_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+	
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {		
 		Boolean ok = super.afterSave(newRecord, success);
@@ -491,6 +523,24 @@ public class TF_MOrderLine extends MOrderLine {
 		return ok;
 	}	
 	
+    /** Column name Barcode */
+    public static final String COLUMNNAME_Barcode = "Barcode";
+    
+	/** Set Barcode.
+	@param Barcode Barcode	  */
+	public void setBarcode (String Barcode)
+	{
+		set_Value (COLUMNNAME_Barcode, Barcode);
+	}
+	
+	/** Get Barcode.
+		@return Barcode	  */
+	public String getBarcode () 
+	{
+		return (String)get_Value(COLUMNNAME_Barcode);
+	}
+
+	
 	@Override
 	protected boolean beforeSave(boolean newRecord) {
 		setQtyReserved(BigDecimal.ZERO);
@@ -501,9 +551,12 @@ public class TF_MOrderLine extends MOrderLine {
 		if(is_ValueChanged(COLUMNNAME_QtyEntered)) {
 			setQtyOrdered(getQtyEntered());
 		}
+		
+		
 		boolean success = super.beforeSave(newRecord);
 		setC_UOM_ID(C_UOM_ID);
 		
+			
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
 		
 		if(bp != null) {
