@@ -45,7 +45,7 @@ public class CalloutInOutLine_SetVehicleRentConfig implements IColumnCallout {
 			BigDecimal price = BigDecimal.ZERO;
 			BigDecimal RateMTKM = BigDecimal.ZERO;
 			
-			if(we != null) {
+			if(we != null && minout.getTF_WeighmentEntry_ID() > 0) {
 				MLumpSumRentConfig lumpsumConfig = MLumpSumRentConfig.getFreightPrice(Env.getCtx(), we.getAD_Org_ID(), minout.getC_BPartner_ID(), 
 						we.getC_BPartner_ID(), we.getM_Product_ID(), TF_Destination_ID, we.getTF_VehicleType_ID(), dest.getDistance(), C_UOM_ID, null);		
 				

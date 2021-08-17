@@ -766,10 +766,14 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			}
 		}
 			
-		if(tableName.equals(TF_MInOutLine.Table_Name)) {
+		if(tableName.equals(TF_MInOutLine.Table_Name)) {			
 			if(columnName.equals(TF_MOrderLine.COLUMNNAME_C_UOM_ID)) {
 				list.add(new CalloutInOutLine_SetVehicleRentConfig());
 			}
+			
+			if(columnName.equals(TF_MInOutLine.COLUMNNAME_Barcode))
+				list.add(new CalloutInOutLine_Barcode());
+			
 		}
 		
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
