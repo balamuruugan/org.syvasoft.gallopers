@@ -771,7 +771,8 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				list.add(new CalloutInOutLine_SetVehicleRentConfig());
 			}
 			
-			if(columnName.equals(TF_MInOutLine.COLUMNNAME_Barcode))
+			if(columnName.equals(TF_MInOutLine.COLUMNNAME_Barcode) || 
+					columnName.equals(TF_MInOutLine.COLUMNNAME_M_Product_ID) )
 				list.add(new CalloutInOutLine_Barcode());
 			
 		}
