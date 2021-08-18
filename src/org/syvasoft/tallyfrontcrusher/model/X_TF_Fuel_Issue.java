@@ -33,7 +33,7 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210803L;
+	private static final long serialVersionUID = 20210818L;
 
     /** Standard Constructor */
     public X_TF_Fuel_Issue (Properties ctx, int TF_Fuel_Issue_ID, String trxName)
@@ -134,32 +134,18 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 		return bd;
 	}
 
-	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException
-    {
-		return (org.compiere.model.I_C_Activity)MTable.get(getCtx(), org.compiere.model.I_C_Activity.Table_Name)
-			.getPO(getC_Activity_ID(), get_TrxName());	}
-
-	/** Set Activity.
-		@param C_Activity_ID 
-		Business Activity
-	  */
-	public void setC_Activity_ID (int C_Activity_ID)
+	/** Set Barcode.
+		@param Barcode Barcode	  */
+	public void setBarcode (String Barcode)
 	{
-		if (C_Activity_ID < 1) 
-			set_Value (COLUMNNAME_C_Activity_ID, null);
-		else 
-			set_Value (COLUMNNAME_C_Activity_ID, Integer.valueOf(C_Activity_ID));
+		set_Value (COLUMNNAME_Barcode, Barcode);
 	}
 
-	/** Get Activity.
-		@return Business Activity
-	  */
-	public int getC_Activity_ID () 
+	/** Get Barcode.
+		@return Barcode	  */
+	public String getBarcode () 
 	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
+		return (String)get_Value(COLUMNNAME_Barcode);
 	}
 
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException
@@ -897,8 +883,8 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 
 	/** Jack Hammer = J */
 	public static final String QUARRYPRODUCTIONTYPE_JackHammer = "J";
-	/** GRAWELLER = G */
-	public static final String QUARRYPRODUCTIONTYPE_GRAWELLER = "G";
+	/** Graweller = G */
+	public static final String QUARRYPRODUCTIONTYPE_Graweller = "G";
 	/** Set Quarry Production Type.
 		@param QuarryProductionType Quarry Production Type	  */
 	public void setQuarryProductionType (String QuarryProductionType)

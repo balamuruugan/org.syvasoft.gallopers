@@ -92,20 +92,14 @@ public interface I_TF_Fuel_Issue
 	  */
 	public BigDecimal getAmt();
 
-    /** Column name C_Activity_ID */
-    public static final String COLUMNNAME_C_Activity_ID = "C_Activity_ID";
+    /** Column name Barcode */
+    public static final String COLUMNNAME_Barcode = "Barcode";
 
-	/** Set Activity.
-	  * Business Activity
-	  */
-	public void setC_Activity_ID (int C_Activity_ID);
+	/** Set Barcode	  */
+	public void setBarcode (String Barcode);
 
-	/** Get Activity.
-	  * Business Activity
-	  */
-	public int getC_Activity_ID();
-
-	public org.compiere.model.I_C_Activity getC_Activity() throws RuntimeException;
+	/** Get Barcode	  */
+	public String getBarcode();
 
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";
