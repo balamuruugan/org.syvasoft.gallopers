@@ -421,6 +421,9 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		}
 				
 		if(tableName.equals(MFuelIssue.Table_Name))  {
+			if(columnName.equals(MFuelIssue.COLUMNNAME_Barcode))
+				list.add(new CalloutFuelIssue_Barcode());
+			
 			if (columnName.equals(MFuelIssue.COLUMNNAME_Qty)
 				|| columnName.equals(MFuelIssue.COLUMNNAME_Rate)) {
 				list.add(new CalloutFuelIssue_CalcAmount());
