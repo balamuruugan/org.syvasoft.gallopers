@@ -245,6 +245,8 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 				wEntry.saveEx();
 				addLog(wEntry.get_Table_ID(), wEntry.getGrossWeightTime(), null, ex.getMessage(), wEntry.get_Table_ID(), wEntry.get_ID());
 			}
+			wEntry.setStatus(MWeighmentEntry.STATUS_Billed);
+			wEntry.setProcessed(true);
 			i++;
 		}
 		return i + " Weighment Entries are processed!";
