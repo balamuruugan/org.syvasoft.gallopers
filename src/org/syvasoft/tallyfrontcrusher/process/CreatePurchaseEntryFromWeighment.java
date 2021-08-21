@@ -104,10 +104,10 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					ord.setItem1_ID(wEntry.getM_Product_ID());
 					
 					int tonnage_uom_id = MSysConfig.getIntValue("TONNAGE_UOM", 1000069, Env.getAD_Client_ID(getCtx()));
-					int uom_id = wEntry.getM_Product().getC_UOM_ID();
+					int uom_id = wEntry.getC_UOM_ID();
 					ord.setItem1_UOM_ID(ord.getItem1().getC_UOM_ID());
 					ord.setItem1_Tax_ID(1000000);
-					BigDecimal qty = wEntry.getNetWeightUnit();
+					BigDecimal qty = wEntry.getNetWeight();
 					if(uom_id == tonnage_uom_id)
 						qty = qty.divide(new BigDecimal(1000));
 					ord.setItem1_TotalLoad(BigDecimal.ONE);
@@ -247,6 +247,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 			}
 			wEntry.setStatus(MWeighmentEntry.STATUS_Billed);
 			wEntry.setProcessed(true);
+			wEntry.saveEx();
 			i++;
 		}
 		return i + " Weighment Entries are processed!";

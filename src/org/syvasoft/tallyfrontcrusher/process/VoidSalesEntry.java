@@ -44,7 +44,7 @@ public class VoidSalesEntry extends SvrProcess {
 
 	@Override
 	protected String doIt() throws Exception {
-		String whereClause = " WeighmentEntryType = '1SO' AND Status IN ('CL','CO') AND (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +
+		String whereClause = " WeighmentEntryType IN ('1SO', '2PO') AND Status IN ('CL','CO') AND (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +
 				" T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = TF_WeighmentEntry.TF_WeighmentEntry_ID) OR TF_WeighmentEntry_ID = ?) "
 				+ "  ";
 				//+ "AND C_Order.DocStatus IN ('CO','DR','IR'))";
