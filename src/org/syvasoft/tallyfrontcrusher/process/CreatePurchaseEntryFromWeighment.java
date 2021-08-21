@@ -80,8 +80,8 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					ord.setPaymentRule(wEntry.getPaymentRule());		
 					//Price List
 					int m_M_PriceList_ID = Env.getContextAsInt(getCtx(), "#M_PriceList_ID");
-					if(bp.getM_PriceList_ID() > 0)
-						m_M_PriceList_ID = bp.getM_PriceList_ID();			
+					if(bp.getPO_PriceList_ID() > 0)
+						m_M_PriceList_ID = bp.getPO_PriceList_ID();			
 					ord.setM_PriceList_ID(m_M_PriceList_ID);
 					ord.setC_Currency_ID(MPriceList.get(getCtx(), m_M_PriceList_ID, get_TrxName()).getC_Currency_ID());
 					ord.setIsSOTrx(false);
@@ -107,7 +107,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					int uom_id = wEntry.getC_UOM_ID();
 					ord.setItem1_UOM_ID(ord.getItem1().getC_UOM_ID());
 					ord.setItem1_Tax_ID(1000000);
-					BigDecimal qty = wEntry.getNetWeight();
+					BigDecimal qty = wEntry.getNetWeightUnit();
 					if(uom_id == tonnage_uom_id)
 						qty = qty.divide(new BigDecimal(1000));
 					ord.setItem1_TotalLoad(BigDecimal.ONE);
