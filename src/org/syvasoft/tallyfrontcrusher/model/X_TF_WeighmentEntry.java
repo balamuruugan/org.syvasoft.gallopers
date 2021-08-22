@@ -1185,7 +1185,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULE_MixedPOSPayment = "M";
 	/** Cash  = Z */
-	public static final String PAYMENTRULE_Cash = "Z";
+	public static final String PAYMENTRULE_Cash = "B";
 	/** Set Payment Rule.
 		@param PaymentRule 
 		How you pay the invoice

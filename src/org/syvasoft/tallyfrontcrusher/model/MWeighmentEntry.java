@@ -2,8 +2,15 @@ package org.syvasoft.tallyfrontcrusher.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.Savepoint;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -13,6 +20,7 @@ import org.adempiere.exceptions.DBException;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInOut;
 import org.compiere.model.MInOutLine;
+import org.compiere.model.MProduct;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MUOM;
 import org.compiere.model.MUOMConversion;
@@ -31,6 +39,11 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	 * 
 	 */
 	private static final long serialVersionUID = 2613943323993702690L;
+	
+	public static String DayShiftStartTime =  MSysConfig.getValue("DAY_SHIFT_START_TIME", "06:00 AM"); 
+	public static String DayShiftEndTime =  MSysConfig.getValue("DAY_SHIFT_END_TIME", "06:00 PM");
+	public static String NightShiftStartTime =  MSysConfig.getValue("NIGHT_SHIFT_START_TIME", "06:00 PM");
+	public static String NightShiftEndTime =  MSysConfig.getValue("NIGHT_SHIFT_END_TIME", "06:00 AM");
 	
 	private static final CLogger s_log = CLogger.getCLogger(MWeighmentEntry.class);
 	
@@ -165,6 +178,18 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			if(user != null) {
 				setAD_User_ID(user.getAD_User_ID());
 			}
+			
+			if(MSysConfig.getValue("WEIGHMENT_TRIPSHEET_CREATION").equals("Y")){
+				CreateTripSheetForOwnVehicle();
+				
+				if(getPM_Machinery_ID() > 0) {
+					CreateTripSheetForLoader();
+				}
+				
+				if(getQuarryProductionType() != null) {
+					CreateTripSheetForQuarryProductionType();
+				}
+			}			
 		}
 
 		boolean ok = super.beforeSave(newRecord);
@@ -187,6 +212,263 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		}
 		
 		return super.afterSave(newRecord, success);
+	}
+	
+	public static boolean checkTime(String starttimes, String currentTime, String endtimes) {
+	    try {
+	        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+
+	        Date startime = simpleDateFormat.parse(starttimes);
+	        Date endtime = simpleDateFormat.parse(endtimes);
+
+	        //current time
+	        Date current_time = simpleDateFormat.parse(currentTime);
+
+	    if (current_time.after(startime) && current_time.before(endtime)) {
+	            return true;
+	      }
+	    else if (current_time.after(startime) && current_time.after(endtime)) {
+	         return true; //overlap condition check
+	      }
+	     else {
+	            return false;
+	     }
+	    } 
+	    catch (ParseException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	} 
+	
+	String GetHoursMins(Timestamp weighmentDate) {
+		Format f = new SimpleDateFormat("HH:mm");
+	    String strResult = f.format(weighmentDate);
+	    return strResult;
+	}
+	
+	void CreateTripSheetForOwnVehicle() {
+		MRentedVehicle rentedVehicle = new MRentedVehicle(getCtx(), getTF_RentedVehicle_ID(), get_TrxName());
+		
+		if(rentedVehicle.isOwnVehicle()) {
+			String where = "M_Product_ID = " + rentedVehicle.getM_Product_ID();
+			
+			MMachinery machinery = new Query(getCtx(), MMachinery.Table_Name, where, get_TrxName()).first();
+			
+			if(machinery != null) {
+				MMachineryType machineryType = new MMachineryType(getCtx(), machinery.getPM_MachineryType_ID(), get_TrxName());
+								
+				MTripSheet tripSheet = new MTripSheet(getCtx(), 0, get_TrxName());
+				tripSheet.setAD_Org_ID(getAD_Org_ID());
+				
+				tripSheet.setTF_Quarry_ID(getTF_Quarry_ID());
+				tripSheet.setPM_Machinery_ID(machinery.getPM_Machinery_ID());
+				tripSheet.setVehicle_ID(machinery.getM_Product_ID());
+				tripSheet.setC_UOM_ID(machineryType.getC_UOM_ID());
+				
+				String currentTime = GetHoursMins(getGrossWeightTime());
+				
+				boolean isDayShift = checkTime(DayShiftStartTime, currentTime, DayShiftEndTime);
+				
+				if(isDayShift) {
+					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+					Date startTime = null;
+					Date endTime = null;
+					
+					try {
+			            startTime = sdf.parse(DayShiftStartTime);
+			            endTime = sdf.parse(DayShiftEndTime);			            
+			        } catch (Exception e) {
+			            e.printStackTrace();
+			        }
+					Timestamp startime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
+					Timestamp endtime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
+					
+					tripSheet.setDateReport(getGrossWeightTime());
+					tripSheet.setDateStart(startime);
+					tripSheet.setDateEnd(endtime);
+					tripSheet.setShift(MTripSheet.SHIFT_Day);
+				}
+				else {
+					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+					Date startTime = null;
+					Date endTime = null;
+					
+					boolean isNextDay = checkTime("00:00", currentTime, "06:01");
+					
+					try {
+			            startTime = sdf.parse(NightShiftStartTime);
+			            endTime = sdf.parse(NightShiftEndTime);			            
+			        } catch (Exception e) {
+			            e.printStackTrace();
+			        }
+					Timestamp dateTime = getGrossWeightTime();
+					
+					if(isNextDay) {
+						Calendar cal = Calendar.getInstance();
+				        cal.setTime(getGrossWeightTime());// w ww.  j ava  2  s  .co m
+				        cal.add(Calendar.DATE, -1); 
+				        
+						dateTime = new Timestamp(cal.getTime().getTime());
+					}	
+					
+					Timestamp startime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
+					Timestamp endtime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
+					
+					tripSheet.setDateReport(dateTime);
+					tripSheet.setDateStart(startime);
+					tripSheet.setDateEnd(endtime);
+					tripSheet.setShift(MTripSheet.SHIFT_Night);					
+				}
+				tripSheet.saveEx();
+			}
+		}
+		
+	}
+	
+	void CreateTripSheetForLoader() {
+		MMachinery machinery = new MMachinery(getCtx(), getPM_Machinery_ID(), get_TrxName());		
+		if(machinery != null) {
+			MMachineryType machineryType = new MMachineryType(getCtx(), machinery.getPM_MachineryType_ID(), get_TrxName());
+			
+			MTripSheet tripSheet = new MTripSheet(getCtx(), 0, get_TrxName());
+			tripSheet.setAD_Org_ID(getAD_Org_ID());
+			tripSheet.setDateReport(getGrossWeightTime());
+			tripSheet.setTF_Quarry_ID(getTF_Quarry_ID());
+			tripSheet.setPM_Machinery_ID(machinery.getPM_Machinery_ID());
+			tripSheet.setVehicle_ID(machinery.getM_Product_ID());
+			tripSheet.setC_UOM_ID(machineryType.getC_UOM_ID());
+			
+			String currentTime = GetHoursMins(getGrossWeightTime());
+			
+			boolean isDayShift = checkTime(DayShiftStartTime, currentTime, DayShiftEndTime);
+			
+			if(isDayShift) {
+				
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+				Date startTime = null;
+				Date endTime = null;
+				
+				try {
+		            startTime = sdf.parse(DayShiftStartTime);
+		            endTime = sdf.parse(DayShiftEndTime);			            
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+				Timestamp startime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
+				Timestamp endtime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
+				
+				tripSheet.setDateReport(getGrossWeightTime());
+				tripSheet.setDateStart(startime);
+				tripSheet.setDateEnd(endtime);
+				tripSheet.setShift(MTripSheet.SHIFT_Day);
+			}
+			else {
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+				Date startTime = null;
+				Date endTime = null;
+				
+				boolean isNextDay = checkTime("00:00", currentTime, "06:01");
+				
+				try {
+		            startTime = sdf.parse(NightShiftStartTime);
+		            endTime = sdf.parse(NightShiftEndTime);			            
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+				Timestamp dateTime = getGrossWeightTime();
+				
+				if(isNextDay) {
+					Calendar cal = Calendar.getInstance();
+			        cal.setTime(getGrossWeightTime());// w ww.  j ava  2  s  .co m
+			        cal.add(Calendar.DATE, -1); 
+			        
+					dateTime = new Timestamp(cal.getTime().getTime());
+				}	
+				
+				Timestamp startime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
+				Timestamp endtime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
+				
+				tripSheet.setDateReport(dateTime);
+				tripSheet.setDateStart(startime);
+				tripSheet.setDateEnd(endtime);
+				tripSheet.setShift(MTripSheet.SHIFT_Night);					
+			}
+			tripSheet.saveEx();
+		}
+	}
+	
+	void CreateTripSheetForQuarryProductionType() {
+		String where = "QuarryProductionType  = " + getQuarryProductionType();
+		
+		MMachinery machinery = new Query(getCtx(), MMachinery.Table_Name, where, get_TrxName()).first();
+		
+		if(machinery != null) {
+			MMachineryType machineryType = new MMachineryType(getCtx(), machinery.getPM_MachineryType_ID(), get_TrxName());
+			
+			MTripSheet tripSheet = new MTripSheet(getCtx(), 0, get_TrxName());
+			tripSheet.setAD_Org_ID(getAD_Org_ID());
+			tripSheet.setDateReport(getGrossWeightTime());
+			tripSheet.setTF_Quarry_ID(getTF_Quarry_ID());
+			tripSheet.setPM_Machinery_ID(machinery.getPM_Machinery_ID());
+			tripSheet.setVehicle_ID(machinery.getM_Product_ID());
+			tripSheet.setC_UOM_ID(machineryType.getC_UOM_ID());
+			
+			String currentTime = GetHoursMins(getGrossWeightTime());
+			
+			boolean isDayShift = checkTime(DayShiftStartTime, currentTime, DayShiftEndTime);
+			
+			if(isDayShift) {
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+				Date startTime = null;
+				Date endTime = null;
+				
+				try {
+		            startTime = sdf.parse(DayShiftStartTime);
+		            endTime = sdf.parse(DayShiftEndTime);			            
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+				Timestamp startime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
+				Timestamp endtime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
+				
+				tripSheet.setDateReport(getGrossWeightTime());
+				tripSheet.setDateStart(startime);
+				tripSheet.setDateEnd(endtime);
+				tripSheet.setShift(MTripSheet.SHIFT_Day);
+			}
+			else {
+				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+				Date startTime = null;
+				Date endTime = null;
+				
+				boolean isNextDay = checkTime("00:00", currentTime, "06:01");
+				
+				try {
+		            startTime = sdf.parse(NightShiftStartTime);
+		            endTime = sdf.parse(NightShiftEndTime);			            
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+				Timestamp dateTime = getGrossWeightTime();
+				
+				if(isNextDay) {
+					Calendar cal = Calendar.getInstance();
+			        cal.setTime(getGrossWeightTime());// w ww.  j ava  2  s  .co m
+			        cal.add(Calendar.DATE, -1); 
+			        
+					dateTime = new Timestamp(cal.getTime().getTime());
+				}	
+				
+				Timestamp startime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
+				Timestamp endtime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
+				
+				tripSheet.setDateReport(dateTime);
+				tripSheet.setDateStart(startime);
+				tripSheet.setDateEnd(endtime);
+				tripSheet.setShift(MTripSheet.SHIFT_Night);					
+			}
+			tripSheet.saveEx();
+		}
 	}
 	
 	void CreateQuarry() {
@@ -570,7 +852,7 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	}
 	
 	public void voidWeighmentEntry() {
-		String oWhereClause = "TF_WeighmentEntry_ID = ? AND C_BPartner_ID = ? AND IsSOTrx = 'Y' AND DocStatus IN ('CO','CL')";
+		String oWhereClause = "TF_WeighmentEntry_ID = ? AND C_BPartner_ID = ? AND DocStatus IN ('CO','CL')";
 		
 		try {
 			String msg = null;
