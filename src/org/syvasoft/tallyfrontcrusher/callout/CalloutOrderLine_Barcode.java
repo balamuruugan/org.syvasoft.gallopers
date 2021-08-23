@@ -33,11 +33,11 @@ public class CalloutOrderLine_Barcode implements IColumnCallout {
 			C_Tax_ID = prod.getTax_ID(true, bp.isApplyTCS(), bp.isInterState());
 		}
 		
-		mTab.setValue("M_WarehouseNew_ID", M_Warehouse_ID);	
-		mTab.setValue(TF_MProduct.COLUMNNAME_M_Product_Category_ID, M_Product_Category_ID);
-		mTab.setValue(TF_MOrderLine.COLUMNNAME_M_Product_ID, M_Product_ID);
-		mTab.setValue(MLocator.COLUMNNAME_M_Locator_ID, M_Locator_ID);
-		mTab.setValue(TF_MOrderLine.COLUMNNAME_C_Tax_ID, C_Tax_ID);
+		mTab.setValue("M_WarehouseNew_ID", M_Warehouse_ID > 0 ? M_Warehouse_ID : null);	
+		mTab.setValue(TF_MProduct.COLUMNNAME_M_Product_Category_ID, M_Product_Category_ID > 0 ? M_Product_Category_ID : null);
+		mTab.setValue(TF_MOrderLine.COLUMNNAME_M_Product_ID, M_Product_ID > 0 ? M_Product_ID : null);
+		mTab.setValue(MLocator.COLUMNNAME_M_Locator_ID, M_Locator_ID > 0 ? M_Locator_ID : null);
+		mTab.setValue(TF_MOrderLine.COLUMNNAME_C_Tax_ID, C_Tax_ID > 0 ? C_Tax_ID : null);
 		return null;
 	}
 
