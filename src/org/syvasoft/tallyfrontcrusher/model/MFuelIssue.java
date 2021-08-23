@@ -90,7 +90,8 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			if(qtyAvailable==null) {
 				qtyAvailable=BigDecimal.ZERO;
 			}
-			if(qtyAvailable.doubleValue() < getQty().doubleValue()) {
+			
+			if(qtyAvailable.doubleValue() < getQty().doubleValue() && validateStock) {
 				//log.saveError("NotEnoughStocked", Msg.getElement(getCtx(), COLUMNNAME_Qty));
 				throw new AdempiereException("Inventory on Hand : " + qtyAvailable);				
 			}
@@ -517,6 +518,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);
 		calculateMileage();
+		validateStock = false;
 	}
 	
 	public static BigDecimal getPreviousMeter(Properties ctx, int AD_Org_ID, Timestamp dateAcct, int Vehicle_ID, int M_Product_ID) {
