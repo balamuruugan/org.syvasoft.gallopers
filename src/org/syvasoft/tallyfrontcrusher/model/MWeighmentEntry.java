@@ -650,12 +650,22 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		TF_MProduct p = new TF_MProduct(getCtx(), getM_Product_ID(), get_TrxName());
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
 		
-		if(isApplyTCS()) {
-			return p.getTax_ID(true, isApplyTCS(), bp.isInterState());
+		if(MSysConfig.getValue("APPLY_GST_ALWAYS").equals("Y")) {
+			if(isApplyTCS()) {
+				return p.getTax_ID(true, isApplyTCS(), bp.isInterState());
+			}
+			else {
+				return p.getTax_ID(true, bp.isInterState());
+			}
 		}
 		else {
-			return p.getTax_ID(true, bp.isInterState());
-		}
+			if(isApplyTCS()) {
+				return p.getTax_ID(isGST(), isApplyTCS(), bp.isInterState());
+			}
+			else {
+				return p.getTax_ID(isGST(), bp.isInterState());
+			}
+		}			
 	}
 	
 	public int getM_InOut_ID() {
@@ -837,7 +847,10 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		if(getRent_Amt() == null || getRent_Amt().doubleValue() == 0)
 			return getPrice();
 		
-		BigDecimal unitRent = getRent_Amt().divide(getNetWeightUnit(), 2,RoundingMode.HALF_EVEN);
+		BigDecimal unitRent = BigDecimal.ZERO;
+		
+		if(MSysConfig.getValue("INCLUDE_RENT_AMOUNT_IN_INVOICE").equals("Y"))
+			unitRent = getRent_Amt().divide(getNetWeightUnit(), 2,RoundingMode.HALF_EVEN);
 		
 		return getPrice().add(unitRent);
 	}
@@ -846,7 +859,10 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		if(getPermitPassAmount() == null || getPermitPassAmount().doubleValue() == 0 || getPassQtyIssued() == null || getPassQtyIssued().doubleValue() == 0)
 			return price;
 		
-		BigDecimal unitPassAmt = getPermitPassAmount().divide(getPassQtyIssued(), 2,RoundingMode.HALF_EVEN);
+		BigDecimal unitPassAmt = BigDecimal.ZERO;
+		
+		if(MSysConfig.getValue("INCLUDE_PASS_AMOUNT_IN_INVOICE").equals("Y"))
+			unitPassAmt = getPermitPassAmount().divide(getPassQtyIssued(), 2,RoundingMode.HALF_EVEN);
 		
 		return price.add(unitPassAmt);
 	}
