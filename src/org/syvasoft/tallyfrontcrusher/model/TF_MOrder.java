@@ -3523,7 +3523,7 @@ public class TF_MOrder extends MOrder {
 	
 	public static int GSTOrderDocType_ID(Properties ctx) {
 		//int DocType_ID = MSysConfig.getIntValue("GST_ORDER_ID", 1000063, Env.getAD_Client_ID(ctx));
-		int DocType_ID = MSysConfig.getIntValue("NONGST_ORDER_ID", 1000062, Env.getAD_Client_ID(ctx));
+		int DocType_ID = MSysConfig.getIntValue("GST_ORDER_ID", 1000062, Env.getAD_Client_ID(ctx));
 		return DocType_ID;
 	}
 
