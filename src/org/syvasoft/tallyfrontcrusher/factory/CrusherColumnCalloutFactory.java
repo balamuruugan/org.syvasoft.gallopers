@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.adempiere.base.IColumnCallout;
 import org.adempiere.base.IColumnCalloutFactory;
+import org.compiere.model.MInventoryLine;
 import org.compiere.model.MInvoice;
 import org.compiere.model.MJournalLine;
 import org.compiere.model.MOrder;
@@ -778,6 +779,11 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 					columnName.equals(TF_MInOutLine.COLUMNNAME_M_Product_ID) )
 				list.add(new CalloutInOutLine_Barcode());
 			
+		}
+		
+		if(tableName.equals(MInventoryLine.Table_Name)) {
+			if(columnName.equals("Barcode"))
+				list.add(new CalloutInventoryLine_Barcode());
 		}
 		
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
