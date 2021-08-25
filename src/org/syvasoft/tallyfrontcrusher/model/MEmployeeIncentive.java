@@ -61,4 +61,15 @@ public class MEmployeeIncentive extends X_TF_IncentiveConfig {
 		return inc;
 	}
 	
+	public static MEmployeeIncentive get(Properties ctx, int AD_Org_ID, String incentiveType) {
+		String whereClause = "AD_Org_ID IN (0,?) AND IncentiveType = ?";
+		MEmployeeIncentive inc = new Query(ctx, Table_Name, whereClause, null)
+				.setClient_ID()
+				.setOnlyActiveRecords(true)
+				.setParameters(AD_Org_ID, incentiveType)
+				.first();
+		
+		return inc;
+	}
+	
 }
