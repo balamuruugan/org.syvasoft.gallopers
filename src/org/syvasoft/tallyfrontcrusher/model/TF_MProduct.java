@@ -726,7 +726,7 @@ public class TF_MProduct extends MProduct {
 	}
 	
 	public static int getM_Product_ID(Properties ctx, String barcode) {
-		String sql = "SELECT M_Product_ID FROM M_Product WHERE Barcode = ? AND Barcode IS NOT NULL";
+		String sql = "SELECT M_Product_ID FROM M_Product WHERE UPPER(Barcode) = UPPER(?) AND Barcode IS NOT NULL";
 		int M_Product_ID = DB.getSQLValue(null, sql, barcode);
 		return M_Product_ID;		
 	}
