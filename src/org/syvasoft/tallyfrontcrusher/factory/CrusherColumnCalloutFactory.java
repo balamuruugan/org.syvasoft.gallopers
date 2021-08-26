@@ -17,6 +17,7 @@ import org.syvasoft.tallyfrontcrusher.model.MCrusherKatingEntry;
 import org.syvasoft.tallyfrontcrusher.model.MDispensePlan;
 import org.syvasoft.tallyfrontcrusher.model.MDispensePlanLine;
 import org.syvasoft.tallyfrontcrusher.model.MDrillingEntry;
+import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalary;
 import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryDet;
 import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryOld;
 import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryIssue;
@@ -236,18 +237,26 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			if(columnName.equals(TF_MPayment.COLUMNNAME_TF_WeighmentEntry_ID) || columnName.equals(TF_MPayment.COLUMNNAME_TF_BPartner_ID))
 				list.add(new CalloutPayment_WeighmentEntry());
 		}
+		
+				
 		//TF_Employee_Salary - Load Salary Config
 		if(tableName.equals(MEmployeeSalaryOld.Table_Name)) {
 			if((columnName.equals(MEmployeeSalaryOld.COLUMNNAME_C_BPartner_ID)
 				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_DateAcct) || columnName.equals(MEmployeeSalaryOld.COLUMNNAME_Present_Days)
+				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_DateFrom) 
+				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_DateTo)
 				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_IsCalculated) 
 				)) {
+				list.add(new CalloutEmployeeSalary_Attendance());
 				list.add(new CalloutEmployeeSalary());
 			}
 			
 			if(columnName.equals(MEmployeeSalaryOld.COLUMNNAME_C_BPartner_ID)) {
 				list.add(new CalloutEmployeeSalary_BPartner());
 			}
+			
+			if(columnName.equals(MEmployeeSalaryOld.COLUMNNAME_IncentiveDays))
+				list.add(new CalloutEmployeeSalary_CalcIncentiveAmt());
 		}
 		//TF_Labour_Wage - Load Wage Config
 		if(tableName.equals(MLabourWage.Table_Name) && (columnName.equals(MLabourWage.COLUMNNAME_C_BPartner_ID) ||

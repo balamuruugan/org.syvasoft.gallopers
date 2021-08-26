@@ -33,7 +33,7 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210623L;
+	private static final long serialVersionUID = 20210823L;
 
     /** Standard Constructor */
     public X_TF_Employee_Salary (Properties ctx, int TF_Employee_Salary_ID, String trxName)
@@ -374,6 +374,40 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 	public BigDecimal getIncentive () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_Incentive);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Incentive Days.
+		@param IncentiveDays Incentive Days	  */
+	public void setIncentiveDays (BigDecimal IncentiveDays)
+	{
+		set_Value (COLUMNNAME_IncentiveDays, IncentiveDays);
+	}
+
+	/** Get Incentive Days.
+		@return Incentive Days	  */
+	public BigDecimal getIncentiveDays () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_IncentiveDays);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Incentive Eligible Days.
+		@param IncentiveEligibleDays Incentive Eligible Days	  */
+	public void setIncentiveEligibleDays (BigDecimal IncentiveEligibleDays)
+	{
+		set_Value (COLUMNNAME_IncentiveEligibleDays, IncentiveEligibleDays);
+	}
+
+	/** Get Incentive Eligible Days.
+		@return Incentive Eligible Days	  */
+	public BigDecimal getIncentiveEligibleDays () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_IncentiveEligibleDays);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;

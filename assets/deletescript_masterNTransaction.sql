@@ -124,6 +124,9 @@ UPDATE C_Invoice SET C_Project_ID = null WHERE AD_client_ID = 1000000;
 UPDATE m_inventory SET C_Project_ID = null WHERE AD_Client_ID = 1000000;
 DELETE FROM pm_meter_log;
 UPDATE tf_tripsheetproduct set tf_tripsheet_id=null WHERE AD_Client_ID = 1000000;
+DELETE FROM tf_drillingentry WHERE AD_Client_ID = 1000000;
+DELETE FROM tf_tripsheet_am WHERE AD_Client_ID = 1000000;
+DELETE FROM tf_tripsheet_salary WHERE AD_Client_ID = 1000000;
 DELETE FROM TF_TripSheet WHERE ad_client_id=1000000;
 UPDATE C_Order SET tf_weighmententry_id = null, C_PROJECT_id = NULL, IssueToSubcontract_ID= null, SUBCON_invoice_id = null,
 TransporterInvoice_ID = null
@@ -135,6 +138,7 @@ DELETE FROM tf_taxinvoice WHERE ad_client_id=1000000;
 DELETE FROM tf_weighment_permit WHERE ad_client_id=1000000;
 UPDATE tf_crusher_production SET tf_weighmententry_ID = NULL;
 UPDATE m_inout SET tf_weighmententry_ID = NULL;
+UPDATE c_invoice SET tf_weighmententry_id=NULL WHERE ad_client_id=1000000;
 DELETE FROM tf_weighmententry WHERE ad_client_id=1000000;
 --DELETE FROM  C_Project WHERE C_Project_id !=1000000 AND ad_client_id=1000000;;
 
@@ -218,6 +222,7 @@ delete from m_requisitionline  WHERE ad_client_id=1000000;;
 delete from m_requisition WHERE ad_client_id=1000000;;
 update pp_order set c_orderline_id = null WHERE ad_client_id=1000000;;
 UPDATE C_Order SET Item1_C_OrderLine_ID = NULL, Item2_C_OrderLine_ID = NULL, Vehicle_C_OrderLine_ID = null WHERE ad_client_id=1000000;;
+delete from tf_dispenseplanline WHERE ad_client_id=1000000;
 delete from c_orderline WHERE ad_client_id=1000000;;
 delete from c_ordertax  WHERE ad_client_id=1000000;;
 update r_request set c_order_id = null, M_inout_id = null WHERE ad_client_id=1000000;;
@@ -340,11 +345,13 @@ DELETE FROM m_pricelist_version_trl WHERE AD_CLIENT_ID= 1000000;
 DELETE FROM ad_preference WHERE AD_USER_ID NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
 DELETE FROM ad_tab_customization where AD_CLIENT_ID= 1000000 AND AD_USER_ID NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
 DELETE FROM m_replenish WHERE AD_CLIENT_ID= 1000000;
+UPDATE m_warehouse set m_reservelocator_id=null WHERE AD_CLIENT_ID= 1000000;
 DELETE FROM m_locator WHERE AD_CLIENT_ID= 1000000;
 DELETE FROM m_locatortype WHERE AD_CLIENT_ID= 1000000 AND createdby NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
 DELETE FROM m_product_category_trl WHERE AD_CLIENT_ID= 1000000 AND createdby NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
 UPDATE m_product SET salesrep_id=null WHERE AD_CLIENT_ID= 1000000;
 
+DELETE FROM ad_postit WHERE AD_CLIENT_ID= 1000000 AND createdby NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
 DELETE FROM AD_USER WHERE AD_CLIENT_ID= 1000000 AND AD_USER_ID NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
 DELETE FROM tf_jobwork_assignedemployee;
 UPDATE C_ValidCombination SET C_BPartner_ID = NULL WHERE ad_client_id=1000000;;
@@ -373,6 +380,9 @@ DELETE FROM tf_trtaxinvoice;
 DELETE FROM tf_generate_taxinvoiceLINE;
 DELETE FROM tf_generate_taxinvoice;
 delete FROM TF_Token ;
+DELETE FROM tf_torder;
+DELETE FROM tf_incentiveconfig_applicable;
+DELETE FROM tf_incentiveconfig;
 DELETE FROM c_bPARTNER WHERE ad_client_id=1000000 AND C_BPARTNER_ID NOT IN (1000010,1000005, 1000007, 1000006, 1000020, 1000034);
 UPDATE m_product SET logo_id=null where ad_client_id=1000000 AND logo_id not in (1000003, 1000002);
 
@@ -464,7 +474,9 @@ DELETE FROM C_Charge_TRL  WHERE AD_Client_ID = 1000000 ;
 UPDATE tf_glposting_config SET FuelExpense_Charge_ID = NULL, ItemIssue_Charge_ID=NULL WHERE AD_Client_ID = 1000000 ;
 DELETE FROM C_Charge WHERE AD_Client_ID = 1000000 AND C_CHarge_ID NOT IN (1000008, 1000041, 1000015 );
 DELETE FROM ad_preference WHERE AD_Client_ID = 1000000  AND AD_Org_ID!=1000000;
-UPDATE c_bankaccount_acct SET b_asset_acct=NULL WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0, 1000000);
+UPDATE c_bankaccount_acct SET b_asset_acct=NULL,b_expense_acct=NULL,b_interestexp_acct=NULL,b_interestrev_acct=NULL,b_intransit_acct=NULL,b_paymentselect_acct=NULL,
+b_revaluationgain_acct=NULL,b_revaluationloss_acct=NULL,b_settlementgain_acct=NULL,b_settlementloss_acct=NULL,b_unallocatedcash_acct=NULL,b_unidentified_acct=NULL WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0, 1000000);
+SELECT * FROM c_validcombination
 --DELETE FROM AD_Role_OrgAccess WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0,)1000000);
 DELETE FROM c_validcombination WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0, 1000000);
 UPDATE C_ElementValue SET DefaultOrg_ID  = 0 WHERE DefaultOrg_ID != 0 AND AD_Client_ID = 1000000  ;
@@ -487,6 +499,11 @@ UPDATE C_validcombination SET user1_id = null WHERE AD_Client_ID = 1000000;
 
 DELETE FROM tf_lumpsumrent_config WHERE AD_Client_ID = 1000000;
 
+select * from c_bpartner where ad_user_id=1000766;
+
+select * from tf_destination where tf_destination_id=1000341;
+UPDATE TF_Destination SET createdby=NULL WHERE AD_Client_ID = 1000000;
+
 DELETE FROM TF_Destination WHERE AD_Client_ID = 1000000;
 
 --UPDATE AD_User SET IsActive = 'N' WHERE AD_User_ID=0
@@ -502,7 +519,7 @@ DELETE FROM tf_vehicletype;
 DELETE FROM tf_countertransline;
 DELETE FROM m_bp_price WHERE AD_Client_ID = 1000000;
 DELETE FROM ad_preference WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
-DELETE FROM c_bpartner WHERE AD_Client_ID = 1000000; AND AD_Org_ID NOT IN (0, 1000000);
+DELETE FROM c_bpartner WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
 UPDATE c_bpartner set ad_org_id=null 
  
 DELETE FROM AD_Org WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);

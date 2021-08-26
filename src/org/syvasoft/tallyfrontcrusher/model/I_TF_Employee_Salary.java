@@ -242,6 +242,24 @@ public interface I_TF_Employee_Salary
 	/** Get Incentive / OT	  */
 	public BigDecimal getIncentive();
 
+    /** Column name IncentiveDays */
+    public static final String COLUMNNAME_IncentiveDays = "IncentiveDays";
+
+	/** Set Incentive Days	  */
+	public void setIncentiveDays (BigDecimal IncentiveDays);
+
+	/** Get Incentive Days	  */
+	public BigDecimal getIncentiveDays();
+
+    /** Column name IncentiveEligibleDays */
+    public static final String COLUMNNAME_IncentiveEligibleDays = "IncentiveEligibleDays";
+
+	/** Set Incentive Eligible Days	  */
+	public void setIncentiveEligibleDays (BigDecimal IncentiveEligibleDays);
+
+	/** Get Incentive Eligible Days	  */
+	public BigDecimal getIncentiveEligibleDays();
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
