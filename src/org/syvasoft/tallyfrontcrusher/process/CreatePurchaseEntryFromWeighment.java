@@ -108,8 +108,8 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					ord.setItem1_UOM_ID(ord.getItem1().getC_UOM_ID());
 					ord.setItem1_Tax_ID(1000000);
 					BigDecimal qty = wEntry.getNetWeightUnit();
-					if(uom_id == tonnage_uom_id)
-						qty = qty.divide(new BigDecimal(1000));
+					/*if(uom_id == tonnage_uom_id)
+						qty = qty.divide(new BigDecimal(1000));*/
 					ord.setItem1_TotalLoad(BigDecimal.ONE);
 					ord.setItem1_PermitIssued(wEntry.getPermitIssuedQty()); 
 					ord.setMDPNo(wEntry.getMDPNo());
