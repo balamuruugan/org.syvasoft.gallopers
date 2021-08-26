@@ -9,6 +9,7 @@ import org.compiere.model.MInvoiceLine;
 import org.compiere.model.MNote;
 import org.compiere.model.MOrderLine;
 import org.compiere.model.MPriceList;
+import org.compiere.model.MProduct;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
@@ -23,6 +24,7 @@ import org.syvasoft.tallyfrontcrusher.model.MWeighmentEntry;
 import org.syvasoft.tallyfrontcrusher.model.TF_MBPartner;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInvoice;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
+import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
 
 public class CreateSalesEntryFromWeighment extends SvrProcess {
 	
@@ -423,14 +425,14 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		//Item
 		ord.setItem1_IsPermitSales(wEntry.isHasBalance());
 		ord.setItem1_VehicleType_ID(wEntry.getTF_VehicleType_ID());
-		ord.setItem1_ID(wEntry.getM_Product_ID());
-				
-		int uom_id = wEntry.getC_UOM_ID();
-		if(uom_id == 0)
-			uom_id = wEntry.getM_Product().getC_UOM_ID();
+		ord.setItem1_ID(wEntry.getM_Product_Pass_ID());
 		
-		ord.setItem1_UOM_ID(wEntry.getC_UOM_ID());
-		ord.setItem1_Tax_ID(wEntry.getC_Tax_ID());
+		TF_MProduct product = new TF_MProduct(getCtx(),wEntry.getM_Product_Pass_ID(),get_TrxName());
+		
+		int uom_id = product.getC_UOM_ID();
+		
+		ord.setItem1_UOM_ID(product.getC_UOM_ID());
+		ord.setItem1_Tax_ID(product.getTax_ID(false, bp.isInterState()));
 		BigDecimal qty = wEntry.getPermitIssuedQty();
 		if(billedQty != null)
 			qty = billedQty;
@@ -447,7 +449,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		ord.setItem1_TotalLoad(BigDecimal.ONE);
 		
 		ord.setItem1_Qty(qty);
-		BigDecimal price = wEntry.getPermitPassAmount();
+		BigDecimal price = wEntry.getPassPricePerUnit();
 		ord.setItem1_Price(price);
 		ord.setItem1_UnitPrice(price);
 		ord.setItem1_Amt(ord.getItem1_Qty().multiply(ord.getItem1_Price()));
