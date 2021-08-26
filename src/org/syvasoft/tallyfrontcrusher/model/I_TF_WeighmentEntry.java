@@ -341,6 +341,15 @@ public interface I_TF_WeighmentEntry
 	/** Get eWay Bill No	  */
 	public String geteWayBillNo();
 
+    /** Column name ExitTime */
+    public static final String COLUMNNAME_ExitTime = "ExitTime";
+
+	/** Set Exit Time	  */
+	public void setExitTime (Timestamp ExitTime);
+
+	/** Get Exit Time	  */
+	public Timestamp getExitTime();
+
     /** Column name FreightPrice */
     public static final String COLUMNNAME_FreightPrice = "FreightPrice";
 
@@ -581,6 +590,17 @@ public interface I_TF_WeighmentEntry
 
 	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException;
 
+    /** Column name M_Product_Pass_ID */
+    public static final String COLUMNNAME_M_Product_Pass_ID = "M_Product_Pass_ID";
+
+	/** Set Pass ID	  */
+	public void setM_Product_Pass_ID (int M_Product_Pass_ID);
+
+	/** Get Pass ID	  */
+	public int getM_Product_Pass_ID();
+
+	public org.compiere.model.I_M_Product getM_Product_Pass() throws RuntimeException;
+
     /** Column name M_Product2_ID */
     public static final String COLUMNNAME_M_Product2_ID = "M_Product2_ID";
 
@@ -751,6 +771,15 @@ public interface I_TF_WeighmentEntry
 	public int getPM_Machinery_ID();
 
 	public I_PM_Machinery getPM_Machinery() throws RuntimeException;
+
+    /** Column name PreviousChallanNo */
+    public static final String COLUMNNAME_PreviousChallanNo = "PreviousChallanNo";
+
+	/** Set Previous Challan No	  */
+	public void setPreviousChallanNo (String PreviousChallanNo);
+
+	/** Get Previous Challan No	  */
+	public String getPreviousChallanNo();
 
     /** Column name Price */
     public static final String COLUMNNAME_Price = "Price";

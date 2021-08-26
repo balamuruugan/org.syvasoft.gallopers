@@ -624,6 +624,10 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			return TF_MOrder.NonGSTOrderDocType_ID(getCtx());
 	}
 	
+	public int getRoyaltyPass_DocType_ID() {
+		return TF_MOrder.RoyaltyPassOrderDocType_ID(getCtx());
+	}
+	
 	/***
 	 * Returns Shipment (Customer) Document Type ID
 	 * @return

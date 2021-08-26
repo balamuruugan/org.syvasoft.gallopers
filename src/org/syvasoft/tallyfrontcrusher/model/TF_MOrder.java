@@ -2653,8 +2653,11 @@ public class TF_MOrder extends MOrder {
 	{
 		if(getTF_WeighmentEntry_ID() > 0) {
 			MWeighmentEntry weighment = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
-			weighment.close();
-			weighment.saveEx();
+			
+			if(weighment.getStatus().equals(weighment.STATUS_Unbilled)) {
+				weighment.close();
+				weighment.saveEx();
+			}			
 		}
 	}
 	
@@ -3529,6 +3532,11 @@ public class TF_MOrder extends MOrder {
 
 	public static int NonGSTOrderDocType_ID(Properties ctx) {
 		int DocType_ID = MSysConfig.getIntValue("NONGST_ORDER_ID", 1000062, Env.getAD_Client_ID(ctx));
+		return DocType_ID;
+	}
+	
+	public static int RoyaltyPassOrderDocType_ID(Properties ctx) {
+		int DocType_ID = MSysConfig.getIntValue("ROYALTY_PASS_DOCTYPE_ID", 1000062, Env.getAD_Client_ID(ctx));
 		return DocType_ID;
 	}
 

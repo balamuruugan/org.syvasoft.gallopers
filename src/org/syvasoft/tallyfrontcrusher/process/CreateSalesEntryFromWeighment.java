@@ -124,6 +124,10 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 						createSalesQuickEntry(wEntry, billQty, true, trx);
 					else
 						createInvoiceCustomer(wEntry, billQty, true, trx);
+					
+					if(MSysConfig.getValue("INCLUDE_PASS_AMOUNT_IN_INVOICE").equals("N")) {
+						createSalesQuickEntryForRoyaltyPass(wEntry, wEntry.getPermitIssuedQty(), true, trx);
+					}
 				}
 			
 			}
@@ -280,7 +284,8 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		addLog(ord.get_Table_ID(), ord.getCreated(), null, " Sales Entry : " + ord.getDocumentNo() + " is created!", ord.get_Table_ID(), ord.get_ID());
 	}
 
-	private void createInvoiceCustomer(MWeighmentEntry wEntry, BigDecimal billedQty,  boolean firstInvoice, Trx trx) throws Exception {		
+	private void createInvoiceCustomer(MWeighmentEntry wEntry, BigDecimal billedQty,  boolean firstInvoice, Trx trx) throws Exception {
+		
 		
 		MOrderLine oLine = (MOrderLine) wEntry.getC_OrderLine();
 		int C_Order_ID = oLine.getC_Order_ID();
@@ -381,4 +386,90 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		trx.releaseSavepoint(sp);
 		addLog(invoice.get_Table_ID(), invoice.getCreated(), null, " Invoice No : " +  invoice.getDocumentNo() + " is created!", invoice.get_Table_ID(), invoice.get_ID());
 	}	
+	
+	private void createSalesQuickEntryForRoyaltyPass(MWeighmentEntry wEntry, BigDecimal billedQty, boolean firstInvoice, Trx trx) throws Exception {
+		TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
+		ord.firstInvoice = firstInvoice;
+		ord.setAD_Org_ID(wEntry.getAD_Org_ID());
+		ord.setC_DocType_ID(wEntry.getRoyaltyPass_DocType_ID());
+		ord.setC_DocTypeTarget_ID(wEntry.getRoyaltyPass_DocType_ID());
+		ord.setM_Warehouse_ID(wEntry.getM_Warehouse_ID());
+		ord.setDateAcct(wEntry.getGrossWeightTime());
+		ord.setDateOrdered(wEntry.getGrossWeightTime());
+		int C_BParner_ID = wEntry.getC_BPartner_ID();
+		if(C_BParner_ID == 0)
+			C_BParner_ID = 1000020;		
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), C_BParner_ID, get_TrxName());
+		ord.setBPartner(bp);
+		ord.setPartyName(wEntry.getPartyName());
+		ord.setPhone(wEntry.getPhone());
+		ord.setDescription(wEntry.getDescription());
+		if(wEntry.getPartyName() != null)
+			ord.addDescription("Customer Name : " + wEntry.getPartyName());
+		
+		ord.setPaymentRule(wEntry.getPaymentRule());
+		ord.setOnAccount(false);
+
+		//Price List
+		int m_M_PriceList_ID = MPriceList.getDefault(getCtx(), true).getM_PriceList_ID();							
+		ord.setM_PriceList_ID(m_M_PriceList_ID);
+		ord.setC_Currency_ID(MPriceList.get(getCtx(), m_M_PriceList_ID, get_TrxName()).getC_Currency_ID());
+		ord.setIsSOTrx(true);
+		ord.setTF_WeighmentEntry_ID(wEntry.getTF_WeighmentEntry_ID());	
+		ord.setTF_Destination_ID(wEntry.getTF_Destination_ID());
+		ord.setVehicleNo(wEntry.getVehicleNo());
+		ord.setTF_RentedVehicle_ID(wEntry.getTF_RentedVehicle_ID());
+		
+		//Item
+		ord.setItem1_IsPermitSales(wEntry.isHasBalance());
+		ord.setItem1_VehicleType_ID(wEntry.getTF_VehicleType_ID());
+		ord.setItem1_ID(wEntry.getM_Product_ID());
+				
+		int uom_id = wEntry.getC_UOM_ID();
+		if(uom_id == 0)
+			uom_id = wEntry.getM_Product().getC_UOM_ID();
+		
+		ord.setItem1_UOM_ID(wEntry.getC_UOM_ID());
+		ord.setItem1_Tax_ID(wEntry.getC_Tax_ID());
+		BigDecimal qty = wEntry.getPermitIssuedQty();
+		if(billedQty != null)
+			qty = billedQty;
+		
+		if(qty.doubleValue() == 0)
+			throw new AdempiereException("Invalid Billing Qty!");
+		
+		//BigDecimal qty = wEntry.getNetWeight();
+		//if(uom_id == tonnage_uom_id)
+		//	qty = qty.divide(new BigDecimal(1000));
+		//else
+		//	qty = wEntry.getNetWeightUnit();
+		ord.setTonnage(qty);
+		ord.setItem1_TotalLoad(BigDecimal.ONE);
+		
+		ord.setItem1_Qty(qty);
+		BigDecimal price = wEntry.getPermitPassAmount();
+		ord.setItem1_Price(price);
+		ord.setItem1_UnitPrice(price);
+		ord.setItem1_Amt(ord.getItem1_Qty().multiply(ord.getItem1_Price()));
+			
+	
+		ord.setProcessed(false);		
+		ord.saveEx();				
+		
+		sp = trx.setSavepoint(wEntry.getDocumentNo());
+		ord.setDocAction(DocAction.ACTION_Complete);
+		ord.completeIt();
+		ord.setDocStatus(TF_MOrder.DOCSTATUS_Completed);
+		ord.saveEx();
+		
+		//Assigning new generated invoices
+		List<TF_MInvoice> invList = ord.getTFInvoices();
+		if(invList.size() > 0) {
+			wEntry.setInvoiceNo(invList.get(0).getDocumentNo());				
+			wEntry.saveEx();
+		}
+		
+		trx.releaseSavepoint(sp);
+		addLog(ord.get_Table_ID(), ord.getCreated(), null, " Sales Entry : " + ord.getDocumentNo() + " is created!", ord.get_Table_ID(), ord.get_ID());
+	}
 }
