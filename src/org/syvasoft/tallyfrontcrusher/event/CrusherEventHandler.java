@@ -204,6 +204,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 				if (inv.getC_Order_ID() > 0) {
 					TF_MOrder ord = new TF_MOrder(Env.getCtx(), inv.getC_Order_ID(), inv.get_TrxName());
 					inv.set_ValueOfColumn(TF_MOrder.COLUMNNAME_VehicleNo, ord.getVehicleNo());
+					inv.set_ValueOfColumn(TF_MOrder.COLUMNNAME_TF_WeighmentEntry_ID,ord.getTF_WeighmentEntry_ID());
 				}
 			}
 		}
@@ -420,6 +421,12 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		else if(po instanceof MInOut) {
 			MInOut inout = (MInOut) po;
 			
+			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
+				if (inout.getC_Order_ID() > 0) {
+					TF_MOrder ord = new TF_MOrder(Env.getCtx(), inout.getC_Order_ID(), inout.get_TrxName());
+					inout.set_ValueOfColumn(TF_MOrder.COLUMNNAME_TF_WeighmentEntry_ID,ord.getTF_WeighmentEntry_ID());
+				}
+			}
 			if(event.getTopic().equals(IEventTopics.DOC_AFTER_COMPLETE)) {
 				issueDiesel(inout);
 			}

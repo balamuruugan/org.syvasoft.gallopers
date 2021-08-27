@@ -466,13 +466,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		ord.setDocStatus(TF_MOrder.DOCSTATUS_Completed);
 		ord.saveEx();
 		
-		//Assigning new generated invoices
-		List<TF_MInvoice> invList = ord.getTFInvoices();
-		if(invList.size() > 0) {
-			wEntry.setInvoiceNo(invList.get(0).getDocumentNo());				
-			wEntry.saveEx();
-		}
-		
+	
 		trx.releaseSavepoint(sp);
 		addLog(ord.get_Table_ID(), ord.getCreated(), null, " Sales Entry : " + ord.getDocumentNo() + " is created!", ord.get_Table_ID(), ord.get_ID());
 	}
