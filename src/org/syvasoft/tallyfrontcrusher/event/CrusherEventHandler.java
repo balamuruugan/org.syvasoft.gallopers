@@ -418,7 +418,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 				ioLine.saveEx();
 			}
 		}
-		else if(po instanceof MInOut) {
+		else if(po instanceof MInOut  || po.get_TableName().equals(MInOut.Table_Name)) {
 			MInOut inout = (MInOut) po;
 			
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {

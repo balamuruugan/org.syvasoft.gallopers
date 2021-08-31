@@ -255,71 +255,7 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			MMachinery machinery = new Query(getCtx(), MMachinery.Table_Name, where, get_TrxName()).first();
 			
 			if(machinery != null) {
-				MMachineryType machineryType = new MMachineryType(getCtx(), machinery.getPM_MachineryType_ID(), get_TrxName());
-								
-				MTripSheet tripSheet = new MTripSheet(getCtx(), 0, get_TrxName());
-				tripSheet.setAD_Org_ID(getAD_Org_ID());
-				
-				tripSheet.setTF_Quarry_ID(getTF_Quarry_ID());
-				tripSheet.setPM_Machinery_ID(machinery.getPM_Machinery_ID());
-				tripSheet.setVehicle_ID(machinery.getM_Product_ID());
-				tripSheet.setC_UOM_ID(machineryType.getC_UOM_ID());
-				
-				String currentTime = GetHoursMins(getGrossWeightTime());
-				
-				boolean isDayShift = checkTime(DayShiftStartTime, currentTime, DayShiftEndTime);
-				
-				if(isDayShift) {
-					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-					Date startTime = null;
-					Date endTime = null;
-					
-					try {
-			            startTime = sdf.parse(DayShiftStartTime);
-			            endTime = sdf.parse(DayShiftEndTime);			            
-			        } catch (Exception e) {
-			            e.printStackTrace();
-			        }
-					Timestamp startime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
-					Timestamp endtime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
-					
-					tripSheet.setDateReport(getGrossWeightTime());
-					tripSheet.setDateStart(startime);
-					tripSheet.setDateEnd(endtime);
-					tripSheet.setShift(MTripSheet.SHIFT_Day);
-				}
-				else {
-					SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-					Date startTime = null;
-					Date endTime = null;
-					
-					boolean isNextDay = checkTime("00:00", currentTime, "06:01");
-					
-					try {
-			            startTime = sdf.parse(NightShiftStartTime);
-			            endTime = sdf.parse(NightShiftEndTime);			            
-			        } catch (Exception e) {
-			            e.printStackTrace();
-			        }
-					Timestamp dateTime = getGrossWeightTime();
-					
-					if(isNextDay) {
-						Calendar cal = Calendar.getInstance();
-				        cal.setTime(getGrossWeightTime());// w ww.  j ava  2  s  .co m
-				        cal.add(Calendar.DATE, -1); 
-				        
-						dateTime = new Timestamp(cal.getTime().getTime());
-					}	
-					
-					Timestamp startime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
-					Timestamp endtime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
-					
-					tripSheet.setDateReport(dateTime);
-					tripSheet.setDateStart(startime);
-					tripSheet.setDateEnd(endtime);
-					tripSheet.setShift(MTripSheet.SHIFT_Night);					
-				}
-				tripSheet.saveEx();
+				CreateTripSheet(machinery);
 			}
 		}
 		
@@ -328,72 +264,7 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	void CreateTripSheetForLoader() {
 		MMachinery machinery = new MMachinery(getCtx(), getPM_Machinery_ID(), get_TrxName());		
 		if(machinery != null) {
-			MMachineryType machineryType = new MMachineryType(getCtx(), machinery.getPM_MachineryType_ID(), get_TrxName());
-			
-			MTripSheet tripSheet = new MTripSheet(getCtx(), 0, get_TrxName());
-			tripSheet.setAD_Org_ID(getAD_Org_ID());
-			tripSheet.setDateReport(getGrossWeightTime());
-			tripSheet.setTF_Quarry_ID(getTF_Quarry_ID());
-			tripSheet.setPM_Machinery_ID(machinery.getPM_Machinery_ID());
-			tripSheet.setVehicle_ID(machinery.getM_Product_ID());
-			tripSheet.setC_UOM_ID(machineryType.getC_UOM_ID());
-			
-			String currentTime = GetHoursMins(getGrossWeightTime());
-			
-			boolean isDayShift = checkTime(DayShiftStartTime, currentTime, DayShiftEndTime);
-			
-			if(isDayShift) {
-				
-				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-				Date startTime = null;
-				Date endTime = null;
-				
-				try {
-		            startTime = sdf.parse(DayShiftStartTime);
-		            endTime = sdf.parse(DayShiftEndTime);			            
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-				Timestamp startime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
-				Timestamp endtime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
-				
-				tripSheet.setDateReport(getGrossWeightTime());
-				tripSheet.setDateStart(startime);
-				tripSheet.setDateEnd(endtime);
-				tripSheet.setShift(MTripSheet.SHIFT_Day);
-			}
-			else {
-				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-				Date startTime = null;
-				Date endTime = null;
-				
-				boolean isNextDay = checkTime("00:00", currentTime, "06:01");
-				
-				try {
-		            startTime = sdf.parse(NightShiftStartTime);
-		            endTime = sdf.parse(NightShiftEndTime);			            
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-				Timestamp dateTime = getGrossWeightTime();
-				
-				if(isNextDay) {
-					Calendar cal = Calendar.getInstance();
-			        cal.setTime(getGrossWeightTime());// w ww.  j ava  2  s  .co m
-			        cal.add(Calendar.DATE, -1); 
-			        
-					dateTime = new Timestamp(cal.getTime().getTime());
-				}	
-				
-				Timestamp startime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
-				Timestamp endtime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
-				
-				tripSheet.setDateReport(dateTime);
-				tripSheet.setDateStart(startime);
-				tripSheet.setDateEnd(endtime);
-				tripSheet.setShift(MTripSheet.SHIFT_Night);					
-			}
-			tripSheet.saveEx();
+			CreateTripSheet(machinery);
 		}
 	}
 	
@@ -403,70 +274,77 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		MMachinery machinery = new Query(getCtx(), MMachinery.Table_Name, where, get_TrxName()).first();
 		
 		if(machinery != null) {
-			MMachineryType machineryType = new MMachineryType(getCtx(), machinery.getPM_MachineryType_ID(), get_TrxName());
+			CreateTripSheet(machinery);
+		}
+	}
+	
+	void CreateTripSheet(MMachinery machinery) {
+		MMachineryType machineryType = new MMachineryType(getCtx(), machinery.getPM_MachineryType_ID(), get_TrxName());
+		
+		String currentTime = GetHoursMins(getGrossWeightTime());
+		boolean isDayShift = checkTime(DayShiftStartTime, currentTime, DayShiftEndTime);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		Date startTime = null;
+		Date endTime = null;
+
+		Timestamp startime;
+		Timestamp endtime;
+		Timestamp dateTime = getGrossWeightTime();
+		String shiftType;
+		if(isDayShift) {
+			try {
+	            startTime = sdf.parse(DayShiftStartTime);
+	            endTime = sdf.parse(DayShiftEndTime);			            
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+			startime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
+			endtime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
 			
+			shiftType = MTripSheet.SHIFT_Day;
+		}
+		else {
+			boolean isNextDay = checkTime("00:00", currentTime, "06:01");
+			
+			try {
+	            startTime = sdf.parse(NightShiftStartTime);
+	            endTime = sdf.parse(NightShiftEndTime);			            
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }			
+			
+			if(isNextDay) {
+				Calendar cal = Calendar.getInstance();
+		        cal.setTime(getGrossWeightTime());// w ww.  j ava  2  s  .co m
+		        cal.add(Calendar.DATE, -1); 
+		        
+				dateTime = new Timestamp(cal.getTime().getTime());
+			}	
+			
+			startime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
+			endtime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
+			
+			shiftType = MTripSheet.SHIFT_Night;					
+		}
+		
+		String whereclause = "PM_Machinery_ID = ? AND TRUNC(DateReport) = ? AND Shift = ?";
+		
+		MTripSheet sheets = new Query(getCtx(), MTripSheet.Table_Name, whereclause, get_TrxName()).setClient_ID().setParameters(machinery.getPM_Machinery_ID(), dateTime, shiftType).first();
+		
+		if(sheets == null) {
 			MTripSheet tripSheet = new MTripSheet(getCtx(), 0, get_TrxName());
 			tripSheet.setAD_Org_ID(getAD_Org_ID());
-			tripSheet.setDateReport(getGrossWeightTime());
 			tripSheet.setTF_Quarry_ID(getTF_Quarry_ID());
 			tripSheet.setPM_Machinery_ID(machinery.getPM_Machinery_ID());
 			tripSheet.setVehicle_ID(machinery.getM_Product_ID());
 			tripSheet.setC_UOM_ID(machineryType.getC_UOM_ID());
 			
-			String currentTime = GetHoursMins(getGrossWeightTime());
+			tripSheet.setDateReport(dateTime);
+			tripSheet.setDateStart(startime);
+			tripSheet.setDateEnd(endtime);
+			tripSheet.setShift(shiftType);
 			
-			boolean isDayShift = checkTime(DayShiftStartTime, currentTime, DayShiftEndTime);
-			
-			if(isDayShift) {
-				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-				Date startTime = null;
-				Date endTime = null;
-				
-				try {
-		            startTime = sdf.parse(DayShiftStartTime);
-		            endTime = sdf.parse(DayShiftEndTime);			            
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-				Timestamp startime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
-				Timestamp endtime = new Timestamp(getGrossWeightTime().getYear(), getGrossWeightTime().getMonth(), getGrossWeightTime().getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
-				
-				tripSheet.setDateReport(getGrossWeightTime());
-				tripSheet.setDateStart(startime);
-				tripSheet.setDateEnd(endtime);
-				tripSheet.setShift(MTripSheet.SHIFT_Day);
-			}
-			else {
-				SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-				Date startTime = null;
-				Date endTime = null;
-				
-				boolean isNextDay = checkTime("00:00", currentTime, "06:01");
-				
-				try {
-		            startTime = sdf.parse(NightShiftStartTime);
-		            endTime = sdf.parse(NightShiftEndTime);			            
-		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-				Timestamp dateTime = getGrossWeightTime();
-				
-				if(isNextDay) {
-					Calendar cal = Calendar.getInstance();
-			        cal.setTime(getGrossWeightTime());// w ww.  j ava  2  s  .co m
-			        cal.add(Calendar.DATE, -1); 
-			        
-					dateTime = new Timestamp(cal.getTime().getTime());
-				}	
-				
-				Timestamp startime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), startTime.getHours(), startTime.getMinutes(), 0, 0);
-				Timestamp endtime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), endTime.getHours(), endTime.getMinutes(), 0, 0);
-				
-				tripSheet.setDateReport(dateTime);
-				tripSheet.setDateStart(startime);
-				tripSheet.setDateEnd(endtime);
-				tripSheet.setShift(MTripSheet.SHIFT_Night);					
-			}
 			tripSheet.saveEx();
 		}
 	}
