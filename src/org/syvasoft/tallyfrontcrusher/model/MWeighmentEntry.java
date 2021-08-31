@@ -269,7 +269,7 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	}
 	
 	void CreateTripSheetForQuarryProductionType() {
-		String where = "QuarryProductionType  = " + getQuarryProductionType();
+		String where = "QuarryProductionType  = '" + getQuarryProductionType() + "'";
 		
 		MMachinery machinery = new Query(getCtx(), MMachinery.Table_Name, where, get_TrxName()).first();
 		
