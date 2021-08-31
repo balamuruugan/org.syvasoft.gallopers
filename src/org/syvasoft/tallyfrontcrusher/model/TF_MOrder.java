@@ -3785,7 +3785,7 @@ public class TF_MOrder extends MOrder {
 	}
 	
 	public void createInvoiceVendor() {
-		if(getC_DocTypeTarget_ID() != getC_VendorInvoiceDocType_ID())
+		if(isSOTrx())
 			return;
 		
 		MDocType dt = (MDocType) getC_DocTypeTarget();
