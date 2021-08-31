@@ -29,7 +29,7 @@ public class ProcessTripSheet extends SvrProcess {
 	@Override
 	protected String doIt() throws Exception {
 		if(!tripSheet.isProcessed())
-			tripSheet.processIt(DocAction.ACTION_Complete);
+			tripSheet.processIt(docAction);
 		else if(tripSheet.isProcessed() && docAction.equals("MO"))
 			tripSheet.reverseIt();
 		

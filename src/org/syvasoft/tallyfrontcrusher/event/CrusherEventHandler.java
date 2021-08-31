@@ -203,8 +203,9 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
 				if (inv.getC_Order_ID() > 0) {
 					TF_MOrder ord = new TF_MOrder(Env.getCtx(), inv.getC_Order_ID(), inv.get_TrxName());
-					inv.set_ValueOfColumn(TF_MOrder.COLUMNNAME_VehicleNo, ord.getVehicleNo());
-					inv.set_ValueOfColumn(TF_MOrder.COLUMNNAME_TF_WeighmentEntry_ID,ord.getTF_WeighmentEntry_ID());
+					srcInv.set_ValueOfColumn(TF_MOrder.COLUMNNAME_VehicleNo, ord.getVehicleNo());
+					//inv.set_ValueOfColumn(TF_MOrder.COLUMNNAME_TF_WeighmentEntry_ID,ord.getTF_WeighmentEntry_ID());
+					srcInv.setTF_WeighmentEntry_ID(ord.getTF_WeighmentEntry_ID());
 				}
 			}
 		}
