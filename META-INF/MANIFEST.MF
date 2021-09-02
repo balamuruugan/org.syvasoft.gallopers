@@ -11,6 +11,7 @@ Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
  org.adempiere.ui.zk;bundle-version="4.1.0",
  org.eclipse.osgi.services;bundle-version="3.4.0"
 Import-Package: org.apache.commons.collections.keyvalue;version="3.2.0",
+ org.apache.commons.lang.time;version="2.6.0",
  org.json,
  org.osgi.framework;version="1.8.0"
 Service-Component: OSGi-INF/CrusherModelFactory.xml,OSGi-INF/CrusherProcessFactory.xml,OSGi-INF/CrusherEventHandler.xml,

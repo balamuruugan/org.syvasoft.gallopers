@@ -17,6 +17,7 @@ import java.util.logging.Level;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.exceptions.DBException;
+import org.apache.commons.lang.time.DateUtils;
 import org.compiere.model.MDocType;
 import org.compiere.model.MInOut;
 import org.compiere.model.MInOutLine;
@@ -328,9 +329,11 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			shiftType = MTripSheet.SHIFT_Night;					
 		}
 		
-		String whereclause = "PM_Machinery_ID = ? AND TRUNC(DateReport) = ? AND Shift = ?";
+		Timestamp currtime = new Timestamp(dateTime.getYear(), dateTime.getMonth(), dateTime.getDate(), 0, 0, 0, 0);
 		
-		MTripSheet sheets = new Query(getCtx(), MTripSheet.Table_Name, whereclause, get_TrxName()).setClient_ID().setParameters(machinery.getPM_Machinery_ID(), dateTime, shiftType).first();
+		String whereclause = "PM_Machinery_ID = ? AND DateReport = ? AND Shift = ?";
+		
+		MTripSheet sheets = new Query(getCtx(), MTripSheet.Table_Name, whereclause, get_TrxName()).setClient_ID().setParameters(machinery.getPM_Machinery_ID(), currtime, shiftType).first();
 		
 		if(sheets == null) {
 			MTripSheet tripSheet = new MTripSheet(getCtx(), 0, get_TrxName());

@@ -393,7 +393,7 @@ public class TF_MProduct extends MProduct {
 		String whereClause = "Rate=? AND IsSummary=? AND IsInterState=? AND ad_org_id=0";
 		MTax tax = new Query(getCtx(), MTax.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
-				.setParameters(isTaxIncluded?getGSTRate():Env.ZERO, isTaxIncluded ? "Y" : "N", isInterState)
+				.setParameters(isTaxIncluded?getGSTRate():Env.ZERO, isTaxIncluded ? "Y" : "N", (getGSTRate().doubleValue() == 0) ? "N" : (isInterState? "Y" : "N"))
 				.first();
 		
 		if(tax != null)
@@ -406,7 +406,7 @@ public class TF_MProduct extends MProduct {
 		String whereClause = "Rate=? AND IsSummary=? AND IsInterState=? AND ad_org_id=0";
 		MTax tax = new Query(getCtx(), MTax.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
-				.setParameters(isTaxIncluded?getGSTRate():Env.ZERO, isTaxIncluded ? "Y" : "N", isInterState? "Y" : "N")
+				.setParameters(isTaxIncluded?getGSTRate():Env.ZERO, isTaxIncluded ? "Y" : "N", (getGSTRate().doubleValue() == 0) ? "N" : (isInterState? "Y" : "N"))
 				.first();
 		
 		if(ApplyTCS) {
