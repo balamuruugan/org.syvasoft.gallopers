@@ -36,7 +36,10 @@ public class CalloutEmployeeSalary implements IColumnCallout {
 			incentiveAsDayWage = inc.isIncentiveAsDayWage();
 			incentiveEligibleDays = inc.getEligibleUnit();
 			if(presentDays.doubleValue() >= incentiveEligibleDays.doubleValue())
-				incentiveDays = stdDays.subtract(incentiveEligibleDays);			
+				incentiveDays = stdDays.subtract(incentiveEligibleDays);	
+			
+			if(incentiveDays.doubleValue() >= 4)
+				incentiveDays = new BigDecimal(4);
 		}
 		
 		

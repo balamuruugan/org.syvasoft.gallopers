@@ -1,6 +1,6 @@
-DROP VIEW  RV_QuarryStatement;
-CREATE VIEW RV_QuarryStatement AS 
-SELECT 
+/***/DROP VIEW  RV_QuarryStatement;
+/***/CREATE VIEW RV_QuarryStatement AS 
+/***/SELECT 
 	mm.AD_Org_ID,
 	0 Idx,
 	 mm.QuarryProductionType,
@@ -26,11 +26,11 @@ FROM
 	
 	
 WHERE 
-	mm.QuarryProductionType  IS NOT NULL AND COALESCE(m.expense,0) > 0 
+	mm.QuarryProductionType  IS NOT NULL AND COALESCE(m.expense,0) > 0 AND (tf.IssueType='E' OR tf.IssueType IS NULL)
 
 UNION
 
-SELECT 
+/***/SELECT 
 	mm.AD_Org_ID,
 	0 Idx,
 	 mm.QuarryProductionType,
@@ -62,7 +62,7 @@ WHERE
 
 UNION
 
-SELECT
+/***/SELECT
 	t.AD_Org_ID,
 	0 idx,
 	t.QuarryProductionType,
@@ -73,7 +73,7 @@ SELECT
 	p.Name description,
 	p.Name product,
 	t.qty qty,
-	'MT' UOM,
+	u.Name UOM,
 	t.Rate rate,
 	t.Amt expense,
 	NULL TotalMT,
@@ -83,18 +83,19 @@ SELECT
 	 
 FROM
 	TF_Fuel_Issue t INNER JOIN M_Product p 
-	 ON t.M_Product_ID = p.M_Product_ID	
+	 ON t.M_Product_ID = p.M_Product_ID				
+	INNER JOIN C_UOM u ON t.C_UOM_ID = u.C_UOM_ID
 	LEFT OUTER JOIN c_elementvalue c ON c.c_elementvalue_id = t.c_elementvalue_id
 	
 WHERE 
-	t.QuarryProductionType  IS NOT NULL  AND t.PM_Machinery_ID IS NULL AND t.DocStatus = 'CO' 
+	t.QuarryProductionType  IS NOT NULL  AND t.DocStatus = 'CO' 
 	AND t.IssueType='E'
 
 
 UNION
 
 
-SELECT
+/***/SELECT
 	m.AD_Org_ID,
 	1 idx,
 	tp.QuarryProductionType,
