@@ -33,7 +33,7 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210823L;
+	private static final long serialVersionUID = 20210903L;
 
     /** Standard Constructor */
     public X_TF_Employee_Salary (Properties ctx, int TF_Employee_Salary_ID, String trxName)
@@ -48,6 +48,8 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 			setIsCalculated (true);
 // Y
 			setProcessed (false);
+			setProductionBonus (Env.ZERO);
+// 0
 			setSalary_Amt (Env.ZERO);
 			setTF_Employee_Salary_ID (0);
         } */
@@ -497,6 +499,23 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 			return "Y".equals(oo);
 		}
 		return false;
+	}
+
+	/** Set Production Bonus.
+		@param ProductionBonus Production Bonus	  */
+	public void setProductionBonus (BigDecimal ProductionBonus)
+	{
+		set_Value (COLUMNNAME_ProductionBonus, ProductionBonus);
+	}
+
+	/** Get Production Bonus.
+		@return Production Bonus	  */
+	public BigDecimal getProductionBonus () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_ProductionBonus);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
 	}
 
 	/** Set Earned Salary.

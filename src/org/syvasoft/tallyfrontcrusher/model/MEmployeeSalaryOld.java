@@ -1,5 +1,6 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
 
@@ -33,7 +34,8 @@ public class MEmployeeSalaryOld extends X_TF_Employee_Salary {
 		//if(isCalculated() && getStd_Days().doubleValue()!=0) {			
 		//	setSalary_Amt(getStd_Wage().multiply(getPresent_Days().divide(getStd_Days())));
 		//}
-		if(getSalary_Amt().doubleValue() == 0 )			
+		BigDecimal earnedSalary = getSalary_Amt().add(getIncentive()).add(getProductionBonus());
+		if(earnedSalary.doubleValue() == 0 )			
 			throw new AdempiereException("Invalid Earned Salary");
 		
 		//If the Employee is created from Quick Entry
@@ -109,6 +111,23 @@ public class MEmployeeSalaryOld extends X_TF_Employee_Salary {
 				jl.saveEx();
 			}
 			
+			//Production Bonus Expense Dr
+			if(getProductionBonus().doubleValue() != 0) {
+				if(MGLPostingConfig.getMGLPostingConfig(getCtx()).getC_EleValueProdBonus_ID() == 0)
+					throw new AdempiereException("Please Production Bonus Account Head in the Settings!");
+				jl = new MJournalLine(j);
+				line = line + 10;
+				jl.setLine(line);			
+				jl.setAccount_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getC_EleValueProdBonus_ID());
+				jl.setC_BPartner_ID(getC_BPartner_ID());
+				jl.setC_Project_ID(getC_Project_ID());
+				jl.setUser1_ID(getC_ElementValue_ID()); // Quarry Profit Center
+				jl.setAmtSourceDr(getProductionBonus());
+				jl.setAmtAcctDr(getProductionBonus());
+				jl.setIsGenerated(true);
+				jl.saveEx();
+			}
+			
 			//Salary Payable Cr.
 			jl = new MJournalLine(j);
 			line = line + 10;
@@ -117,8 +136,9 @@ public class MEmployeeSalaryOld extends X_TF_Employee_Salary {
 			jl.setC_BPartner_ID(getC_BPartner_ID());
 			jl.setC_Project_ID(getC_Project_ID());
 			jl.setUser1_ID(getC_ElementValue_ID()); // Quarry Profit Center
-			jl.setAmtSourceCr(getSalary_Amt().add(getIncentive()));
-			jl.setAmtAcctCr(getSalary_Amt().add(getIncentive()));
+			BigDecimal totalEarnedSalary = getSalary_Amt().add(getIncentive()).add(getProductionBonus());
+			jl.setAmtSourceCr(totalEarnedSalary);
+			jl.setAmtAcctCr(totalEarnedSalary);
 			jl.setIsGenerated(true);
 			jl.saveEx();
 			

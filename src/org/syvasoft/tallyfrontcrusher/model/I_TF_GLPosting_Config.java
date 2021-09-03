@@ -201,6 +201,17 @@ public interface I_TF_GLPosting_Config
 
 	public org.compiere.model.I_C_ElementValue getC_ElementValueSGST() throws RuntimeException;
 
+    /** Column name C_EleValueProdBonus_ID */
+    public static final String COLUMNNAME_C_EleValueProdBonus_ID = "C_EleValueProdBonus_ID";
+
+	/** Set Production Bonus	  */
+	public void setC_EleValueProdBonus_ID (int C_EleValueProdBonus_ID);
+
+	/** Get Production Bonus	  */
+	public int getC_EleValueProdBonus_ID();
+
+	public org.compiere.model.I_C_ElementValue getC_EleValueProdBonus() throws RuntimeException;
+
     /** Column name Created */
     public static final String COLUMNNAME_Created = "Created";
 
@@ -380,6 +391,17 @@ public interface I_TF_GLPosting_Config
 	public int getMaterialIssue_DocType_ID();
 
 	public org.compiere.model.I_C_DocType getMaterialIssue_DocType() throws RuntimeException;
+
+    /** Column name MaterialReceipt_DocType_ID */
+    public static final String COLUMNNAME_MaterialReceipt_DocType_ID = "MaterialReceipt_DocType_ID";
+
+	/** Set Material Receipt Doc Type	  */
+	public void setMaterialReceipt_DocType_ID (int MaterialReceipt_DocType_ID);
+
+	/** Get Material Receipt Doc Type	  */
+	public int getMaterialReceipt_DocType_ID();
+
+	public org.compiere.model.I_C_DocType getMaterialReceipt_DocType() throws RuntimeException;
 
     /** Column name OpeningBalAcct_ID */
     public static final String COLUMNNAME_OpeningBalAcct_ID = "OpeningBalAcct_ID";
@@ -616,7 +638,4 @@ public interface I_TF_GLPosting_Config
 	public int getWagePayableAcct_ID();
 
 	public org.compiere.model.I_C_ElementValue getWagePayableAcct() throws RuntimeException;
-	
-	/** Column name MaterialReceipt_DocType_ID */
-    public static final String COLUMNNAME_MaterialReceipt_DocType_ID = "MaterialReceipt_DocType_ID";
 }

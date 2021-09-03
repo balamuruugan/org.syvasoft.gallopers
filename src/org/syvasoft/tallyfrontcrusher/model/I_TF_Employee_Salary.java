@@ -317,6 +317,15 @@ public interface I_TF_Employee_Salary
 	/** Get Process Now	  */
 	public boolean isProcessing();
 
+    /** Column name ProductionBonus */
+    public static final String COLUMNNAME_ProductionBonus = "ProductionBonus";
+
+	/** Set Production Bonus	  */
+	public void setProductionBonus (BigDecimal ProductionBonus);
+
+	/** Get Production Bonus	  */
+	public BigDecimal getProductionBonus();
+
     /** Column name Salary_Amt */
     public static final String COLUMNNAME_Salary_Amt = "Salary_Amt";
 

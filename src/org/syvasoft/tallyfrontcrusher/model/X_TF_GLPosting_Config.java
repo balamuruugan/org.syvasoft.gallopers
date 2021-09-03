@@ -30,7 +30,7 @@ public class X_TF_GLPosting_Config extends PO implements I_TF_GLPosting_Config, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200621L;
+	private static final long serialVersionUID = 20210903L;
 
     /** Standard Constructor */
     public X_TF_GLPosting_Config (Properties ctx, int TF_GLPosting_Config_ID, String trxName)
@@ -363,6 +363,31 @@ public class X_TF_GLPosting_Config extends PO implements I_TF_GLPosting_Config, 
 		return ii.intValue();
 	}
 
+	public org.compiere.model.I_C_ElementValue getC_EleValueProdBonus() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_ElementValue)MTable.get(getCtx(), org.compiere.model.I_C_ElementValue.Table_Name)
+			.getPO(getC_EleValueProdBonus_ID(), get_TrxName());	}
+
+	/** Set Production Bonus.
+		@param C_EleValueProdBonus_ID Production Bonus	  */
+	public void setC_EleValueProdBonus_ID (int C_EleValueProdBonus_ID)
+	{
+		if (C_EleValueProdBonus_ID < 1) 
+			set_Value (COLUMNNAME_C_EleValueProdBonus_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_EleValueProdBonus_ID, Integer.valueOf(C_EleValueProdBonus_ID));
+	}
+
+	/** Get Production Bonus.
+		@return Production Bonus	  */
+	public int getC_EleValueProdBonus_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_EleValueProdBonus_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_C_DocType getDebitNote_DocType() throws RuntimeException
     {
 		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_Name)
@@ -689,6 +714,31 @@ public class X_TF_GLPosting_Config extends PO implements I_TF_GLPosting_Config, 
 	public int getMaterialIssue_DocType_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_MaterialIssue_DocType_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_DocType getMaterialReceipt_DocType() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_Name)
+			.getPO(getMaterialReceipt_DocType_ID(), get_TrxName());	}
+
+	/** Set Material Receipt Doc Type.
+		@param MaterialReceipt_DocType_ID Material Receipt Doc Type	  */
+	public void setMaterialReceipt_DocType_ID (int MaterialReceipt_DocType_ID)
+	{
+		if (MaterialReceipt_DocType_ID < 1) 
+			set_Value (COLUMNNAME_MaterialReceipt_DocType_ID, null);
+		else 
+			set_Value (COLUMNNAME_MaterialReceipt_DocType_ID, Integer.valueOf(MaterialReceipt_DocType_ID));
+	}
+
+	/** Get Material Receipt Doc Type.
+		@return Material Receipt Doc Type	  */
+	public int getMaterialReceipt_DocType_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_MaterialReceipt_DocType_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -1162,30 +1212,4 @@ public class X_TF_GLPosting_Config extends PO implements I_TF_GLPosting_Config, 
 			 return 0;
 		return ii.intValue();
 	}
-	
-	public org.compiere.model.I_C_DocType getMaterialReceipt_DocType() throws RuntimeException
-    {
-		return (org.compiere.model.I_C_DocType)MTable.get(getCtx(), org.compiere.model.I_C_DocType.Table_Name)
-			.getPO(getMaterialReceipt_DocType_ID(), get_TrxName());	}
-
-	/** Set Material Receipt Doc Type.
-		@param MaterialReceipt_DocType_ID Material Receipt Doc Type	  */
-	public void setMaterialReceipt_DocType_ID (int MaterialReceipt_DocType_ID)
-	{
-		if (MaterialReceipt_DocType_ID < 1) 
-			set_Value (COLUMNNAME_MaterialReceipt_DocType_ID, null);
-		else 
-			set_Value (COLUMNNAME_MaterialReceipt_DocType_ID, Integer.valueOf(MaterialReceipt_DocType_ID));
-	}
-
-	/** Get Material Receipt Doc Type.
-		@return Material Receipt Doc Type	  */
-	public int getMaterialReceipt_DocType_ID () 
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_MaterialReceipt_DocType_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
 }
