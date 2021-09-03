@@ -30,8 +30,10 @@ import org.compiere.util.Env;
 public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Persistent 
 {
 
-
-	private static final long serialVersionUID = 20210811L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 20210826L;
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)
@@ -553,6 +555,20 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_eWayBillNo);
 	}
 
+	/** Set Exit Time.
+		@param ExitTime Exit Time	  */
+	public void setExitTime (Timestamp ExitTime)
+	{
+		set_Value (COLUMNNAME_ExitTime, ExitTime);
+	}
+
+	/** Get Exit Time.
+		@return Exit Time	  */
+	public Timestamp getExitTime () 
+	{
+		return (Timestamp)get_Value(COLUMNNAME_ExitTime);
+	}
+
 	/** Set Freight Rate.
 		@param FreightPrice Freight Rate	  */
 	public void setFreightPrice (BigDecimal FreightPrice)
@@ -979,6 +995,31 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return ii.intValue();
 	}
 
+	public org.compiere.model.I_M_Product getM_Product_Pass() throws RuntimeException
+    {
+		return (org.compiere.model.I_M_Product)MTable.get(getCtx(), org.compiere.model.I_M_Product.Table_Name)
+			.getPO(getM_Product_Pass_ID(), get_TrxName());	}
+
+	/** Set Pass ID.
+		@param M_Product_Pass_ID Pass ID	  */
+	public void setM_Product_Pass_ID (int M_Product_Pass_ID)
+	{
+		if (M_Product_Pass_ID < 1) 
+			set_Value (COLUMNNAME_M_Product_Pass_ID, null);
+		else 
+			set_Value (COLUMNNAME_M_Product_Pass_ID, Integer.valueOf(M_Product_Pass_ID));
+	}
+
+	/** Get Pass ID.
+		@return Pass ID	  */
+	public int getM_Product_Pass_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_M_Product_Pass_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public org.compiere.model.I_M_Product getM_Product2() throws RuntimeException
     {
 		return (org.compiere.model.I_M_Product)MTable.get(getCtx(), org.compiere.model.I_M_Product.Table_Name)
@@ -1172,6 +1213,8 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 
 	/** PaymentRule AD_Reference_ID=195 */
 	public static final int PAYMENTRULE_AD_Reference_ID=195;
+	/** Cash = B */
+	public static final String PAYMENTRULE_Cash = "B";
 	/** Credit Card = K */
 	public static final String PAYMENTRULE_CreditCard = "K";
 	/** Direct Deposit = T */
@@ -1185,7 +1228,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULE_MixedPOSPayment = "M";
 	/** Cash  = Z */
-	public static final String PAYMENTRULE_Cash = "B";
+	public static final String PAYMENTRULE_PrepaidCash = "Z";
 	/** Set Payment Rule.
 		@param PaymentRule 
 		How you pay the invoice
@@ -1292,6 +1335,20 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Previous Challan No.
+		@param PreviousChallanNo Previous Challan No	  */
+	public void setPreviousChallanNo (String PreviousChallanNo)
+	{
+		set_Value (COLUMNNAME_PreviousChallanNo, PreviousChallanNo);
+	}
+
+	/** Get Previous Challan No.
+		@return Previous Challan No	  */
+	public String getPreviousChallanNo () 
+	{
+		return (String)get_Value(COLUMNNAME_PreviousChallanNo);
 	}
 
 	/** Set Price.

@@ -2653,8 +2653,11 @@ public class TF_MOrder extends MOrder {
 	{
 		if(getTF_WeighmentEntry_ID() > 0) {
 			MWeighmentEntry weighment = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
-			weighment.close();
-			weighment.saveEx();
+			
+			if(weighment.getStatus().equals(weighment.STATUS_Unbilled)) {
+				weighment.close();
+				weighment.saveEx();
+			}			
 		}
 	}
 	
@@ -3531,6 +3534,11 @@ public class TF_MOrder extends MOrder {
 		int DocType_ID = MSysConfig.getIntValue("NONGST_ORDER_ID", 1000062, Env.getAD_Client_ID(ctx));
 		return DocType_ID;
 	}
+	
+	public static int RoyaltyPassOrderDocType_ID(Properties ctx) {
+		int DocType_ID = MSysConfig.getIntValue("ROYALTY_PASS_DOCTYPE_ID", 1000062, Env.getAD_Client_ID(ctx));
+		return DocType_ID;
+	}
 
 	public boolean firstInvoice = true;
 	public void createInvoiceCustomer() {
@@ -3553,16 +3561,20 @@ public class TF_MOrder extends MOrder {
 		invoice.setDateAcct(getDateAcct());
 		
 		//fetching already generated invoice no in case of reversing and recreating the existing invoices.
-		if(getC_DocTypeTarget_ID() == GSTOrderDocType_ID(getCtx())) {
+		/*if(getC_DocTypeTarget_ID() == GSTOrderDocType_ID(getCtx())) {
 			invoice.setDocumentNo(weighment.getInvoiceNo());		
 			if(invoice.getDocumentNo() == null)
 				invoice.setDocumentNo(weighment.getDocumentNo());
 		}
 		else {
 			invoice.setDocumentNo(weighment.getDocumentNo());
-		}
+		}*/
 		
 		//
+		
+		if(getC_DocTypeTarget_ID() == GSTOrderDocType_ID(getCtx()) || getC_DocTypeTarget_ID() == NonGSTOrderDocType_ID(getCtx())) {
+			invoice.setDocumentNo(weighment.getInvoiceNo());
+		}
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		
 		invoice.setPaymentRule(getPaymentRule());
 		invoice.setC_PaymentTerm_ID(getC_PaymentTerm_ID());
@@ -3773,7 +3785,7 @@ public class TF_MOrder extends MOrder {
 	}
 	
 	public void createInvoiceVendor() {
-		if(getC_DocTypeTarget_ID() != getC_VendorInvoiceDocType_ID())
+		if(isSOTrx())
 			return;
 		
 		MDocType dt = (MDocType) getC_DocTypeTarget();

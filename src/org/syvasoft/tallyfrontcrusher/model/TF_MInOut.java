@@ -346,7 +346,10 @@ public class TF_MInOut extends MInOut {
 	public String postCrusherProduction(MWeighmentEntry wEntry) {				
 		String aggregateStockApproach = MSysConfig.getValue("AGGREGATE_STOCK_APPROACH","B", getAD_Client_ID(), getAD_Org_ID());
 		int Boulder_ID = MSysConfig.getIntValue("BOULDER_ID",getAD_Client_ID(), getAD_Org_ID());
-		if(aggregateStockApproach.equals("B") && isSOTrx() && Boulder_ID != wEntry.getM_Product_ID()) {
+		
+		TF_MProduct product = new TF_MProduct(getCtx(), wEntry.getM_Product_ID(), get_TrxName());
+		
+		if(aggregateStockApproach.equals("B") && isSOTrx() && product.isStocked() && Boulder_ID != wEntry.getM_Product_ID()) {
 			
 				MCrusherProduction cProd = new MCrusherProduction(getCtx(), 0, get_TrxName());
 				MCrusherProductionConfig pConfig = MCrusherProductionConfig.getMCrusherProductionConfig(getCtx(), getAD_Org_ID(), "SO", wEntry.getM_Product_ID());

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.compiere.model.Query;
+import org.compiere.util.AdempiereUserError;
+import org.compiere.util.DB;
 
 public class MDestination extends X_TF_Destination {
 
@@ -23,6 +25,29 @@ public class MDestination extends X_TF_Destination {
 		// TODO Auto-generated constructor stub
 	}
 
+	protected boolean beforeSave(boolean newRecord) {
+		if(newRecord) {
+			String where = " UPPER(Name) = '" + getName().toUpperCase() + "' AND AD_Org_ID = " + getAD_Org_ID();
+			
+			MDestination dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).first();
+			
+			if(dest != null) {
+				throw new AdempiereUserError("Destination already exists");
+			}
+		}
+		else {
+			String where = " UPPER(Name) = '" + getName().toUpperCase() + "' AND AD_Org_ID = " + getAD_Org_ID() + " AND TF_Destination_ID != " + getTF_Destination_ID();
+			
+			MDestination dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).first();
+			
+			if(dest != null) {
+				throw new AdempiereUserError("Destination already exists");
+			}
+		}
+		return super.beforeSave(newRecord);
+	}
+	
+	
 	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {
 		if(newRecord) {
