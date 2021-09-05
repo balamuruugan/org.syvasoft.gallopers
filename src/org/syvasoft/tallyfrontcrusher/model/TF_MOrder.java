@@ -3785,10 +3785,15 @@ public class TF_MOrder extends MOrder {
 	}
 	
 	public void createInvoiceVendor() {
+		MDocType dt = (MDocType) getC_DocTypeTarget();
+		String DocSubTypeSO = dt.getDocSubTypeSO();
+		
+		if(DocSubTypeSO == null || DocSubTypeSO.equals("IN"))
+			return;
+							
 		if(isSOTrx())
 			return;
-		
-		MDocType dt = (MDocType) getC_DocTypeTarget();
+			
 		
 		if(dt.getDocSubTypeSO() != null && !dt.getDocSubTypeSO().equals("IN"))
 			return;
