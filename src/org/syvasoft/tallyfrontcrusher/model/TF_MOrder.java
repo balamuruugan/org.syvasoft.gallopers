@@ -3788,7 +3788,7 @@ public class TF_MOrder extends MOrder {
 		MDocType dt = (MDocType) getC_DocTypeTarget();
 		String DocSubTypeSO = dt.getDocSubTypeSO();
 		
-		if(DocSubTypeSO == null || DocSubTypeSO.equals("IN"))
+		if(DocSubTypeSO == null || !DocSubTypeSO.equals("IN"))
 			return;
 							
 		if(isSOTrx())
