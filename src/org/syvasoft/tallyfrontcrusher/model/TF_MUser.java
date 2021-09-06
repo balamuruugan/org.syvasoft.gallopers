@@ -1,5 +1,6 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Properties;
 
@@ -7,6 +8,7 @@ import org.compiere.model.MTable;
 import org.compiere.model.MUser;
 import org.compiere.model.Query;
 import org.compiere.model.X_C_BPartner;
+import org.compiere.util.AdempiereUserError;
 
 public class TF_MUser extends MUser {
 
@@ -71,6 +73,10 @@ public class TF_MUser extends MUser {
 		return user;
 	}
 
-
+	@Override
+	protected boolean beforeSave(boolean newRecord) {
+		setName(getName().trim());
+		return super.beforeSave(newRecord);
+	}
 	
 }

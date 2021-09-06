@@ -309,6 +309,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MNotificationTriggerColumn.class;
 		else if(MProdCategorySetup.Table_Name.equals(tableName))
 			return MProdCategorySetup.class;
+		else if(TF_MUser.Table_Name.equals(tableName))
+			return TF_MUser.class;
 		return null;
 	}
 
@@ -611,6 +613,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MNotificationTriggerColumn(ctx, Record_ID, trxName);
 		else if(MProdCategorySetup.Table_Name.equals(tableName))
 			return new MProdCategorySetup(ctx, Record_ID, trxName);
+		else if(TF_MUser.Table_Name.equals(tableName))
+			return new TF_MUser(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -915,6 +919,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MNotificationTriggerColumn(ctx, rs, trxName);
 		else if(MProdCategorySetup.Table_Name.equals(tableName))
 			return new MProdCategorySetup(ctx, rs, trxName);
+		else if(TF_MUser.Table_Name.equals(tableName))
+			return new TF_MUser(ctx, rs, trxName);
 		return null;
 	}
 
