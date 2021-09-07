@@ -32,7 +32,7 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210803L;
+	private static final long serialVersionUID = 20210901L;
 
     /** Standard Constructor */
     public X_TF_TripSheetProduct (Properties ctx, int TF_TripSheetProduct_ID, String trxName)
@@ -120,6 +120,30 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
+	/** Set Generated.
+		@param IsGenerated 
+		This Line is generated
+	  */
+	public void setIsGenerated (boolean IsGenerated)
+	{
+		set_ValueNoCheck (COLUMNNAME_IsGenerated, Boolean.valueOf(IsGenerated));
+	}
+
+	/** Get Generated.
+		@return This Line is generated
+	  */
+	public boolean isGenerated () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsGenerated);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	public org.compiere.model.I_M_Product_Category getM_Product_Category() throws RuntimeException
     {
 		return (org.compiere.model.I_M_Product_Category)MTable.get(getCtx(), org.compiere.model.I_M_Product_Category.Table_Name)
@@ -195,8 +219,8 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 
 	/** Jack Hammer = J */
 	public static final String QUARRYPRODUCTIONTYPE_JackHammer = "J";
-	/** GRAWELLER = G */
-	public static final String QUARRYPRODUCTIONTYPE_GRAWELLER = "G";
+	/** Graweller = G */
+	public static final String QUARRYPRODUCTIONTYPE_Graweller = "G";
 	/** Set Quarry Production Type.
 		@param QuarryProductionType Quarry Production Type	  */
 	public void setQuarryProductionType (String QuarryProductionType)

@@ -1,7 +1,9 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.exceptions.DBException;
 import org.compiere.model.MBPartner;
 import org.compiere.model.MClient;
 import org.compiere.model.MInvoiceLine;
@@ -27,6 +30,11 @@ public class MTripSheet extends X_TF_TripSheet {
 	 */
 	private static final long serialVersionUID = -3586090598937825044L;
 
+	public static String DayShiftStartTime =  MSysConfig.getValue("DAY_SHIFT_START_TIME", "06:00 AM"); 
+	public static String DayShiftEndTime =  MSysConfig.getValue("DAY_SHIFT_END_TIME", "06:00 PM");
+	public static String NightShiftStartTime =  MSysConfig.getValue("NIGHT_SHIFT_START_TIME", "06:00 PM");
+	public static String NightShiftEndTime =  MSysConfig.getValue("NIGHT_SHIFT_END_TIME", "06:00 AM");
+	
 	public MTripSheet(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 		// TODO Auto-generated constructor stub
@@ -114,9 +122,10 @@ public class MTripSheet extends X_TF_TripSheet {
 	
 	public void processIt(String docAction) {
 		if(DocAction.ACTION_Prepare.equals(docAction)) {
+			//createProductDetail();
 			setDocStatus(DOCSTATUS_InProgress);
 		}
-		else if(DocAction.ACTION_Complete.equals(docAction)) {
+		else {
 			setDocStatus(DOCSTATUS_Completed);
 			setProcessed(true);
 			updateRentQty();
@@ -567,5 +576,211 @@ public class MTripSheet extends X_TF_TripSheet {
 			salary.setProcessed(true);
 			salary.saveEx();
 		}
+	}
+	
+	public void createProductDetail() {
+		
+		String sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = NULL" +  
+				"  WHERE TF_TripSheet_ID = ?";			
+		Object[] obj = new Object[1];
+		obj[0] = getTF_TripSheet_ID();			
+		DB.executeUpdateEx(sql,obj, get_TrxName());
+		
+		sql = "DELETE FROM TF_TripSheetProduct WHERE TF_TripSheet_ID = ? AND IsGenerated = 'Y'";			
+		obj = new Object[1];
+		obj[0] = getTF_TripSheet_ID();			
+		DB.executeUpdateEx(sql,obj, get_TrxName());
+		
+		sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = ? " +  
+				"  WHERE GrossWeightTime BETWEEN ? AND ? AND " + 
+				" TF_RentedVehicle_ID = (SELECT TF_RentedVehicle_ID FROM PM_Machinery WHERE PM_Machinery.PM_Machinery_ID = ?)";
+		
+		obj = new Object[4];
+		obj[0] = getTF_TripSheet_ID();			
+		obj[1] = getDateStart();
+		obj[2] = getDateEnd();
+		obj[3] = getPM_Machinery_ID();
+		DB.executeUpdateEx(sql,obj, get_TrxName());
+		
+		// 1. Own Production, SubcContract Production
+		
+		String whereClause="SELECT " + 
+						   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,max(r.unitrent)unitrent " + 
+						   " FROM " + 
+						   " tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id " + 
+						   " INNER JOIN TF_Machinery_RentConfig R ON we.m_product_id = r.JobWork_Product_ID " + 
+						   " WHERE " + 
+						   " WeighmentEntryType IN ('3PR','4SR') AND GrossWeightTime BETWEEN ? AND ? AND " + 
+						   " TF_RentedVehicle_ID =  (SELECT TF_RentedVehicle_ID FROM PM_Machinery WHERE PM_Machinery.PM_Machinery_ID = ?) " + 
+						   " GROUP BY we.m_product_id,p.m_product_category_id,we.quarryproductiontype";
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			pstmt = DB.prepareStatement(sql, get_TrxName());
+			rs = pstmt.executeQuery();		
+			while (rs.next()) {
+				MTripSheetProduct product = new MTripSheetProduct(getCtx(), 0, get_TrxName());
+				
+				product.setAD_Org_ID(getAD_Org_ID());
+				product.setTF_TripSheet_ID(getTF_TripSheet_ID());
+				product.setQuarryProductionType(rs.getString("quarryproductiontype"));
+				product.setM_Product_Category_ID(rs.getInt("m_product_category_id"));
+				product.setM_Product_ID(rs.getInt("m_product_id"));
+				product.setNoOfLoad(rs.getBigDecimal("loads"));
+				
+				BigDecimal unitrent = rs.getBigDecimal("unitrent");
+				BigDecimal totalmt = rs.getBigDecimal("netweight");
+				
+				product.setTotalMT(totalmt);
+				product.setRateMT(unitrent);
+				product.setRent_Amt(unitrent.multiply(totalmt));
+				product.setDescription("Quarry to Crusher");
+				product.setIsGenerated(true);
+				 
+				product.saveEx();
+			}
+		} catch (SQLException e) {
+			throw new DBException(e, sql);
+		} finally {
+			DB.close(rs, pstmt);
+			rs = null;
+			pstmt = null;
+		}
+		
+		whereClause="SELECT " + 
+				   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,max(r.unitrent)unitrent " + 
+				   " FROM " + 
+				   " tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id " + 
+				   " INNER JOIN TF_Machinery_RentConfig R ON we.m_product_id = r.JobWork_Product_ID " + 
+				   " WHERE " + 
+				   " WeighmentEntryType IN ('5KA') AND GrossWeightTime BETWEEN ? AND ? AND " + 
+				   " TF_RentedVehicle_ID =  (SELECT TF_RentedVehicle_ID FROM PM_Machinery WHERE PM_Machinery.PM_Machinery_ID = ?) " + 
+				   " GROUP BY we.m_product_id,p.m_product_category_id,we.quarryproductiontype";
+
+		pstmt = null;
+		rs = null;
+		
+		try {
+			pstmt = DB.prepareStatement(sql, get_TrxName());
+			rs = pstmt.executeQuery();		
+			while (rs.next()) {
+				MTripSheetProduct product = new MTripSheetProduct(getCtx(), 0, get_TrxName());
+				
+				product.setAD_Org_ID(getAD_Org_ID());
+				product.setTF_TripSheet_ID(getTF_TripSheet_ID());
+				product.setQuarryProductionType(rs.getString("quarryproductiontype"));
+				product.setM_Product_Category_ID(rs.getInt("m_product_category_id"));
+				product.setM_Product_ID(rs.getInt("m_product_id"));
+				product.setNoOfLoad(rs.getBigDecimal("loads"));
+				
+				BigDecimal unitrent = rs.getBigDecimal("unitrent");
+				BigDecimal totalmt = rs.getBigDecimal("netweight");
+				
+				product.setTotalMT(totalmt);
+				product.setRateMT(unitrent);
+				product.setRent_Amt(unitrent.multiply(totalmt));
+				product.setDescription("Stock to Crusher");				
+				product.setIsGenerated(true);
+				
+				product.saveEx();
+			}
+		} catch (SQLException e) {
+			throw new DBException(e, sql);
+		} finally {
+			DB.close(rs, pstmt);
+			rs = null;
+			pstmt = null;
+		}
+		
+		whereClause="SELECT " + 
+				   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,sum(we.rent_amt)/sum(we.netweight / 1000) unitrent " + 
+				   " FROM " + 
+				   " tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id " + 
+				   " WHERE " + 
+				   " WeighmentEntryType IN ('1SO') AND GrossWeightTime BETWEEN ? AND ? AND " + 
+				   " TF_RentedVehicle_ID =  (SELECT TF_RentedVehicle_ID FROM PM_Machinery WHERE PM_Machinery.PM_Machinery_ID = ?) " + 
+				   " GROUP BY we.m_product_id,p.m_product_category_id,we.quarryproductiontype";
+
+		pstmt = null;
+		rs = null;
+		
+		try {
+			pstmt = DB.prepareStatement(sql, get_TrxName());
+			rs = pstmt.executeQuery();		
+			while (rs.next()) {
+				MTripSheetProduct product = new MTripSheetProduct(getCtx(), 0, get_TrxName());
+				
+				product.setAD_Org_ID(getAD_Org_ID());
+				product.setTF_TripSheet_ID(getTF_TripSheet_ID());
+				product.setQuarryProductionType(rs.getString("quarryproductiontype"));
+				product.setM_Product_Category_ID(rs.getInt("m_product_category_id"));
+				product.setM_Product_ID(rs.getInt("m_product_id"));
+				product.setNoOfLoad(rs.getBigDecimal("loads"));
+				
+				BigDecimal unitrent = rs.getBigDecimal("unitrent");
+				BigDecimal totalmt = rs.getBigDecimal("netweight");
+				
+				product.setTotalMT(totalmt);
+				product.setRateMT(unitrent);
+				product.setRent_Amt(unitrent.multiply(totalmt));
+				product.setDescription("Customer Delivery");			
+				product.setIsGenerated(true);
+				
+				product.saveEx();
+			}
+		} catch (SQLException e) {
+			throw new DBException(e, sql);
+		} finally {
+			DB.close(rs, pstmt);
+			rs = null;
+			pstmt = null;
+		}
+		
+		whereClause="SELECT " + 
+				   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,sum(we.rent_amt)/sum(we.netweight / 1000) unitrent " + 
+				   " FROM " + 
+				   " tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id " + 
+				   " WHERE " + 
+				   " WeighmentEntryType IN ('2PO') AND GrossWeightTime BETWEEN ? AND ? AND " + 
+				   " TF_RentedVehicle_ID =  (SELECT TF_RentedVehicle_ID FROM PM_Machinery WHERE PM_Machinery.PM_Machinery_ID = ?) " + 
+				   " GROUP BY we.m_product_id,p.m_product_category_id,we.quarryproductiontype";
+
+		pstmt = null;
+		rs = null;
+		
+		try {
+			pstmt = DB.prepareStatement(sql, get_TrxName());
+			rs = pstmt.executeQuery();		
+			while (rs.next()) {
+				MTripSheetProduct product = new MTripSheetProduct(getCtx(), 0, get_TrxName());
+				
+				product.setAD_Org_ID(getAD_Org_ID());
+				product.setTF_TripSheet_ID(getTF_TripSheet_ID());
+				product.setQuarryProductionType(rs.getString("quarryproductiontype"));
+				product.setM_Product_Category_ID(rs.getInt("m_product_category_id"));
+				product.setM_Product_ID(rs.getInt("m_product_id"));
+				product.setNoOfLoad(rs.getBigDecimal("loads"));
+				
+				BigDecimal unitrent = rs.getBigDecimal("unitrent");
+				BigDecimal totalmt = rs.getBigDecimal("netweight");
+				
+				product.setTotalMT(totalmt);
+				product.setRateMT(unitrent);
+				product.setRent_Amt(unitrent.multiply(totalmt));
+				product.setDescription("Purchase");			
+				product.setIsGenerated(true);
+				
+				product.saveEx();
+			}
+		} catch (SQLException e) {
+			throw new DBException(e, sql);
+		} finally {
+			DB.close(rs, pstmt);
+			rs = null;
+			pstmt = null;
+		}
+		
 	}
 }

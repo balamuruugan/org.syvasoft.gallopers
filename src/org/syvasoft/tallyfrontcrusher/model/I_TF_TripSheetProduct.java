@@ -121,6 +121,19 @@ public interface I_TF_TripSheetProduct
 	  */
 	public boolean isActive();
 
+    /** Column name IsGenerated */
+    public static final String COLUMNNAME_IsGenerated = "IsGenerated";
+
+	/** Set Generated.
+	  * This Line is generated
+	  */
+	public void setIsGenerated (boolean IsGenerated);
+
+	/** Get Generated.
+	  * This Line is generated
+	  */
+	public boolean isGenerated();
+
     /** Column name M_Product_Category_ID */
     public static final String COLUMNNAME_M_Product_Category_ID = "M_Product_Category_ID";
 

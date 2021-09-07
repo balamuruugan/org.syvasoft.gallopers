@@ -12,6 +12,7 @@ import org.syvasoft.tallyfrontcrusher.model.MVehicleRentalContract;
 public class ProcessTripSheet extends SvrProcess {
 
 	private String docAction="CO";
+	private String reCreate="N";
 	MTripSheet tripSheet; 
 	
 	@Override
