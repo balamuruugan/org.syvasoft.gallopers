@@ -400,42 +400,47 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	}
 
 	void CreateCustomerVehicle() {
-		if(getTF_RentedVehicle_ID() == 0 && getPaymentRule().equals(PAYMENTRULE_OnCredit.toString())) {
-			String whereClause="UPPER(replace(vehicleno,' ',''))='"+getVehicleNo().replace(" ","").toUpperCase()+"'";
+		if(getC_BPartner_ID()>0) {
+			TF_MBPartner bp=new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
 			
-			MRentedVehicle rentedVehicle = new Query(getCtx(), MRentedVehicle.Table_Name, whereClause, get_TrxName())
-											.setClient_ID()
-											.first();
-			
-			if(rentedVehicle != null) {
-				setTF_RentedVehicle_ID(rentedVehicle.getTF_RentedVehicle_ID());
-			}
-			else {
-				MRentedVehicle rentedVehiclenew = new MRentedVehicle(getCtx(), 0, get_TrxName());
-				int C_UOM_ID = MSysConfig.getIntValue("Vehicle_UOM_ID", 100);
-				int Product_Category_ID = MSysConfig.getIntValue("Vehicle_Product_Category_ID", 1000055);
+			if(!bp.getIsPOSCashBP()) {
+				String whereClause="UPPER(replace(vehicleno,' ',''))='"+getVehicleNo().replace(" ","").toUpperCase()+"'";
 				
-				rentedVehiclenew.setAD_Org_ID(getAD_Org_ID());
-				rentedVehiclenew.setVehicleNo(getVehicleNo().replace(" ","").toUpperCase());
-
-				if(getTransporter_ID() > 0) {
-					rentedVehiclenew.setC_BPartner_ID(getTransporter_ID());
-					rentedVehiclenew.setIsTransporter(true);
+				MRentedVehicle rentedVehicle = new Query(getCtx(), MRentedVehicle.Table_Name, whereClause, get_TrxName())
+												.setClient_ID()
+												.first();
+				
+				if(rentedVehicle != null) {
+					setTF_RentedVehicle_ID(rentedVehicle.getTF_RentedVehicle_ID());
 				}
 				else {
-					rentedVehiclenew.setC_BPartner_ID(getC_BPartner_ID());
+					MRentedVehicle rentedVehiclenew = new MRentedVehicle(getCtx(), 0, get_TrxName());
+					int C_UOM_ID = MSysConfig.getIntValue("Vehicle_UOM_ID", 100);
+					int Product_Category_ID = MSysConfig.getIntValue("Vehicle_Product_Category_ID", 1000055);
+					
+					rentedVehiclenew.setAD_Org_ID(getAD_Org_ID());
+					rentedVehiclenew.setVehicleNo(getVehicleNo().replace(" ","").toUpperCase());
+
+					if(getTransporter_ID() > 0) {
+						rentedVehiclenew.setC_BPartner_ID(getTransporter_ID());
+						rentedVehiclenew.setIsTransporter(true);
+					}
+					else {
+						rentedVehiclenew.setC_BPartner_ID(getC_BPartner_ID());
+					}
+					
+					rentedVehiclenew.setTareWeight(getTareWeight());
+					rentedVehiclenew.setVehicleSOPOType(MRentedVehicle.VEHICLESOPOTYPE_Sales);
+					rentedVehiclenew.setTF_VehicleType_ID(getTF_VehicleType_ID());
+					rentedVehiclenew.setM_Product_Category_ID(Product_Category_ID);
+					rentedVehiclenew.setC_UOM_ID(C_UOM_ID);
+					rentedVehiclenew.setIsActive(true);
+					rentedVehiclenew.saveEx();
+					
+					setTF_RentedVehicle_ID(rentedVehiclenew.get_ID());
 				}
-				
-				rentedVehiclenew.setTareWeight(getTareWeight());
-				rentedVehiclenew.setVehicleSOPOType(MRentedVehicle.VEHICLESOPOTYPE_Sales);
-				rentedVehiclenew.setTF_VehicleType_ID(getTF_VehicleType_ID());
-				rentedVehiclenew.setM_Product_Category_ID(Product_Category_ID);
-				rentedVehiclenew.setC_UOM_ID(C_UOM_ID);
-				rentedVehiclenew.setIsActive(true);
-				rentedVehiclenew.saveEx();
-				
-				setTF_RentedVehicle_ID(rentedVehiclenew.get_ID());
 			}
+
 		}
 	}
 	
