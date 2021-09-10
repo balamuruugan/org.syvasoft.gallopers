@@ -33,7 +33,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210826L;
+	private static final long serialVersionUID = 20210910L;
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)
@@ -1612,6 +1612,44 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** TenderType AD_Reference_ID=214 */
+	public static final int TENDERTYPE_AD_Reference_ID=214;
+	/** Credit Card = C */
+	public static final String TENDERTYPE_CreditCard = "C";
+	/** Check = K */
+	public static final String TENDERTYPE_Check = "K";
+	/** Direct Deposit = A */
+	public static final String TENDERTYPE_DirectDeposit = "A";
+	/** Direct Debit = D */
+	public static final String TENDERTYPE_DirectDebit = "D";
+	/** Account = T */
+	public static final String TENDERTYPE_Account = "T";
+	/** Cash = X */
+	public static final String TENDERTYPE_Cash = "X";
+	/** RTGS = R */
+	public static final String TENDERTYPE_RTGS = "R";
+	/** NEFT = N */
+	public static final String TENDERTYPE_NEFT = "N";
+	/** UPI = U */
+	public static final String TENDERTYPE_UPI = "U";
+	/** Set Tender type.
+		@param TenderType 
+		Method of Payment
+	  */
+	public void setTenderType (String TenderType)
+	{
+
+		set_ValueNoCheck (COLUMNNAME_TenderType, TenderType);
+	}
+
+	/** Get Tender type.
+		@return Method of Payment
+	  */
+	public String getTenderType () 
+	{
+		return (String)get_Value(COLUMNNAME_TenderType);
 	}
 
 	/** Regular = R */

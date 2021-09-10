@@ -132,6 +132,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 						TF_MOrder ord = new TF_MOrder(inv.getCtx(), inv.getC_Order_ID(), inv.get_TrxName());
 						MWeighmentEntry we = new MWeighmentEntry(inv.getCtx(), ord.getTF_WeighmentEntry_ID(), inv.get_TrxName());
 					
+						payment.setTenderType(we.getTenderType());
 						if(ord.getC_BankAccount_ID() > 0) {
 							payment.setC_BankAccount_ID(ord.getC_BankAccount_ID());
 						}
@@ -564,6 +565,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		payment.setUser1_ID(ord.getUser1_ID()); // Profit Center
 		payment.setC_ElementValue_ID(glConfig.getTipsExpenseAcct_ID());
 		
+		payment.setTenderType(we.getTenderType());
 		if(neworder.getC_BankAccount_ID() > 0) {
 			payment.setC_BankAccount_ID(neworder.getC_BankAccount_ID());		
 		}
