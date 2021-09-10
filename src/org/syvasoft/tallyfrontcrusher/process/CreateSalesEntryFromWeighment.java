@@ -256,6 +256,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 
 		ord.setDriverTips(wEntry.getDriverTips());
 		ord.setProcessed(false);		
+		ord.setC_BankAccount_ID(wEntry.getC_BankAccount_ID());
 		ord.saveEx();				
 		
 		sp = trx.setSavepoint(wEntry.getDocumentNo());
