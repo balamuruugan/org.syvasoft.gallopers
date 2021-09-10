@@ -78,7 +78,9 @@ public class MRentedVehicle extends X_TF_RentedVehicle {
 			prod.set_ValueOfColumn("IsRented", true);
 		}
 		prod.setIsActive(isActive());
-		prod.setC_TaxCategory_ID(Env.getContextAsInt(getCtx(), "#C_TaxCategory_ID"));
+		
+		prod.setC_TaxCategory_ID(1000000);
+		//prod.setC_TaxCategory_ID(Env.getContextAsInt(getCtx(), "#C_TaxCategory_ID"));
 		
 		prod.saveEx();
 		if(getM_Product_ID() == 0) {
