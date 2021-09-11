@@ -2404,8 +2404,19 @@ public class TF_MOrder extends MOrder {
 				inv.saveEx();
 			}
 			
-			reverseTransportReceiptStatus();
+			reverseTransportReceiptStatus();			
+		}
+		else if(DocSubTypeSO.equals("SI")) {			
+			//Invoice reverse Correct
+			List<TF_MInvoice> invList = new Query(getCtx(), TF_MInvoice.Table_Name, "C_Order_ID=? AND DocStatus=?", get_TrxName())
+				.setClient_ID().setParameters(getC_Order_ID(), DOCSTATUS_Completed).list();
+			for(TF_MInvoice inv : invList) {
+				if(!inv.reverseCorrectIt())
+					return false;
+				inv.saveEx();
+			}
 			
+			reverseTransportReceiptStatus();
 		}
 		
 		if(getTF_DriverTips_Pay_ID() > 0) {
@@ -3576,7 +3587,7 @@ public class TF_MOrder extends MOrder {
 			invoice.setDocumentNo(weighment.getInvoiceNo());
 		}
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		
-		invoice.setPaymentRule(getPaymentRule());
+		
 		invoice.setC_PaymentTerm_ID(getC_PaymentTerm_ID());
 		//
 		
@@ -3584,7 +3595,7 @@ public class TF_MOrder extends MOrder {
 		invoice.setOrder(this);
 		invoice.setVehicleNo(getVehicleNo());
 		invoice.setDescription(getDescription());
-		
+		invoice.setPaymentRule(getPaymentRule());
 		//Price List
 				
 		
