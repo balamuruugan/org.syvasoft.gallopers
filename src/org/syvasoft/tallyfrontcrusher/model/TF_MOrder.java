@@ -3822,14 +3822,14 @@ public class TF_MOrder extends MOrder {
 		
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		
-		invoice.setPaymentRule(getPaymentRule());
+		
 		invoice.setC_PaymentTerm_ID(getC_PaymentTerm_ID());
 		//
 		
 		invoice.setBPartner(bp);				
 		invoice.setVehicleNo(getVehicleNo());
 		invoice.setDescription(getDescription());
-		
+		invoice.setPaymentRule(getPaymentRule());
 		//Price List
 				
 		
