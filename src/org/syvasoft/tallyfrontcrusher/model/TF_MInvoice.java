@@ -926,7 +926,7 @@ public class TF_MInvoice extends MInvoice {
 			return;
 		
 		String st = getC_Order().getC_DocTypeTarget().getDocSubTypeSO();
-		if(st!=null && !st.equals("IN"))
+		if(st==null || !st.equals("IN"))
 			return;
 		
 		String whereClause = " C_OrderLine_ID = ? ";				
