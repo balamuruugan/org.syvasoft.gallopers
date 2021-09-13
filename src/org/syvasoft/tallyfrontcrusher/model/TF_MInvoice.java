@@ -464,6 +464,8 @@ public class TF_MInvoice extends MInvoice {
 						String documentNo = MSequence.getDocumentNoFromSeq(seq, get_TrxName(), this);
 						setDocumentNo(documentNo);
 				}
+				
+				setPaymentRule(wentry.getPaymentRule());
 			}
 		}
 				

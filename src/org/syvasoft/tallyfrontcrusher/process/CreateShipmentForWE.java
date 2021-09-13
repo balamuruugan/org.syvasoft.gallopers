@@ -36,6 +36,11 @@ public class CreateShipmentForWE extends SvrProcess {
 		int j=0;
 				
 		for(MWeighmentEntry we : list) {
+			if(we.getDescription() != null && we.getDescription().contains("ERROR:")) {
+				addLog(we.get_Table_ID(), we.getGrossWeightTime(), null, we.getDescription(), we.get_Table_ID(), we.get_ID());
+				continue;
+			}
+
 			if(!we.getNetWeightUnit().equals(BigDecimal.ZERO))
 			{
 				createShipmentDocument(we);
@@ -51,6 +56,7 @@ public class CreateShipmentForWE extends SvrProcess {
 	}
 	
 	public void createShipmentDocument(MWeighmentEntry we) {
+		
 		 TF_MOrderLine orderLine = new  TF_MOrderLine(getCtx(), we.getC_OrderLine_ID(), get_TrxName());
 		 
 		 if(orderLine != null) {	
@@ -223,8 +229,17 @@ public class CreateShipmentForWE extends SvrProcess {
 			}
 			
 			//Material Issue DocAction
-			if (!inout.processIt(DocAction.ACTION_Complete))
-				throw new AdempiereException("Failed when processing document - " + order.getProcessMsg());
+			if (!inout.processIt(DocAction.ACTION_Complete)) {
+				//throw new AdempiereException("Failed when processing document - " + order.getProcessMsg());
+				String desc = we.getDescription();
+				if(desc == null)
+					desc = "";
+				if(!desc.contains("ERROR:")) {
+					we.setDescription(desc + 
+							" | ERROR: " + "Failed when processing document - " + inout.getProcessMsg());					
+				}					
+				we.saveEx();
+			}
 			
 			inout.saveEx();
 			//End DocAction

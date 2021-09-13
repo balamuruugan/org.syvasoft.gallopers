@@ -132,6 +132,10 @@ public class CrusherEventHandler extends AbstractEventHandler {
 						TF_MOrder ord = new TF_MOrder(inv.getCtx(), inv.getC_Order_ID(), inv.get_TrxName());
 						MWeighmentEntry we = new MWeighmentEntry(inv.getCtx(), ord.getTF_WeighmentEntry_ID(), inv.get_TrxName());
 					
+						if(we.getTenderType() != null) {
+							payment.setTenderType(we.getTenderType());
+						}
+						
 						if(ord.getC_BankAccount_ID() > 0) {
 							payment.setC_BankAccount_ID(ord.getC_BankAccount_ID());
 						}
@@ -527,11 +531,14 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		//It should be in atomic transaction to get account settings of Charge for the current docaction transaction.
 		TF_MCharge charge = TF_MCharge.createChargeFromAccount(ord.getCtx(), glConfig.getTipsExpenseAcct_ID(), null);
 		
-		int TF_VehicleType_ID = ord.get_ValueAsInt("Item1_VehicleType_ID");
+/*		int TF_VehicleType_ID = ord.get_ValueAsInt("Item1_VehicleType_ID");
 		
-		MVehicleType vtype=new MVehicleType(ord.getCtx(), TF_VehicleType_ID, ord.get_TrxName());
+		MVehicleType vtype=new MVehicleType(ord.getCtx(), TF_VehicleType_ID, ord.get_TrxName());*/
 
 		//Get Invoice Document no
+		
+		TF_MOrder neworder = new TF_MOrder(ord.getCtx(), ord.getC_Order_ID(), ord.get_TrxName());
+		
 		String Where=" C_Order_ID = ? AND DocStatus = 'CO'";
 		
 		MInvoice inv = new Query(ord.getCtx(), MInvoice.Table_Name,Where, ord.get_TrxName())
@@ -553,7 +560,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		payment.setAD_Org_ID(ord.getAD_Org_ID());
 		payment.setDateAcct(ord.getDateAcct());
 		payment.setDateTrx(ord.getDateAcct());
-		payment.setDescription("DRIVER BETA AMOUNT GIVEN FOR DC:# "+ invoiceNo +", Vehicle Type : "+vtype.getName());
+		payment.setDescription("DRIVER BETA AMOUNT GIVEN FOR DC:# "+ invoiceNo);
 		//* Commented for Laxmi Stone */
 		//payment.setCashType(TF_MPayment.CASHTYPE_GeneralExpense);
 		payment.setC_DocType_ID(false);		
@@ -561,7 +568,16 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		payment.setUser1_ID(ord.getUser1_ID()); // Profit Center
 		payment.setC_ElementValue_ID(glConfig.getTipsExpenseAcct_ID());
 		
-		payment.setC_BankAccount_ID(TF_MBankAccount.getDefaultCashAccount(ord.getCtx(), ord.getAD_Org_ID(), null));
+		if(we.getTenderType() != null) {
+			payment.setTenderType(we.getTenderType());
+		}
+		
+		if(neworder.getC_BankAccount_ID() > 0) {
+			payment.setC_BankAccount_ID(neworder.getC_BankAccount_ID());		
+		}
+		else {
+			payment.setC_BankAccount_ID(TF_MBankAccount.getDefaultCashAccount(ord.getCtx(), ord.getAD_Org_ID(), null));
+		}
 		
 		MUser user = MUser.get(ord.getCtx(), Env.getAD_User_ID(ord.getCtx()));
 		payment.setC_BPartner_ID(user.getC_BPartner_ID());

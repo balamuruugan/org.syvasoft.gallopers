@@ -932,6 +932,19 @@ public interface I_TF_WeighmentEntry
 	  */
 	public BigDecimal getTenderAmount();
 
+    /** Column name TenderType */
+    public static final String COLUMNNAME_TenderType = "TenderType";
+
+	/** Set Tender type.
+	  * Method of Payment
+	  */
+	public void setTenderType (String TenderType);
+
+	/** Get Tender type.
+	  * Method of Payment
+	  */
+	public String getTenderType();
+
     /** Column name TF_BlueMetal_Type */
     public static final String COLUMNNAME_TF_BlueMetal_Type = "TF_BlueMetal_Type";
 
