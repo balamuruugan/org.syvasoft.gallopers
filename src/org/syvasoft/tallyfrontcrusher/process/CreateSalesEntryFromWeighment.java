@@ -32,12 +32,11 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 	/*
 	private Timestamp DateFrom = null;
 	private Timestamp DateTo = null;
-	*/
-	private String InvoiceType = null;
-	private boolean createTPandNonTPInvocies = false;
+	*/		
 	private int RecordId = 0;
 	@Override
-	protected void prepare() {		
+	protected void prepare() {
+		/*
 		ProcessInfoParameter[] para = getParameter();		
 		for (int i = 0; i < para.length; i++)
 		{						
@@ -46,30 +45,32 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 				InvoiceType = para[i].getParameterAsString();
 			else if (name.equals("CreateTwoInvoices"))
 				createTPandNonTPInvocies = para[i].getParameterAsBoolean();
-			/*
+			
 			if(name.equals("AD_Org_ID"))
 				AD_Org_ID = para[i].getParameterAsInt();
 			if(name.equals("DateFrom"))
 				DateFrom = para[i].getParameterAsTimestamp();
 			if(name.equals("DateTo"))
 				DateTo = para[i].getParameterAsTimestamp();
-			*/
+			
 		}
+		*/
 		RecordId = getRecord_ID();
 	}
 
 	@Override
 	protected String doIt() throws Exception {
 		
-		String whereClause = " WeighmentEntryType = '1SO' AND TF_WeighmentEntry.Status IN ('CO') AND (SELECT OrgType FROM AD_Org WHERE "				
+		String whereClause = " WeighmentEntryType = '1SO' AND ((TF_WeighmentEntry.Status IN ('CO') AND (SELECT OrgType FROM AD_Org WHERE "				
 				+ "AD_Org.AD_Org_ID = TF_WeighmentEntry.AD_Org_ID) = 'C'"
 				+ " AND NOT EXISTS(SELECT C_Order.TF_WeighmentEntry_ID FROM C_Order WHERE "
-				+ "C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)";
+				+ "C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)) OR (TF_WeighmentEntry_ID = ? AND TF_WeighmentEntry.Status IN ('CO')) ) ";
 		
 		//+ "AND C_Order.DocStatus IN ('CO','DR','IR'))";
 		int i = 0;
 		List<MWeighmentEntry> wEntries = new Query(getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
+				.setParameters(RecordId)
 				.list();
 		
 		for(MWeighmentEntry wEntry : wEntries) {
