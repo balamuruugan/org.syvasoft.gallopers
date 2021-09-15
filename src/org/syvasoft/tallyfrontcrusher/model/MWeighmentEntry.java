@@ -175,9 +175,18 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		
 		//set AD_User_ID
 		if(newRecord) {
-			MUser user = TF_MUser.get(getCtx(), getUserName(), get_TrxName());
-			if(user != null) {
-				setAD_User_ID(user.getAD_User_ID());
+			
+			if(getCompletedBy() == null) {
+				MUser user = TF_MUser.get(getCtx(), getUserName(), get_TrxName());
+				if(user != null) {
+					setAD_User_ID(user.getAD_User_ID());
+				}
+			}
+			else {
+				MUser user = TF_MUser.get(getCtx(), getCompletedBy(), get_TrxName());
+				if(user != null) {
+					setAD_User_ID(user.getAD_User_ID());
+				}
 			}
 			
 			if(MSysConfig.getValue("WEIGHMENT_TRIPSHEET_CREATION").equals("Y")){
