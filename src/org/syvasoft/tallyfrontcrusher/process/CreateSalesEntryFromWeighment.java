@@ -5,6 +5,7 @@ import java.sql.Savepoint;
 import java.util.List;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.adempiere.webui.editor.WNumberEditor;
 import org.compiere.model.MInvoiceLine;
 import org.compiere.model.MNote;
 import org.compiere.model.MOrderLine;
@@ -64,7 +65,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		String whereClause = " WeighmentEntryType = '1SO' AND ((TF_WeighmentEntry.Status IN ('CO') AND (SELECT OrgType FROM AD_Org WHERE "				
 				+ "AD_Org.AD_Org_ID = TF_WeighmentEntry.AD_Org_ID) = 'C'"
 				+ " AND NOT EXISTS(SELECT C_Order.TF_WeighmentEntry_ID FROM C_Order WHERE "
-				+ "C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)) OR (TF_WeighmentEntry_ID = ? AND TF_WeighmentEntry.Status IN ('CO')) ) ";
+				+ "C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)) OR (TF_WeighmentEntry_ID = ? AND TF_WeighmentEntry.Status IN ('UR','CO')) ) ";
 		
 		//+ "AND C_Order.DocStatus IN ('CO','DR','IR'))";
 		int i = 0;
@@ -80,6 +81,11 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 			}
 			
 			Trx trx = Trx.get(get_TrxName(), false);
+			
+			if(wEntry.getStatus().equals(MWeighmentEntry.STATUS_UnderReview)) {
+				wEntry.setStatus(MWeighmentEntry.STATUS_Unbilled);
+				wEntry.saveEx();
+			}
 			
 			try {
 				
