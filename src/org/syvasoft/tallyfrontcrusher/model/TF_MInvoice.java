@@ -443,8 +443,9 @@ public class TF_MInvoice extends MInvoice {
 	@Override
 	protected boolean beforeSave(boolean newRecord) {				
 		MBPartner bp = MBPartner.get(getCtx(), getC_BPartner_ID());
-		setBPartner(bp);
+		
 		if(newRecord) {			
+			setBPartner(bp);
 			if(getPaymentRule() == null)
 				setPaymentRule(PAYMENTRULE_OnCredit);
 			
@@ -456,14 +457,14 @@ public class TF_MInvoice extends MInvoice {
 				setTermsAndCondition(printdocSetup.getTermsConditions());
 			}
 			
-			if(getTF_WeighmentEntry_ID() > 0 && isSOTrx() && getDocumentNo() == null) {
-				MWeighmentEntry wentry = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+			MWeighmentEntry wentry = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+			if(getTF_WeighmentEntry_ID() > 0 && isSOTrx()) {			
 				
-				if(wentry.getC_DocTypeInvoice_ID() == getC_DocType_ID()) {
+				if(getDocumentNo() == null && wentry.getC_DocTypeInvoice_ID() == getC_DocType_ID()) {
 						MSequence seq = new MSequence(getCtx(), wentry.getInvoiceSeq_Id(), get_TrxName());
 						String documentNo = MSequence.getDocumentNoFromSeq(seq, get_TrxName(), this);
 						setDocumentNo(documentNo);
-				}
+				}				
 				
 				setPaymentRule(wentry.getPaymentRule());
 			}

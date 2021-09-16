@@ -318,12 +318,13 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		else
 			invoice.setDocumentNo(wEntry.getDocumentNo());
 		//
-		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));		
-		invoice.setPaymentRule(order.getPaymentRule());
+		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));	
+		
 		invoice.setC_PaymentTerm_ID(order.getC_PaymentTerm_ID());
 		//
 		
 		invoice.setBPartner(bp);				
+		invoice.setPaymentRule(order.getPaymentRule());
 		invoice.setVehicleNo(wEntry.getVehicleNo());
 		invoice.setDescription(wEntry.getDescription());
 		
