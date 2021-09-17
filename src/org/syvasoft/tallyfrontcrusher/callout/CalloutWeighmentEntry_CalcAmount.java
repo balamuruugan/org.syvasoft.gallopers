@@ -17,9 +17,9 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 	public String start(Properties ctx, int WindowNo, GridTab mTab, GridField mField, Object value, Object oldValue) {
 		BigDecimal qty = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_NetWeightUnit);
 		BigDecimal price = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_Price);
-		BigDecimal passqty = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_PassQtyIssued);
+		BigDecimal passqty = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_PermitIssuedQty);
 		BigDecimal passprice = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_PassPricePerUnit);
-		BigDecimal freightprice  = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_PassPricePerUnit);
+		BigDecimal freightprice  = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_FreightPrice);
 		
 		int passID = 0;
 		int freight_uom_id = 0; 
@@ -77,7 +77,7 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		Boolean ApplyTax = mTab.getValueAsBoolean(MWeighmentEntry.COLUMNNAME_IsPermitSales);
 		Boolean ApplyTCS = mTab.getValueAsBoolean(MWeighmentEntry.COLUMNNAME_ApplyTCS);
 		//if(ApplyTax)
-		GstAmt = PassAmount.add(Amount).multiply(new BigDecimal(0.05)).setScale(2, RoundingMode.HALF_EVEN);
+		GstAmt = (PassAmount.add(Amount)).multiply(new BigDecimal(0.05)).setScale(2, RoundingMode.HALF_EVEN);
 		/*else
 			GstAmt = BigDecimal.ZERO;
 		*/
