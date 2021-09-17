@@ -22,7 +22,7 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		BigDecimal freightprice  = CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_FreightPrice);
 		
 		int passID = CalloutUtil.getIntValue(mTab, MWeighmentEntry.COLUMNNAME_M_Product_Pass_ID);;
-		int freight_uom_id = CalloutUtil.getIntValue(mTab, MWeighmentEntry.COLUMNNAME_FreightUOM_ID);
+		int freight_uom_id = CalloutUtil.getIntValue(mTab, MWeighmentEntry.COLUMNNAME_FreightRule_ID);
 		
 		BigDecimal Amount = qty.multiply(price);
 		BigDecimal PassAmount = BigDecimal.ZERO;
