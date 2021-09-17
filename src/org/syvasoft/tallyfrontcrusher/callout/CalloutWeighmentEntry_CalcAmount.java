@@ -20,7 +20,7 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		BigDecimal passqty = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_PassQtyIssued);
 		BigDecimal passprice = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_PassPricePerUnit);
 		BigDecimal freightprice  = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_PassPricePerUnit);
-		B
+		
 		int passID = 0;
 		int freight_uom_id = 0; 
 		
@@ -33,7 +33,12 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		}
 		
 		BigDecimal Amount = qty.multiply(price);
-		BigDecimal PassAmount = passqty.multiply(passprice);
+		BigDecimal PassAmount = BigDecimal.ZERO;
+		
+		if(passqty != null && passprice != null) {
+			PassAmount = passqty.multiply(passprice);
+		}
+		
 		BigDecimal GrandTotalAmt = BigDecimal.ZERO;
 		BigDecimal RentAmount = BigDecimal.ZERO;// CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_Rent_Amt);
 		
@@ -58,7 +63,17 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		BigDecimal GstAmt = BigDecimal.ZERO;		
 		
 		BigDecimal TCSAmt = BigDecimal.ZERO;
-		BigDecimal driverTips = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_DriverTips);		
+		
+		BigDecimal driverTips = BigDecimal.ZERO;		
+		if(driverTips != null) {
+			driverTips	= (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_DriverTips);
+		}
+		
+		BigDecimal discountAmt = BigDecimal.ZERO;
+		if(discountAmt != null) {
+			discountAmt = (BigDecimal) mTab.getValue(MWeighmentEntry.COLUMNNAME_DiscountAmount);
+		}
+		
 		Boolean ApplyTax = mTab.getValueAsBoolean(MWeighmentEntry.COLUMNNAME_IsPermitSales);
 		Boolean ApplyTCS = mTab.getValueAsBoolean(MWeighmentEntry.COLUMNNAME_ApplyTCS);
 		//if(ApplyTax)
@@ -66,13 +81,13 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		/*else
 			GstAmt = BigDecimal.ZERO;
 		*/
-		BigDecimal TotalAmount = Amount.add(GstAmt).add(RentAmount).add(PassAmount).subtract(driverTips);
+		BigDecimal TotalAmount = Amount.add(GstAmt).add(RentAmount).add(PassAmount);
 		
 		if(ApplyTCS) {
 			TCSAmt = TotalAmount.multiply(new BigDecimal(0.001)).setScale(2, RoundingMode.HALF_EVEN);
 		}
 			
-		GrandTotalAmt = TotalAmount.add(TCSAmt);
+		GrandTotalAmt = TotalAmount.add(TCSAmt).subtract(driverTips).subtract(discountAmt);
 		
 		mTab.setValue(MWeighmentEntry.COLUMNNAME_Rent_Amt, RentAmount);
 		mTab.setValue(MWeighmentEntry.COLUMNNAME_GSTAmount, GstAmt);		
