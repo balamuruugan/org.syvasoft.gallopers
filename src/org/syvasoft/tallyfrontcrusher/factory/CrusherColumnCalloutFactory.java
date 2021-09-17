@@ -181,6 +181,9 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 					columnName.equals(TF_MOrderLine.COLUMNNAME_UnitPrice)) {
 				list.add(new CalloutOrderLine_SetPriceEntered());
 			}
+			
+			if(columnName.equals(TF_MOrderLine.COLUMNNAME_PriceList)) 
+				list.add(new CalloutOrderLine_ListPrice());
 		}
 		
 	/*	if(tableName.equals(TF_MOrderLine.Table_Name)) {
