@@ -376,11 +376,17 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				list.add(new CalloutOrder_VehicleRent());
 			}
 			
-			if(columnName.equals(MWeighmentEntry.COLUMNNAME_Price) || 
+			if(columnName.equals(MWeighmentEntry.COLUMNNAME_NetWeightUnit) || 
+					columnName.equals(MWeighmentEntry.COLUMNNAME_Price) || 
 					columnName.equals(MWeighmentEntry.COLUMNNAME_GSTAmount) || 
+					columnName.equals(MWeighmentEntry.COLUMNNAME_PassQtyIssued) || 
+					columnName.equals(MWeighmentEntry.COLUMNNAME_PassPricePerUnit) ||
 					columnName.equals(MWeighmentEntry.COLUMNNAME_IsPermitSales) ||
+					columnName.equals(MWeighmentEntry.COLUMNNAME_FreightPrice) ||
+					columnName.equals(MWeighmentEntry.COLUMNNAME_DiscountAmount) ||
 					columnName.equals(MWeighmentEntry.COLUMNNAME_Rent_Amt) ||
-					columnName.equals(MWeighmentEntry.COLUMNNAME_DriverTips)) {
+					columnName.equals(MWeighmentEntry.COLUMNNAME_DriverTips) ||
+					columnName.equals(MWeighmentEntry.COLUMNNAME_ApplyTCS)) {
 				list.add(new CalloutWeighmentEntry_CalcAmount());
 			}
 		}
