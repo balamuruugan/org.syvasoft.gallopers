@@ -3412,7 +3412,8 @@ public class TF_MOrder extends MOrder {
 		payment.setUser1_ID(getUser1_ID()); // Profit Center
 		payment.setC_ElementValue_ID(glConfig.getSalesDiscountAcct_ID());
 		
-		payment.setC_BankAccount_ID(TF_MBankAccount.getDefaultCashAccount(getCtx(), getAD_Org_ID(), null));
+		payment.setC_BankAccount_ID(getC_BankAccount_ID());
+		//payment.setC_BankAccount_ID(TF_MBankAccount.getDefaultCashAccount(getCtx(), getAD_Org_ID(), null));
 		MUser user = MUser.get(getCtx(), Env.getAD_User_ID(getCtx()));
 		payment.setC_BPartner_ID(user.getC_BPartner_ID());
 		payment.setPayAmt(amt);
