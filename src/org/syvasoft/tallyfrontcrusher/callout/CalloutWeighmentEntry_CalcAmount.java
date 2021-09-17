@@ -49,8 +49,8 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		if(freight_uom_id > 0) {
 			int KM_UOM_ID = MSysConfig.getIntValue("KM_UOM", 1000071, Env.getAD_Client_ID(ctx));
 			int MT_KM_UOM_ID = MSysConfig.getIntValue("MT_KM_UOM", 1000093, Env.getAD_Client_ID(ctx));
-			int MT_UOM_ID = MSysConfig.getIntValue("MT_KM_UOM", 1000069, Env.getAD_Client_ID(ctx));
-			int LOAD_UOM_ID = MSysConfig.getIntValue("MT_KM_UOM", 1000072, Env.getAD_Client_ID(ctx));
+			int MT_UOM_ID = MSysConfig.getIntValue("MT_UOM", 1000069, Env.getAD_Client_ID(ctx));
+			int LOAD_UOM_ID = MSysConfig.getIntValue("LOAD_UOM", 1000072, Env.getAD_Client_ID(ctx));
 			
 			if(freight_uom_id == LOAD_UOM_ID) {
 				RentAmount = (BigDecimal) freightprice;
