@@ -841,4 +841,23 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		return user.getC_BankAccount_ID();
 	}
 
+	
+	public boolean hasShipmentGenerated() {
+		String whereClause = "TF_WeighmentEntry_ID = ? AND DocStatus IN ('CO','CL')";
+		
+		
+		TF_MInOut io  = new Query(getCtx(), TF_MInOut.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_WeighmentEntry_ID())
+				.first();
+		
+		int count = 0;
+		
+		if(io != null) {
+			count = 1;
+			io.createMaterialMovement(this);
+		}
+		
+		return count > 0;
+	}
 }

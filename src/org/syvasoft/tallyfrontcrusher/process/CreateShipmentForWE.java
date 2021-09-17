@@ -57,6 +57,13 @@ public class CreateShipmentForWE extends SvrProcess {
 	
 	public void createShipmentDocument(MWeighmentEntry we) {
 		
+		if(we.hasShipmentGenerated()) {
+			we.shipped();
+			we.saveEx();
+			return;
+		}
+			
+		
 		 TF_MOrderLine orderLine = new  TF_MOrderLine(getCtx(), we.getC_OrderLine_ID(), get_TrxName());
 		 
 		 if(orderLine != null) {	
