@@ -178,7 +178,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		ord.setPartyName(wEntry.getPartyName());
 		ord.setPhone(wEntry.getPhone());
 		ord.setDescription(wEntry.getDescription());
-		if(wEntry.getPartyName() != null)
+		if(wEntry.getPartyName() != null && bp.getIsPOSCashBP())
 			ord.addDescription("Customer Name : " + wEntry.getPartyName());
 		
 		ord.setPaymentRule(wEntry.getPaymentRule());
@@ -315,7 +315,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		invoice.setDateAcct(wEntry.getGrossWeightTime());
 		
 		//fetching already generated invoice no in case of reversing and recreating the existing invoices.
-		if(wEntry.getInvoiceNo() != null) {
+		if(wEntry.getInvoiceNo() != null && bp.getIsPOSCashBP()) {
 			invoice.setDocumentNo(wEntry.getInvoiceNo());
 			
 			if(invoice.getDocumentNo() == null)
@@ -417,7 +417,7 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		ord.setPartyName(wEntry.getPartyName());
 		ord.setPhone(wEntry.getPhone());
 		ord.setDescription(wEntry.getDescription());
-		if(wEntry.getPartyName() != null)
+		if(wEntry.getPartyName() != null && bp.getIsPOSCashBP())
 			ord.addDescription("Customer Name : " + wEntry.getPartyName());
 		
 		ord.setPaymentRule(wEntry.getPaymentRule());
