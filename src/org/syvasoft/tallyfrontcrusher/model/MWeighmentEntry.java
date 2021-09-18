@@ -819,6 +819,21 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 				inv.saveEx();
 			}
 			
+			String whereClauseCB = "DocStatus = 'CO' AND C_InVoice_ID IN (SELECT C_Invoice_ID FROM C_Invoice "
+					+ " WHERE C_Payment.C_Invoice_ID = C_Invoice.C_Invoice_ID AND C_Invoice.DocStatus='RE' AND C_Invoice.TF_WeighmentEntry_ID = ?) ";
+			List<TF_MPayment> cbList = new Query(getCtx(), TF_MPayment.Table_Name, whereClauseCB, get_TrxName())
+					.setClient_ID()
+					.setParameters(getTF_WeighmentEntry_ID())
+					.list();
+			
+			for(TF_MPayment p : cbList) {
+				p.setDocAction(DocAction.ACTION_Reverse_Correct);
+				p.reverseCorrectIt();
+				p.setDocStatus(TF_MOrder.DOCSTATUS_Reversed);
+				p.saveEx();
+			}
+			
+			
 			//Boulder Receipt
 			List<MBoulderReceipt> boulders = new Query(getCtx(), MBoulderReceipt.Table_Name, "TF_WeighmentEntry_ID = ? AND DocStatus ='CO'", get_TrxName())
 					.setClient_ID()
