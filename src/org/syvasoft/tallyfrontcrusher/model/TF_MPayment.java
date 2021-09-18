@@ -809,8 +809,9 @@ public class TF_MPayment extends MPayment {
 		
 		if(getDateBankTrx() == null) {
 			setIsBankAccount(!getC_BankAccount().getBankAccountType().equals(TF_MBankAccount.BANKACCOUNTTYPE_Cash));
-			if(isBankAccount())
-				throw new AdempiereException("Bank Trx Date is mandatory!");
+			setDateBankTrx(getDateTrx());
+			//if(isBankAccount())
+			//	throw new AdempiereException("Bank Trx Date is mandatory!");
 		}
 		
 		if(getC_ElementValue_ID()==0)
@@ -859,7 +860,7 @@ public class TF_MPayment extends MPayment {
 			postAdvanceAdjustmentJournal();
 		if(getPM_Machinery_ID()>0)
 			createMachineryStatement();
-		createCreditNote();
+		//createCreditNote();
 		
 		return msg;
 	}
