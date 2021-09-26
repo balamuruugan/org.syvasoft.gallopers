@@ -10,8 +10,6 @@ import java.util.Properties;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.acct.Doc;
 import org.compiere.model.MAcctSchema;
-import org.compiere.model.MAllocationHdr;
-import org.compiere.model.MBPartner;
 import org.compiere.model.MClient;
 import org.compiere.model.MCost;
 import org.compiere.model.MCostElement;
@@ -22,16 +20,13 @@ import org.compiere.model.MInventoryLine;
 import org.compiere.model.MInvoiceLine;
 import org.compiere.model.MLocator;
 import org.compiere.model.MPriceList;
-import org.compiere.model.MProduct;
-import org.compiere.model.MResource;
 import org.compiere.model.MSysConfig;
-import org.compiere.model.MTax;
 import org.compiere.model.MWarehouse;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
-import org.compiere.util.Msg;
+
 
 public class MFuelIssue extends X_TF_Fuel_Issue {
 
@@ -145,7 +140,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 				qtyAvailable=BigDecimal.ZERO;
 			}
 			
-			if(qtyAvailable.doubleValue() < getQty().doubleValue() && validateStock) {
+			if(qtyAvailable.doubleValue() < getQty().doubleValue() && validateStock && getMovementQty().doubleValue() > 0) {
 				//log.saveError("NotEnoughStocked", Msg.getElement(getCtx(), COLUMNNAME_Qty));
 				throw new AdempiereException("Inventory on Hand : " + qtyAvailable);				
 			}
@@ -168,7 +163,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 				else
 					VendorIssue(rv, proj, bp);
 			}
-			else if(ISSUETYPE_OwnExpense.equals(getIssueType())) {
+			else if(ISSUETYPE_OwnExpense.equals(getIssueType()) || ISSUETYPE_OwnExpenseReturn.equals(getIssueType())) {
 				createInternalUseInventory(docAction);
 			}
 	
@@ -186,10 +181,11 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		mStatement.setDateAcct(getDateAcct());
 		mStatement.setPM_Machinery_ID(getPM_Machinery_ID());
 		mStatement.setM_Product_ID(getM_Product_ID());
-		mStatement.setQty(getQty());
+		mStatement.setQty(getMovementQty());
 		mStatement.setRate(getRate());
 		mStatement.setC_UOM_ID(getC_UOM_ID());
-		mStatement.setExpense(getAmt());
+		
+		mStatement.setExpense(getMovementQty().doubleValue() > 0 ? getAmt() : getAmt().negate());
 		mStatement.setDescription(getDescription());
 		mStatement.setC_ElementValue_ID(getAccount_ID());
 		mStatement.setTF_Fuel_Issue_ID(getTF_Fuel_Issue_ID());
@@ -205,6 +201,13 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			account_id = MSysConfig.getIntValue("InventoryConsumptionAccount_ID", 1000330);
 		}
 		return account_id;
+	}
+	
+	private BigDecimal getMovementQty() {
+		if(getIssueType().equals(ISSUETYPE_OwnExpenseReturn)) 
+			return getQty().negate();
+		else
+			return getQty();
 	}
 	
 	private void createInternalUseInventory(String docAction) {
@@ -234,7 +237,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		inv.saveEx();
 		
 		//Inventory Use Line
-		MInventoryLine line = new MInventoryLine(inv, getM_Locator_ID(), getM_Product_ID(), 0, null, null, getQty());
+		MInventoryLine line = new MInventoryLine(inv, getM_Locator_ID(), getM_Product_ID(), 0, null, null, getMovementQty());
 		
 		TF_MCharge chrg = TF_MCharge.createChargeFromAccount(getCtx(), getAccount_ID(), get_TrxName());
 		line.setC_Charge_ID(chrg.getC_Charge_ID());
@@ -367,7 +370,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		
 		if(getM_Product_ID() > 0) {
 			invLine.setM_Product_ID(getM_Product_ID(), true);
-			invLine.setQty(getQty());
+			invLine.setQty(getMovementQty());
 			BigDecimal price = getRate();			
 			
 			invLine.setPriceActual(price);
@@ -410,8 +413,8 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			//Material Issue Line
 			MInOutLine ioLine = new MInOutLine(inout);
 			MWarehouse wh = (MWarehouse) getM_Warehouse();
-			ioLine.setInvoiceLine(invLine, getM_Locator_ID(), getQty());
-			ioLine.setQty(getQty());
+			ioLine.setInvoiceLine(invLine, getM_Locator_ID(), getMovementQty());
+			ioLine.setQty(getMovementQty());
 			ioLine.saveEx(get_TrxName());
 			
 			//Material Issue DocAction
@@ -471,7 +474,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 		MWarehouse wh = (MWarehouse) getM_Warehouse();
 		ioLine.setM_Locator_ID(getM_Locator_ID());
 		ioLine.setM_Product_ID(getM_Product_ID(), true);		
-		ioLine.setQty(getQty());
+		ioLine.setQty(getMovementQty());
 		ioLine.saveEx(get_TrxName());
 		
 		//Material Issue DocAction

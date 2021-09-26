@@ -33,7 +33,7 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210818L;
+	private static final long serialVersionUID = 20210922L;
 
     /** Standard Constructor */
     public X_TF_Fuel_Issue (Properties ctx, int TF_Fuel_Issue_ID, String trxName)
@@ -486,6 +486,8 @@ public class X_TF_Fuel_Issue extends PO implements I_TF_Fuel_Issue, I_Persistent
 	public static final String ISSUETYPE_OwnExpense = "E";
 	/** Payment = P */
 	public static final String ISSUETYPE_Payment = "P";
+	/** Own Expense Return = R */
+	public static final String ISSUETYPE_OwnExpenseReturn = "R";
 	/** Set Issue Type.
 		@param IssueType Issue Type	  */
 	public void setIssueType (String IssueType)
