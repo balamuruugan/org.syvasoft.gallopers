@@ -920,20 +920,26 @@ public class TF_MBPartner extends MBPartner {
 			}
 		}
 		
-		String where = " TRIM(UPPER(Name)) = '" + getCity().toUpperCase().trim() + "' AND AD_Org_ID = " + getAD_Org_ID();
-		
-		List<MDestination> dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).list();
-		
-		if(dest.size() == 0)
-		{
-			MDestination destination = new MDestination(getCtx(), 0, get_TrxName());
-			destination.setAD_Org_ID(getAD_Org_ID());
-			destination.setName(getCity());
-			destination.setDistance(BigDecimal.ZERO);
-			destination.saveEx();
-			
-			if(getTF_Destination_ID() == 0) {				
-				setTF_Destination_ID(destination.getTF_Destination_ID());
+		if(isCustomer() || isVendor()) {
+			if(getTF_Destination_ID() == 0) {	
+				String where = " TRIM(UPPER(Name)) = '" + getCity().toUpperCase().trim() + "' AND AD_Org_ID IN (0," + getAD_Org_ID() + ")";
+				
+				MDestination dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).setOnlyActiveRecords(true).first();
+				
+				if(dest == null)
+				{
+					MDestination destination = new MDestination(getCtx(), 0, get_TrxName());
+					destination.setAD_Org_ID(getAD_Org_ID());
+					destination.setName(getCity());
+					destination.setDistance(BigDecimal.ZERO);
+					destination.saveEx();				
+								
+					setTF_Destination_ID(destination.getTF_Destination_ID());
+				}
+				else
+				{
+					setTF_Destination_ID(dest.getTF_Destination_ID());
+				}
 			}
 		}
 		if(IsRequiredTaxInvoicePerLoad()) {
