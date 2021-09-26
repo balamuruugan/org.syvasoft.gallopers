@@ -920,7 +920,7 @@ public class TF_MBPartner extends MBPartner {
 			}
 		}
 		
-		String where = " Name = '" + getCity() + "'";
+		String where = " TRIM(UPPER(Name)) = '" + getCity().toUpperCase().trim() + "' AND AD_Org_ID = " + getAD_Org_ID();
 		
 		List<MDestination> dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).list();
 		

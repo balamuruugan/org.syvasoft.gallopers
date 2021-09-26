@@ -27,7 +27,7 @@ public class MDestination extends X_TF_Destination {
 
 	protected boolean beforeSave(boolean newRecord) {
 		if(newRecord) {
-			String where = " UPPER(Name) = '" + getName().toUpperCase() + "' AND AD_Org_ID = " + getAD_Org_ID();
+			String where = " TRIM(UPPER(Name)) = '" + getName().toUpperCase().trim() + "' AND AD_Org_ID = " + getAD_Org_ID();
 			
 			MDestination dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).first();
 			
@@ -36,7 +36,7 @@ public class MDestination extends X_TF_Destination {
 			}
 		}
 		else {
-			String where = " UPPER(Name) = '" + getName().toUpperCase() + "' AND AD_Org_ID = " + getAD_Org_ID() + " AND TF_Destination_ID != " + getTF_Destination_ID();
+			String where = " TRIM(UPPER(Name)) = '" + getName().toUpperCase().trim() + "' AND AD_Org_ID = " + getAD_Org_ID() + " AND TF_Destination_ID != " + getTF_Destination_ID();
 			
 			MDestination dest = new Query(getCtx(), MDestination.Table_Name, where, get_TrxName()).first();
 			
