@@ -308,7 +308,7 @@ public class TF_MInOut extends MInOut {
 				.list();
 		for(TF_MInOut io : list) {
 			
-			String where = " C_Order_ID = " + io.getC_Order_ID();
+			String where = " C_Order_ID = " + io.getC_Order_ID() + " AND DocStatus IN ('CL','CO') AND C_DocTypeTarget_ID = " + TF_MOrder.getC_TransporterInvoiceDocType_ID();
 			List<TF_MOrder> porders = new Query(getCtx(), TF_MOrder.Table_Name, where, get_TrxName())
 					.setClient_ID()
 					.list();
