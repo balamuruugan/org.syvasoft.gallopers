@@ -307,6 +307,19 @@ public class TF_MInOut extends MInOut {
 				.setParameters(getTF_WeighmentEntry_ID(), MInOut.MOVEMENTTYPE_VendorReceipts, getM_InOut_ID())
 				.list();
 		for(TF_MInOut io : list) {
+			
+			String where = " C_Order_ID = " + io.getC_Order_ID();
+			List<TF_MOrder> porders = new Query(getCtx(), TF_MOrder.Table_Name, where, get_TrxName())
+					.setClient_ID()
+					.list();
+			
+			for(TF_MOrder purchase : porders) {				
+				purchase.setDocAction(DocAction.ACTION_Void);
+				purchase.voidIt();
+				purchase.setDocStatus(TF_MOrder.DOCSTATUS_Voided);
+				purchase.saveEx();
+			}
+			
 			if(io.getDocStatus().equals(DOCSTATUS_Completed))
 				io.reverseCorrectIt();
 			io.saveEx();

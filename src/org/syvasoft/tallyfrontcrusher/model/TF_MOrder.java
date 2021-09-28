@@ -2374,7 +2374,7 @@ public class TF_MOrder extends MOrder {
 		String DocSubTypeSO = dt.getDocSubTypeSO();
 		
 		//POS Order's MR and Invoice should be reversed.
-		if((!isSOTrx() && MDocType.DOCSUBTYPESO_POSOrder.equals(DocSubTypeSO)) ||
+		if((!isSOTrx() && MDocType.DOCSUBTYPESO_POSOrder.equals(DocSubTypeSO)) || DocSubTypeSO.equals("IN") ||
 				getC_DocType_ID() == 1000050 || getC_DocType_ID() == 1000041 || getC_DocType_ID() == getC_VendorInvoiceDocType_ID() ||
 				getC_DocType_ID() == GSTOrderDocType_ID(getCtx()) || getC_DocType_ID() == NonGSTOrderDocType_ID(getCtx())) {
 			//MR/Shipment reverse Correct
