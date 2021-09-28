@@ -117,8 +117,8 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 	}
 	public void createFromWeighmentEntry(MWeighmentEntry entry) {
 		setAD_Org_ID(entry.getAD_Org_ID());
-		setDateReceipt(entry.getTareWeightTime());
-		setDateAcct(entry.getTareWeightTime());		
+		setDateReceipt(entry.getGrossWeightTime());
+		setDateAcct(entry.getGrossWeightTime());
 		TF_MProject proj = new TF_MProject(getCtx(), entry.getC_Project_ID(), get_TrxName());	
 		
 		if(proj != null && proj.getC_Project_ID() > 0) {
@@ -194,6 +194,7 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		invoice.setC_DocTypeTarget_ID(config.getTransporterInvoiceDocType_ID());	// AP Invoice		
 		invoice.setDateInvoiced(getDateReceipt());
 		invoice.setDateAcct(getDateAcct());
+		invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
 		//
@@ -268,6 +269,7 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		invoice.setDateAcct(getDateAcct());
 		//
 		invoice.setSalesRep_ID(Env.getAD_User_ID(getCtx()));
+		invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
 		//
 		
 		invoice.setBPartner(bp);
@@ -313,6 +315,13 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 	
 		
 	public String processIt(String DocAction) {
+		MWeighmentEntry entry = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+		if(entry.isProcessed())
+			throw new AdempiereException("Ticket No: " + getDocumentNo() + " is already processed!");
+		
+		if(entry.getWeighmentEntryType().equals(MWeighmentEntry.WEIGHMENTENTRYTYPE_StockToCrusher))
+				return null;
+		
 		String m_processMsg = null;
 		TF_MProject proj = new TF_MProject(getCtx(), getC_Project_ID(), get_TrxName());		
 		if(MBoulderReceipt.DOCACTION_Prepare.equals(DocAction)) {
@@ -382,6 +391,9 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 			
 			setDocStatus(DOCSTATUS_Completed);
 			setProcessed(true);
+			
+			entry.setProcessed(true);
+			entry.saveEx();
 			
 			if(TF_SEND_TO_Production.equals(getTF_Send_To())) {
 				m_processMsg = postCrusherProduction();
@@ -487,9 +499,13 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 			rent.deleteEx(true);
 		}
 		MBoulderMovement.deleteBoulderMovement(getTF_WeighmentEntry_ID(), get_TrxName());
-		reverseServiceReceipts();
+		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+		we.setProcessed(false);
+		we.setStatus(MWeighmentEntry.STATUS_Unbilled);
+		we.saveEx();
 		setProcessed(false);
-		setDocStatus(DOCSTATUS_Drafted);		
+		setDocStatus(DOCSTATUS_Drafted);
+		reverseServiceReceipts();
 	}
 		
 	
@@ -691,7 +707,8 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		inout.setIsSOTrx(false);
 		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
-		inout.setDateAcct(getDateAcct());		
+		inout.setDateAcct(getDateAcct());
+		inout.setMovementDate(getDateAcct());		
 		inout.setC_BPartner_ID(bp.getC_BPartner_ID());
 		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
 		inout.setAD_User_ID(bp.getAD_User_ID());
@@ -712,7 +729,8 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		
 		ioLine.setQty(qty);
 		ioLine.setC_UOM_ID(getC_UOM_ID());
-		ioLine.set_ValueOfColumn("Price", purchasePrice);				
+		ioLine.set_ValueOfColumn("Price", purchasePrice);	
+		ioLine.set_ValueOfColumn("DocStatus", "CO");				
 		ioLine.saveEx(get_TrxName());
 		
 		//Material Receipt DocAction
@@ -752,7 +770,8 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		inout.setIsSOTrx(false);
 		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
-		inout.setDateAcct(getDateAcct());		
+		inout.setDateAcct(getDateAcct());	
+		inout.setMovementDate(getDateAcct());		
 		inout.setC_BPartner_ID(bp.getC_BPartner_ID());
 		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
 		inout.setAD_User_ID(bp.getAD_User_ID());
@@ -816,7 +835,8 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		inout.setIsSOTrx(false);
 		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
-		inout.setDateAcct(getDateAcct());		
+		inout.setDateAcct(getDateAcct());	
+		inout.setMovementDate(getDateAcct());
 		inout.setC_BPartner_ID(rv.getC_BPartner_ID());
 		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
 		inout.setAD_User_ID(bp.getAD_User_ID());

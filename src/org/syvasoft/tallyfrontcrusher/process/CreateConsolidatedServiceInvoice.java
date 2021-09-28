@@ -88,7 +88,7 @@ ProcessInfoParameter[] para = getParameter();
 				 	 " M_InOut io INNER JOIN M_InOutLine inl ON inl.M_InOut_ID=io.M_InOut_ID "  + 
 				" WHERE  " +
 					" io.DocStatus = 'CO' AND inl.DocStatus = 'CO' AND (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +  
-					" T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = inl.M_InOutLIne_ID) AND  io.C_BPartner_ID = ?) "  +
+					" T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = inl.M_InOutLIne_ID) AND  io.C_BPartner_ID = ?) AND io.C_Order_ID IS NULL"  +
 				 " GROUP BY			inl.M_Product_ID, inl.C_UOM_ID, inl.Price, inl.C_Tax_ID";
 		
 		PreparedStatement pstmt =  null;
@@ -131,13 +131,14 @@ ProcessInfoParameter[] para = getParameter();
 			//by BP
 			
 			String sqlOrderUpdate = "UPDATE M_InOut SET C_Order_ID = ? WHERE  M_InOut_ID IN (SELECT M_InOut_ID FROM M_InOutLIne \r\n" + 
-					"				 WHERE  (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE \r\n" + 
-					"				 T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = M_InOutLIne.M_InOutLine_ID) OR M_InOutLIne.M_InOutLine_ID = 0)"
-					+ " AND C_BPartner_ID = ? )";
+					"				 WHERE (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE \r\n" + 
+					"				 T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = M_InOutLIne.M_InOutLine_ID) OR M_InOutLIne.M_InOutLine_ID = ?)"
+					+ " AND C_BPartner_ID = ? AND  DocStatus = 'CO' )";
 			
 			params = new ArrayList<Object>();
 			params.add(ord.getC_Order_ID());
 			params.add(getAD_PInstance_ID());
+			params.add(M_InoutLine_ID);
 			params.add(bp.getC_BPartner_ID());				
 			DB.executeUpdateEx(sqlOrderUpdate, params.toArray(), get_TrxName());
 			
@@ -177,14 +178,13 @@ ProcessInfoParameter[] para = getParameter();
 				//Update all the iolines which are related for this consolidated order..
 				//using update query for the IO Header associated with Order
 				String sqlUpdateLine = "UPDATE M_InOutLine SET C_OrderLine_ID = ?, DocStatus = 'CL' WHERE M_InOut_ID IN (SELECT M_InOut_ID FROM M_InOut WHERE C_Order_ID = ?) "
-						+ " AND M_Product_ID = ? AND C_UOM_ID = ? AND QtyEntered = ? AND Price = ? "
+						+ " AND M_Product_ID = ? AND C_UOM_ID = ?  AND Price = ? "
 						+ " AND DocStatus = 'CO'";
 				params = new ArrayList<Object>();
 				params.add(ordLine.getC_OrderLine_ID());
 				params.add(ordLine.getC_Order_ID());
 				params.add(M_PRoduct_ID);
-				params.add(C_UOM_ID);
-				params.add(qty);
+				params.add(C_UOM_ID);				
 				params.add(price);
 				DB.executeUpdateEx(sqlUpdateLine, params.toArray(), get_TrxName());
 				
