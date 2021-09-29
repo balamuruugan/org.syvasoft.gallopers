@@ -17,7 +17,7 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 	public String start(Properties ctx, int WindowNo, GridTab mTab, GridField mField, Object value, Object oldValue) {
 		BigDecimal qty = CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_NetWeightUnit);
 		BigDecimal price = CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_Price);
-		BigDecimal passqty = CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_PassQtyIssued);
+		BigDecimal passqty = CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_PermitIssuedQty);
 		BigDecimal passprice = CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_PassPricePerUnit);
 		BigDecimal freightprice  = CalloutUtil.getBDValue(mTab, MWeighmentEntry.COLUMNNAME_FreightPrice);
 		

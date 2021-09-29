@@ -379,7 +379,7 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 			if(columnName.equals(MWeighmentEntry.COLUMNNAME_NetWeightUnit) || 
 					columnName.equals(MWeighmentEntry.COLUMNNAME_Price) || 
 					columnName.equals(MWeighmentEntry.COLUMNNAME_GSTAmount) || 
-					columnName.equals(MWeighmentEntry.COLUMNNAME_PassQtyIssued) || 
+					columnName.equals(MWeighmentEntry.COLUMNNAME_PermitIssuedQty) || 
 					columnName.equals(MWeighmentEntry.COLUMNNAME_PassPricePerUnit) ||
 					columnName.equals(MWeighmentEntry.COLUMNNAME_IsPermitSales) ||
 					columnName.equals(MWeighmentEntry.COLUMNNAME_FreightPrice) ||
