@@ -313,6 +313,11 @@ public class TF_MInOut extends MInOut {
 					.setClient_ID()
 					.list();
 			
+			
+			if(io.getDocStatus().equals(DOCSTATUS_Completed))
+				io.reverseCorrectIt();
+			io.saveEx();
+			
 			for(TF_MOrder purchase : porders) {				
 				purchase.setDocAction(DocAction.ACTION_Void);
 				purchase.voidIt();
@@ -320,9 +325,6 @@ public class TF_MInOut extends MInOut {
 				purchase.saveEx();
 			}
 			
-			if(io.getDocStatus().equals(DOCSTATUS_Completed))
-				io.reverseCorrectIt();
-			io.saveEx();
 		}
 	}
 	
