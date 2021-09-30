@@ -3653,7 +3653,7 @@ public class TF_MOrder extends MOrder {
 	}
 
 	public void reverseConsolidateInvoice() {	
-		if(getTF_WeighmentEntry_ID() > 0)
+		if(getTF_WeighmentEntry_ID() > 0 || getC_DocTypeTarget_ID() == getC_TransporterInvoiceDocType_ID())
 			return;
 		
 		String whereClause = " TF_WeighmentEntry_ID IN (SELECT i.TF_WeighmentEntry_ID FROM M_InOut i WHERE i.C_Order_ID = ? ) AND Processed = 'Y' AND Status='CL'";
