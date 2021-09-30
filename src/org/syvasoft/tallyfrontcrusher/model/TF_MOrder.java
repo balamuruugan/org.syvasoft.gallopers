@@ -2381,6 +2381,9 @@ public class TF_MOrder extends MOrder {
 			List<MInOut> inOutList = new Query(getCtx(), MInOut.Table_Name, "C_Order_ID=? AND DocStatus=? AND C_DocType_ID != ?", get_TrxName())
 				.setClient_ID().setParameters(getC_Order_ID(),DOCSTATUS_Completed, getC_VendorInvoiceDocType_ID()).list();
 			for(MInOut inout : inOutList) {
+				if(getC_DocTypeTarget_ID() == getC_TransporterInvoiceDocType_ID() || getC_DocTypeTarget_ID() == getC_ServiceInvoiceDocType_ID())
+					continue;
+				
 				if(!inout.reverseCorrectIt())
 					return false;				
 				inout.saveEx();
@@ -3653,7 +3656,7 @@ public class TF_MOrder extends MOrder {
 	}
 
 	public void reverseConsolidateInvoice() {	
-		if(getTF_WeighmentEntry_ID() > 0 || getC_DocTypeTarget_ID() == getC_TransporterInvoiceDocType_ID())
+		if(getTF_WeighmentEntry_ID() > 0 || getC_DocTypeTarget_ID() == getC_TransporterInvoiceDocType_ID() || getC_DocTypeTarget_ID() == getC_ServiceInvoiceDocType_ID())
 			return;
 		
 		String whereClause = " TF_WeighmentEntry_ID IN (SELECT i.TF_WeighmentEntry_ID FROM M_InOut i WHERE i.C_Order_ID = ? ) AND Processed = 'Y' AND Status='CL'";
