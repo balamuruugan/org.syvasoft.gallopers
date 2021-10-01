@@ -122,7 +122,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
 				//Period Open
 				if(!MCashAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BankAccount_ID(), payment.getDateTrx()))
-					throw new AdempiereUserError("Cash Accounting Period is closed!", "Please contact Admin!");
+					throw new AdempiereUserError("Cash Accounting Period is closed!, Please contact Administrator!");
 				
 				//To show party name and phone for cash sales...
 				if(payment.getC_Invoice_ID() > 0 && payment.getReversal_ID() == 0) {
@@ -168,7 +168,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			}
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_CHANGE)) {
 				if(!MCashAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BankAccount_ID(), payment.getDateTrx()))
-					throw new AdempiereUserError("Cash Accounting Period is closed!", "Please contact Admin!");
+					throw new AdempiereUserError("Cash Accounting Period is closed!, Please contact Administrator!");
 				
 				if(payment.getC_Invoice_ID() > 0) {
 					if(payment.getC_DocType().isSOTrx())
