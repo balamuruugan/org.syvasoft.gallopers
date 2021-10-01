@@ -42,6 +42,7 @@ import org.compiere.process.DocAction;
 import org.compiere.process.ProcessInfo;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.RollUpCosts;
+import org.compiere.util.AdempiereUserError;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
@@ -49,6 +50,7 @@ import org.compiere.util.Trx;
 import org.osgi.service.event.Event;
 import org.syvasoft.tallyfrontcrusher.model.MAdditionalTransactionSetup;
 import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
+import org.syvasoft.tallyfrontcrusher.model.MCashAcctPeriod;
 import org.syvasoft.tallyfrontcrusher.model.MCashCounter;
 import org.syvasoft.tallyfrontcrusher.model.MCounterTransactionSetup;
 import org.syvasoft.tallyfrontcrusher.model.MFuelIssue;
@@ -118,6 +120,10 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		if(po.get_TableName().equals(MPayment.Table_Name)) {
 			MPayment payment = (MPayment) po;
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
+				//Period Open
+				if(!MCashAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BankAccount_ID(), payment.getDateTrx()))
+					throw new AdempiereUserError("Cash Accounting Period is closed!", "Please contact Admin!");
+				
 				//To show party name and phone for cash sales...
 				if(payment.getC_Invoice_ID() > 0 && payment.getReversal_ID() == 0) {
 					MInvoice inv =  (MInvoice) payment.getC_Invoice();
@@ -161,6 +167,9 @@ public class CrusherEventHandler extends AbstractEventHandler {
 
 			}
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_CHANGE)) {
+				if(!MCashAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BankAccount_ID(), payment.getDateTrx()))
+					throw new AdempiereUserError("Cash Accounting Period is closed!", "Please contact Admin!");
+				
 				if(payment.getC_Invoice_ID() > 0) {
 					if(payment.getC_DocType().isSOTrx())
 						payment.set_ValueOfColumn(TF_MPayment.COLUMNNAME_CashType, TF_MPayment.CASHTYPE_CustomerPayment);					

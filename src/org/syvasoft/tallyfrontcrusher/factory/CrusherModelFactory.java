@@ -311,6 +311,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MProdCategorySetup.class;
 		else if(TF_MUser.Table_Name.equals(tableName))
 			return TF_MUser.class;
+		else if(MCashAcctPeriod.Table_Name.equals(tableName))			
+			return MCashAcctPeriod.class;
 		return null;
 	}
 
@@ -615,6 +617,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MProdCategorySetup(ctx, Record_ID, trxName);
 		else if(TF_MUser.Table_Name.equals(tableName))
 			return new TF_MUser(ctx, Record_ID, trxName);
+		else if(MCashAcctPeriod.Table_Name.equals(tableName))			
+			return new MCashAcctPeriod(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -921,6 +925,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MProdCategorySetup(ctx, rs, trxName);
 		else if(TF_MUser.Table_Name.equals(tableName))
 			return new TF_MUser(ctx, rs, trxName);
+		else if(MCashAcctPeriod.Table_Name.equals(tableName))			
+			return new MCashAcctPeriod(ctx, rs, trxName);
 		return null;
 	}
 
