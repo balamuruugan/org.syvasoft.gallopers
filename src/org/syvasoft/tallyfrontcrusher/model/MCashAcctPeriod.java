@@ -25,7 +25,7 @@ public class MCashAcctPeriod extends X_TF_AcctPeriod {
 
 	public static boolean isOpen(Properties ctx,int AD_Org_ID, int C_BankAccount_ID, Timestamp dateAcct) {
 		String whereClause = "AD_Org_ID = ? AND C_BankAccount_ID = ? AND  "
-				+ " DateTo >= ? AND IsActive='Y'";
+				+ " DateTo >= TRUNC(?::Timestamp) AND IsActive='Y'";
 		MCashAcctPeriod period = new Query(ctx, Table_Name, whereClause, null)
 				.setClient_ID()
 				.setParameters(AD_Org_ID, C_BankAccount_ID, dateAcct)
