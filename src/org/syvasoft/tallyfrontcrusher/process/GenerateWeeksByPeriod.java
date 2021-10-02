@@ -72,6 +72,7 @@ public class GenerateWeeksByPeriod extends SvrProcess {
 		    	week.setC_Period_ID(mPeriod.getC_Period_ID());
 		    	week.saveEx();
 		    	
+		    	// Get next week info
 		    	weekno++;
 		    	cal = Calendar.getInstance();
 				cal.setTimeInMillis(weekendDate.getTime());
@@ -85,7 +86,7 @@ public class GenerateWeeksByPeriod extends SvrProcess {
 			    
 			    weekendDate = new Timestamp(cal.getTime().getTime());	
 			    
-			    if(weekendDate.after(endDate))
+			    if(weekendDate.after(endDate) || weekendDate.equals(endDate))
 			    {
 			    	week = new MWeek(getCtx(), 0, get_TrxName());
 			    	
