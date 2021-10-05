@@ -87,12 +87,18 @@ public class CreateTransporterInvoice extends SvrProcess {
 			TF_MInOut io = new TF_MInOut(getCtx(), ioLine.getM_InOut_ID(), get_TrxName());
 			if(!io.getDocStatus().equals(TF_MInOut.STATUS_Completed)) {
 				addLog(0, null, null, "Invalid Material Receipt Document Status : " + io.getDocStatusName(), io.get_Table_ID(), io.get_ID());
-				return "Please exclude this transporter DC to create Transporter Invoice!";
+				
+				if(!automatic_process) {
+					return "Please exclude this transporter DC to create Transporter Invoice!";
+				}
 			}
 			
 			if(ioLine.getPrice().doubleValue() == 0) {
 				addLog(0, null, null, "Doc No: " + io.getDocumentNo() + " - Invalid Price!" , io.get_Table_ID(), io.get_ID());
-				return "Please set the Price!";
+				
+				if(!automatic_process) {
+					return "Please set the Price!";
+				}
 			}
 			
 		}
@@ -113,6 +119,20 @@ public class CreateTransporterInvoice extends SvrProcess {
 			TF_MInOut io = new TF_MInOut(getCtx(), ioLine.getM_InOut_ID(), get_TrxName());
 			
 			Trx trx = Trx.get(get_TrxName(), false);
+			
+			if(!io.getDocStatus().equals(TF_MInOut.STATUS_Completed)) {
+				addLog(0, null, null, "Invalid Material Receipt Document Status : " + io.getDocStatusName(), io.get_Table_ID(), io.get_ID());
+				ioLine.set_ValueOfColumn("DocStatus", MWeighmentEntry.STATUS_UnderReview);
+				ioLine.saveEx();
+				continue;
+			}
+			
+			if(ioLine.getPrice().doubleValue() == 0) {
+				addLog(0, null, null, "Doc No: " + io.getDocumentNo() + " - Invalid Price!" , io.get_Table_ID(), io.get_ID());
+				ioLine.set_ValueOfColumn("DocStatus", MWeighmentEntry.STATUS_UnderReview);
+				ioLine.saveEx();
+				continue;
+			}
 			
 			try {
 				sp = trx.setSavepoint(io.getDocumentNo());
