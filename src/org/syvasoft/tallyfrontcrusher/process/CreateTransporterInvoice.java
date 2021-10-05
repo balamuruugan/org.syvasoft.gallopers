@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MPriceList;
+import org.compiere.model.MSysConfig;
 import org.compiere.model.MTax;
 import org.compiere.model.Query;
 import org.compiere.process.DocAction;
@@ -54,15 +55,32 @@ public class CreateTransporterInvoice extends SvrProcess {
 
 	@Override
 	protected String doIt() throws Exception {
-		String whereClause = " DocStatus = 'CO' AND (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +
-				" T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = M_InOutLIne.M_InOutLIne_ID) OR M_InOutLine_ID = ?) "
-				+ "  ";
-		List<TF_MInOutLine> list = new Query(getCtx(), TF_MInOutLine.Table_Name, whereClause, get_TrxName())
-				.setClient_ID()
-				.setParameters(getAD_PInstance_ID(), M_InoutLine_ID)
-				.setOrderBy("(SELECT C_BPartner_ID FROM M_InOut WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID), "
-						+ "(SELECT MovementDate FROM M_InOut WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID)")
-				.list();
+		boolean automatic_process = MSysConfig.getValue("AUTOMATIC_TRANSPORTER_INVOICE_CREATION","Y").equals("Y");
+		String whereClause = "";
+		List<TF_MInOutLine> list;
+		if(automatic_process) {
+			whereClause = " DocStatus = 'CO' AND (EXISTS (SELECT m_inout_id FROM m_inout io JOIN tf_weighmententry w ON w.tf_weighmententry_id = io.tf_weighmententry_id WHERE io.issotrx='N'" + 
+					" AND io.m_inout_id = m_inoutline.m_inout_id AND io.docstatus <> 'RE')) ";
+			
+			list = new Query(getCtx(), TF_MInOutLine.Table_Name, whereClause, get_TrxName())
+					.setClient_ID()
+					.setOrderBy("(SELECT C_BPartner_ID FROM M_InOut WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID), "
+							+ "(SELECT MovementDate FROM M_InOut WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID)")
+					.list();
+		}
+		else {
+			whereClause = " DocStatus = 'CO' AND (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +
+					" T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = M_InOutLIne.M_InOutLIne_ID) OR M_InOutLine_ID = ?) ";
+			
+			list = new Query(getCtx(), TF_MInOutLine.Table_Name, whereClause, get_TrxName())
+					.setClient_ID()
+					.setParameters(getAD_PInstance_ID(), M_InoutLine_ID)
+					.setOrderBy("(SELECT C_BPartner_ID FROM M_InOut WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID), "
+							+ "(SELECT MovementDate FROM M_InOut WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID)")
+					.list();
+		}		
+		
+		
 		
 		//Validation
 		for(TF_MInOutLine ioLine : list) {
@@ -99,11 +117,13 @@ public class CreateTransporterInvoice extends SvrProcess {
 			try {
 				sp = trx.setSavepoint(io.getDocumentNo());
 				TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
+				
+				ord.setAD_Org_ID(io.getAD_Org_ID());
 				ord.setIsSOTrx(false);
 				ord.setC_DocTypeTarget_ID(TF_MOrder.getC_TransporterInvoiceDocType_ID());
 				ord.setC_DocType_ID(TF_MOrder.getC_TransporterInvoiceDocType_ID());
-				ord.setDateAcct(dateInvoiced);
-				ord.setDateOrdered(dateInvoiced);
+				ord.setDateAcct(io.getDateAcct());
+				ord.setDateOrdered(io.getDateAcct());
 				ord.setC_BPartner_ID(io.getC_BPartner_ID());
 				ord.setM_Warehouse_ID(io.getM_Warehouse_ID());
 				ord.setPaymentRule(TF_MOrder.PAYMENTRULE_OnCredit);

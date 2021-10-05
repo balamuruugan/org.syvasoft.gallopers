@@ -165,6 +165,7 @@ public class TF_MInOut extends MInOut {
 	
 	public void createTransportMaterialReceipt() {
 		
+		int No_Tax_ID = MSysConfig.getIntValue("NO_TAX_ID", 1000033, getAD_Client_ID(), getAD_Org_ID());
 		
 		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
 				
@@ -240,6 +241,9 @@ public class TF_MInOut extends MInOut {
 				ioLine.setIsTaxIncluded(rentConfig.isTaxIncluded());
 				ioLine.set_ValueOfColumn("TF_LumpSumRent_Config_ID", rentConfig.getTF_LumpSumRent_Config_ID());
 			}			
+			else {
+				ioLine.setC_Tax_ID(No_Tax_ID);
+			}
 			
 		}
 		else {
