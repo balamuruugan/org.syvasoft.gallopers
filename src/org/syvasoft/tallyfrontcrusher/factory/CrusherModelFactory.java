@@ -313,6 +313,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return TF_MUser.class;
 		else if(MCashAcctPeriod.Table_Name.equals(tableName))			
 			return MCashAcctPeriod.class;
+		else if(MPLCModbusConfig.Table_Name.equals(tableName))			
+			return MPLCModbusConfig.class;
+		else if(MPLCReadingLog.Table_Name.equals(tableName))			
+			return MPLCReadingLog.class;
 		return null;
 	}
 
@@ -619,6 +623,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new TF_MUser(ctx, Record_ID, trxName);
 		else if(MCashAcctPeriod.Table_Name.equals(tableName))			
 			return new MCashAcctPeriod(ctx, Record_ID, trxName);
+		else if(MPLCModbusConfig.Table_Name.equals(tableName))			
+			return new MPLCModbusConfig(ctx, Record_ID, trxName);
+		else if(MPLCReadingLog.Table_Name.equals(tableName))			
+			return new MPLCReadingLog(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -927,6 +935,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new TF_MUser(ctx, rs, trxName);
 		else if(MCashAcctPeriod.Table_Name.equals(tableName))			
 			return new MCashAcctPeriod(ctx, rs, trxName);
+		else if(MPLCModbusConfig.Table_Name.equals(tableName))			
+			return new MPLCModbusConfig(ctx, rs, trxName);
+		else if(MPLCReadingLog.Table_Name.equals(tableName))			
+			return new MPLCReadingLog(ctx, rs, trxName);
 		return null;
 	}
 
