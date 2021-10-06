@@ -3880,7 +3880,7 @@ public class TF_MOrder extends MOrder {
 				.setParameters(getC_Order_ID())
 				.list();
 		for(TF_MInOutLine ioLine : ioLists) {
-			ioLine.set_ValueOfColumn("DocStatus", MWeighmentEntry.STATUS_Unbilled);
+			ioLine.set_ValueOfColumn("DocStatus", MWeighmentEntry.STATUS_UnderReview);
 			ioLine.setC_OrderLine_ID(0);
 			ioLine.saveEx();
 		}

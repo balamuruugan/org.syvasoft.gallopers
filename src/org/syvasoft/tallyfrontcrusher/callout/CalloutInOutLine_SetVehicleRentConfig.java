@@ -82,7 +82,13 @@ public class CalloutInOutLine_SetVehicleRentConfig implements IColumnCallout {
 				mTab.setValue(TF_MInOutLine.COLUMNNAME_Distance, distance);
 				mTab.setValue(TF_MInOutLine.COLUMNNAME_Price, price);
 				mTab.setValue(TF_MInOutLine.COLUMNNAME_QtyEntered, qty);
-				mTab.setValue(TF_MInOutLine.COLUMNNAME_TF_LumpSumRent_Config_ID, TF_LumpSumRentConfig_ID);
+				
+				if(TF_LumpSumRentConfig_ID == 0) {					
+					mTab.setValue(TF_MInOutLine.COLUMNNAME_TF_LumpSumRent_Config_ID, null);
+				}
+				else {
+					mTab.setValue(TF_MInOutLine.COLUMNNAME_TF_LumpSumRent_Config_ID, TF_LumpSumRentConfig_ID);
+				}
 			}
 		}
 		return null;

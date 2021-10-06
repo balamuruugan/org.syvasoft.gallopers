@@ -317,6 +317,9 @@ public class CrusherModelFactory implements IModelFactory {
 			return MPLCModbusConfig.class;
 		else if(MPLCReadingLog.Table_Name.equals(tableName))			
 			return MPLCReadingLog.class;
+		else if(MWeek.Table_Name.equals(tableName))			
+			return MWeek.class;
+
 		return null;
 	}
 
@@ -627,6 +630,9 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MPLCModbusConfig(ctx, Record_ID, trxName);
 		else if(MPLCReadingLog.Table_Name.equals(tableName))			
 			return new MPLCReadingLog(ctx, Record_ID, trxName);
+		else if(MWeek.Table_Name.equals(tableName))			
+			return new MWeek(ctx, Record_ID, trxName);
+
 		return null;
 	}
 
@@ -939,7 +945,9 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MPLCModbusConfig(ctx, rs, trxName);
 		else if(MPLCReadingLog.Table_Name.equals(tableName))			
 			return new MPLCReadingLog(ctx, rs, trxName);
+		else if(MWeek.Table_Name.equals(tableName))			
+			return new MWeek(ctx, rs, trxName);
+
 		return null;
 	}
-
 }
