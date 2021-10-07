@@ -530,6 +530,7 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 				mStatement.delete(true);
 			}
 		}
+		MSpareMaster.reverseSpareEntries(getCtx(),get_TrxName(),getTF_Fuel_Issue_ID());
 		setQty(BigDecimal.ZERO);			
 		setProcessed(false);
 		setDocStatus(DOCSTATUS_Drafted);
