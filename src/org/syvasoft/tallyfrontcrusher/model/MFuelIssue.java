@@ -165,11 +165,22 @@ public class MFuelIssue extends X_TF_Fuel_Issue {
 			}
 			else if(ISSUETYPE_OwnExpense.equals(getIssueType()) || ISSUETYPE_OwnExpenseReturn.equals(getIssueType())) {
 				createInternalUseInventory(docAction);
+				
+				TF_MProduct product = new TF_MProduct(getCtx(),getM_Product_ID(),get_TrxName());
+				
+				if(product != null) {
+					if(product.isTrackSpareLife() == true)
+					{
+						MSpareMaster.createSpareMaster(getCtx(),get_TrxName(), getTF_Fuel_Issue_ID(), getPM_Machinery_ID(), product.getSpareLife_UOM_ID(), getM_Product_ID(), getDateAcct(), getQty());
+					}
+				}
 			}
 	
 			if(getPM_Machinery_ID()>0) {
 				createMachineryStatement();
 			}
+			
+			
 			
 			calculateMileage();
 		}
