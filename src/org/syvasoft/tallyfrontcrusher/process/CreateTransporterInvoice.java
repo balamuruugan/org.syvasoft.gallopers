@@ -60,7 +60,7 @@ public class CreateTransporterInvoice extends SvrProcess {
 		List<TF_MInOutLine> list;
 		if(automatic_process) {
 			whereClause = " DocStatus = 'CO' AND (EXISTS (SELECT m_inout_id FROM m_inout io JOIN tf_weighmententry w ON w.tf_weighmententry_id = io.tf_weighmententry_id WHERE io.issotrx='N'" + 
-					" AND io.m_inout_id = m_inoutline.m_inout_id AND io.docstatus <> 'RE')) ";
+					" AND io.m_inout_id = m_inoutline.m_inout_id AND io.docstatus <> 'RE' AND w.Status = 'CL')) ";
 			
 			list = new Query(getCtx(), TF_MInOutLine.Table_Name, whereClause, get_TrxName())
 					.setClient_ID()
