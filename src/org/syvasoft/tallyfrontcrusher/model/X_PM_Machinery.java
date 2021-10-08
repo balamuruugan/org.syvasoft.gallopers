@@ -32,7 +32,7 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210724L;
+	private static final long serialVersionUID = 20211006L;
 
     /** Standard Constructor */
     public X_PM_Machinery (Properties ctx, int PM_Machinery_ID, String trxName)
@@ -40,6 +40,8 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
       super (ctx, PM_Machinery_ID, trxName);
       /** if (PM_Machinery_ID == 0)
         {
+			setisIoTLinked (false);
+// N
 			setMachineryNo (null);
 			setPM_Machinery_ID (0);
 			setPM_MachineryType_ID (0);
@@ -145,6 +147,27 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
 	public String getDescription () 
 	{
 		return (String)get_Value(COLUMNNAME_Description);
+	}
+
+	/** Set IoT Linked.
+		@param isIoTLinked IoT Linked	  */
+	public void setisIoTLinked (boolean isIoTLinked)
+	{
+		set_Value (COLUMNNAME_isIoTLinked, Boolean.valueOf(isIoTLinked));
+	}
+
+	/** Get IoT Linked.
+		@return IoT Linked	  */
+	public boolean isIoTLinked () 
+	{
+		Object oo = get_Value(COLUMNNAME_isIoTLinked);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	/** Set Summary Level.
@@ -296,8 +319,8 @@ public class X_PM_Machinery extends PO implements I_PM_Machinery, I_Persistent
 
 	/** Jack Hammer = J */
 	public static final String QUARRYPRODUCTIONTYPE_JackHammer = "J";
-	/** GRAWELLER = G */
-	public static final String QUARRYPRODUCTIONTYPE_GRAWELLER = "G";
+	/** Graweller = G */
+	public static final String QUARRYPRODUCTIONTYPE_Graweller = "G";
 	/** Set Quarry Production Type.
 		@param QuarryProductionType Quarry Production Type	  */
 	public void setQuarryProductionType (String QuarryProductionType)

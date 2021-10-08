@@ -136,6 +136,15 @@ public interface I_PM_Machinery
 	  */
 	public boolean isActive();
 
+    /** Column name isIoTLinked */
+    public static final String COLUMNNAME_isIoTLinked = "isIoTLinked";
+
+	/** Set IoT Linked	  */
+	public void setisIoTLinked (boolean isIoTLinked);
+
+	/** Get IoT Linked	  */
+	public boolean isIoTLinked();
+
     /** Column name IsSummary */
     public static final String COLUMNNAME_IsSummary = "IsSummary";
 
