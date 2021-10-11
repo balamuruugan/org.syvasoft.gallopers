@@ -33,7 +33,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210910L;
+	private static final long serialVersionUID = 20211011L;
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)
@@ -141,7 +141,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		@param ApplyTCS Apply TCS	  */
 	public void setApplyTCS (boolean ApplyTCS)
 	{
-		set_ValueNoCheck (COLUMNNAME_ApplyTCS, Boolean.valueOf(ApplyTCS));
+		set_Value (COLUMNNAME_ApplyTCS, Boolean.valueOf(ApplyTCS));
 	}
 
 	/** Get Apply TCS.
@@ -569,6 +569,25 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (Timestamp)get_Value(COLUMNNAME_ExitTime);
 	}
 
+	/** East Weighbridge  = EW */
+	public static final String FIRSTWEIGHBRIDGENAME_EastWeighbridge = "EW";
+	/** West Weighbridge  = WW */
+	public static final String FIRSTWEIGHBRIDGENAME_WestWeighbridge = "WW";
+	/** Set First Weighbridge Name.
+		@param FirstWeighbridgeName First Weighbridge Name	  */
+	public void setFirstWeighbridgeName (String FirstWeighbridgeName)
+	{
+
+		set_Value (COLUMNNAME_FirstWeighbridgeName, FirstWeighbridgeName);
+	}
+
+	/** Get First Weighbridge Name.
+		@return First Weighbridge Name	  */
+	public String getFirstWeighbridgeName () 
+	{
+		return (String)get_Value(COLUMNNAME_FirstWeighbridgeName);
+	}
+
 	/** Set Freight Rate.
 		@param FreightPrice Freight Rate	  */
 	public void setFreightPrice (BigDecimal FreightPrice)
@@ -609,31 +628,6 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public int getFreightRule_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_FreightRule_ID);
-		if (ii == null)
-			 return 0;
-		return ii.intValue();
-	}
-
-	public org.compiere.model.I_C_UOM getFreightUOM() throws RuntimeException
-    {
-		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
-			.getPO(getFreightUOM_ID(), get_TrxName());	}
-
-	/** Set Freight UOM.
-		@param FreightUOM_ID Freight UOM	  */
-	public void setFreightUOM_ID (int FreightUOM_ID)
-	{
-		if (FreightUOM_ID < 1) 
-			set_Value (COLUMNNAME_FreightUOM_ID, null);
-		else 
-			set_Value (COLUMNNAME_FreightUOM_ID, Integer.valueOf(FreightUOM_ID));
-	}
-
-	/** Get Freight UOM.
-		@return Freight UOM	  */
-	public int getFreightUOM_ID () 
-	{
-		Integer ii = (Integer)get_Value(COLUMNNAME_FreightUOM_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
@@ -758,6 +752,48 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return false;
 	}
 
+	/** Set Include Pass Amount Invoice.
+		@param IncludePassAmtInvoice Include Pass Amount Invoice	  */
+	public void setIncludePassAmtInvoice (boolean IncludePassAmtInvoice)
+	{
+		set_Value (COLUMNNAME_IncludePassAmtInvoice, Boolean.valueOf(IncludePassAmtInvoice));
+	}
+
+	/** Get Include Pass Amount Invoice.
+		@return Include Pass Amount Invoice	  */
+	public boolean isIncludePassAmtInvoice () 
+	{
+		Object oo = get_Value(COLUMNNAME_IncludePassAmtInvoice);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Include Rent Amount Invoice.
+		@param IncludeRentAmtInvoice Include Rent Amount Invoice	  */
+	public void setIncludeRentAmtInvoice (boolean IncludeRentAmtInvoice)
+	{
+		set_Value (COLUMNNAME_IncludeRentAmtInvoice, Boolean.valueOf(IncludeRentAmtInvoice));
+	}
+
+	/** Get Include Rent Amount Invoice.
+		@return Include Rent Amount Invoice	  */
+	public boolean isIncludeRentAmtInvoice () 
+	{
+		Object oo = get_Value(COLUMNNAME_IncludeRentAmtInvoice);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Invoice No.
 		@param InvoiceNo 
 		Invoice No generated from weighbridge app
@@ -839,7 +875,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		@param IsPermitSales Permit Sales	  */
 	public void setIsPermitSales (boolean IsPermitSales)
 	{
-		set_Value (COLUMNNAME_IsPermitSales, Boolean.valueOf(IsPermitSales));
+		set_ValueNoCheck (COLUMNNAME_IsPermitSales, Boolean.valueOf(IsPermitSales));
 	}
 
 	/** Get Permit Sales.
@@ -1177,6 +1213,27 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_PartyName);
 	}
 
+	/** Set Pass Includes Tax.
+		@param PassIncludesTax Pass Includes Tax	  */
+	public void setPassIncludesTax (boolean PassIncludesTax)
+	{
+		set_Value (COLUMNNAME_PassIncludesTax, Boolean.valueOf(PassIncludesTax));
+	}
+
+	/** Get Pass Includes Tax.
+		@return Pass Includes Tax	  */
+	public boolean isPassIncludesTax () 
+	{
+		Object oo = get_Value(COLUMNNAME_PassIncludesTax);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Pass Price.
 		@param PassPricePerUnit Pass Price	  */
 	public void setPassPricePerUnit (BigDecimal PassPricePerUnit)
@@ -1228,7 +1285,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULE_MixedPOSPayment = "M";
 	/** Cash  = Z */
-	public static final String PAYMENTRULE_PrepaidCash = "Z";
+	public static final String PAYMENTRULE_PreapidCash = "Z";
 	/** Set Payment Rule.
 		@param PaymentRule 
 		How you pay the invoice
@@ -1398,6 +1455,48 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_PrimaryDocumentNo2);
 	}
 
+	/** Set Print Delivery Estimate.
+		@param PrintDeliveryEstimate Print Delivery Estimate	  */
+	public void setPrintDeliveryEstimate (String PrintDeliveryEstimate)
+	{
+		set_Value (COLUMNNAME_PrintDeliveryEstimate, PrintDeliveryEstimate);
+	}
+
+	/** Get Print Delivery Estimate.
+		@return Print Delivery Estimate	  */
+	public String getPrintDeliveryEstimate () 
+	{
+		return (String)get_Value(COLUMNNAME_PrintDeliveryEstimate);
+	}
+
+	/** Set Print Invoice.
+		@param PrintInvoice Print Invoice	  */
+	public void setPrintInvoice (String PrintInvoice)
+	{
+		set_Value (COLUMNNAME_PrintInvoice, PrintInvoice);
+	}
+
+	/** Get Print Invoice.
+		@return Print Invoice	  */
+	public String getPrintInvoice () 
+	{
+		return (String)get_Value(COLUMNNAME_PrintInvoice);
+	}
+
+	/** Set Print Weighment Slip.
+		@param PrintWESlip Print Weighment Slip	  */
+	public void setPrintWESlip (String PrintWESlip)
+	{
+		set_Value (COLUMNNAME_PrintWESlip, PrintWESlip);
+	}
+
+	/** Get Print Weighment Slip.
+		@return Print Weighment Slip	  */
+	public String getPrintWESlip () 
+	{
+		return (String)get_Value(COLUMNNAME_PrintWESlip);
+	}
+
 	/** Set Processed.
 		@param Processed 
 		The document has been processed
@@ -1458,6 +1557,27 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return bd;
 	}
 
+	/** Set Rent Includes Tax.
+		@param RentIncludesTax Rent Includes Tax	  */
+	public void setRentIncludesTax (boolean RentIncludesTax)
+	{
+		set_Value (COLUMNNAME_RentIncludesTax, Boolean.valueOf(RentIncludesTax));
+	}
+
+	/** Get Rent Includes Tax.
+		@return Rent Includes Tax	  */
+	public boolean isRentIncludesTax () 
+	{
+		Object oo = get_Value(COLUMNNAME_RentIncludesTax);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Rounding Off.
 		@param RoundingOff Rounding Off	  */
 	public void setRoundingOff (BigDecimal RoundingOff)
@@ -1487,6 +1607,25 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public String getRoyaltyNo () 
 	{
 		return (String)get_Value(COLUMNNAME_RoyaltyNo);
+	}
+
+	/** East Weighbridge  = EW */
+	public static final String SECONDWEIGHBRIDGENAME_EastWeighbridge = "EW";
+	/** West Weighbridge  = WW */
+	public static final String SECONDWEIGHBRIDGENAME_WestWeighbridge = "WW";
+	/** Set Second Weighbridge Name.
+		@param SecondWeighbridgeName Second Weighbridge Name	  */
+	public void setSecondWeighbridgeName (String SecondWeighbridgeName)
+	{
+
+		set_Value (COLUMNNAME_SecondWeighbridgeName, SecondWeighbridgeName);
+	}
+
+	/** Get Second Weighbridge Name.
+		@return Second Weighbridge Name	  */
+	public String getSecondWeighbridgeName () 
+	{
+		return (String)get_Value(COLUMNNAME_SecondWeighbridgeName);
 	}
 
 	/** Set Shipment To.
@@ -2069,6 +2208,8 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String WEIGHMENTENTRYTYPE_StockToCrusher = "5KA";
 	/** Other Purchase = 8OP */
 	public static final String WEIGHMENTENTRYTYPE_OtherPurchase = "8OP";
+	/** Crusher to Stock = 9CA */
+	public static final String WEIGHMENTENTRYTYPE_CrusherToStock = "9CA";
 	/** Set Type.
 		@param WeighmentEntryType Type	  */
 	public void setWeighmentEntryType (String WeighmentEntryType)

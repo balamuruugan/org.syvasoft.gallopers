@@ -748,7 +748,8 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		
 		BigDecimal unitRent = BigDecimal.ZERO;
 		
-		if(MSysConfig.getValue("INCLUDE_RENT_AMOUNT_IN_INVOICE").equals("Y"))
+		//if(MSysConfig.getValue("INCLUDE_RENT_AMOUNT_IN_INVOICE").equals("Y"))
+		if(isIncludeRentAmtInvoice())
 			unitRent = getRent_Amt().divide(getNetWeightUnit(), 2,RoundingMode.HALF_EVEN);
 		
 		return getPrice().add(unitRent);
@@ -760,7 +761,8 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		
 		BigDecimal unitPassAmt = BigDecimal.ZERO;
 		
-		if(MSysConfig.getValue("INCLUDE_PASS_AMOUNT_IN_INVOICE", getAD_Client_ID(), getAD_Org_ID()).equals("Y"))
+		//if(MSysConfig.getValue("INCLUDE_PASS_AMOUNT_IN_INVOICE", getAD_Client_ID(), getAD_Org_ID()).equals("Y"))
+		if(isIncludePassAmtInvoice())
 			unitPassAmt = getPermitPassAmount().divide(getNetWeightUnit(), 2,RoundingMode.HALF_EVEN);
 		
 		return price.add(unitPassAmt);
