@@ -350,6 +350,15 @@ public interface I_TF_WeighmentEntry
 	/** Get Exit Time	  */
 	public Timestamp getExitTime();
 
+    /** Column name FirstWeighbridgeName */
+    public static final String COLUMNNAME_FirstWeighbridgeName = "FirstWeighbridgeName";
+
+	/** Set First Weighbridge Name	  */
+	public void setFirstWeighbridgeName (String FirstWeighbridgeName);
+
+	/** Get First Weighbridge Name	  */
+	public String getFirstWeighbridgeName();
+
     /** Column name FreightPrice */
     public static final String COLUMNNAME_FreightPrice = "FreightPrice";
 
@@ -373,17 +382,6 @@ public interface I_TF_WeighmentEntry
 	public int getFreightRule_ID();
 
 	public org.compiere.model.I_C_UOM getFreightRule() throws RuntimeException;
-
-    /** Column name FreightUOM_ID */
-    public static final String COLUMNNAME_FreightUOM_ID = "FreightUOM_ID";
-
-	/** Set Freight UOM	  */
-	public void setFreightUOM_ID (int FreightUOM_ID);
-
-	/** Get Freight UOM	  */
-	public int getFreightUOM_ID();
-
-	public org.compiere.model.I_C_UOM getFreightUOM() throws RuntimeException;
 
     /** Column name GrossPrice */
     public static final String COLUMNNAME_GrossPrice = "GrossPrice";
@@ -451,6 +449,24 @@ public interface I_TF_WeighmentEntry
 	  * Permit Sales / Non Permit Sales
 	  */
 	public boolean isHasBalance();
+
+    /** Column name IncludePassAmtInvoice */
+    public static final String COLUMNNAME_IncludePassAmtInvoice = "IncludePassAmtInvoice";
+
+	/** Set Include Pass Amount Invoice	  */
+	public void setIncludePassAmtInvoice (boolean IncludePassAmtInvoice);
+
+	/** Get Include Pass Amount Invoice	  */
+	public boolean isIncludePassAmtInvoice();
+
+    /** Column name IncludeRentAmtInvoice */
+    public static final String COLUMNNAME_IncludeRentAmtInvoice = "IncludeRentAmtInvoice";
+
+	/** Set Include Rent Amount Invoice	  */
+	public void setIncludeRentAmtInvoice (boolean IncludeRentAmtInvoice);
+
+	/** Get Include Rent Amount Invoice	  */
+	public boolean isIncludeRentAmtInvoice();
 
     /** Column name InvoiceNo */
     public static final String COLUMNNAME_InvoiceNo = "InvoiceNo";
@@ -690,6 +706,15 @@ public interface I_TF_WeighmentEntry
 	/** Get Party Name	  */
 	public String getPartyName();
 
+    /** Column name PassIncludesTax */
+    public static final String COLUMNNAME_PassIncludesTax = "PassIncludesTax";
+
+	/** Set Pass Includes Tax	  */
+	public void setPassIncludesTax (boolean PassIncludesTax);
+
+	/** Get Pass Includes Tax	  */
+	public boolean isPassIncludesTax();
+
     /** Column name PassPricePerUnit */
     public static final String COLUMNNAME_PassPricePerUnit = "PassPricePerUnit";
 
@@ -812,6 +837,33 @@ public interface I_TF_WeighmentEntry
 	/** Get PrimaryDocumentNo2	  */
 	public String getPrimaryDocumentNo2();
 
+    /** Column name PrintDeliveryEstimate */
+    public static final String COLUMNNAME_PrintDeliveryEstimate = "PrintDeliveryEstimate";
+
+	/** Set Print Delivery Estimate	  */
+	public void setPrintDeliveryEstimate (String PrintDeliveryEstimate);
+
+	/** Get Print Delivery Estimate	  */
+	public String getPrintDeliveryEstimate();
+
+    /** Column name PrintInvoice */
+    public static final String COLUMNNAME_PrintInvoice = "PrintInvoice";
+
+	/** Set Print Invoice	  */
+	public void setPrintInvoice (String PrintInvoice);
+
+	/** Get Print Invoice	  */
+	public String getPrintInvoice();
+
+    /** Column name PrintWESlip */
+    public static final String COLUMNNAME_PrintWESlip = "PrintWESlip";
+
+	/** Set Print Weighment Slip	  */
+	public void setPrintWESlip (String PrintWESlip);
+
+	/** Get Print Weighment Slip	  */
+	public String getPrintWESlip();
+
     /** Column name Processed */
     public static final String COLUMNNAME_Processed = "Processed";
 
@@ -843,6 +895,15 @@ public interface I_TF_WeighmentEntry
 	/** Get Rent (Amount)	  */
 	public BigDecimal getRent_Amt();
 
+    /** Column name RentIncludesTax */
+    public static final String COLUMNNAME_RentIncludesTax = "RentIncludesTax";
+
+	/** Set Rent Includes Tax	  */
+	public void setRentIncludesTax (boolean RentIncludesTax);
+
+	/** Get Rent Includes Tax	  */
+	public boolean isRentIncludesTax();
+
     /** Column name RoundingOff */
     public static final String COLUMNNAME_RoundingOff = "RoundingOff";
 
@@ -860,6 +921,15 @@ public interface I_TF_WeighmentEntry
 
 	/** Get TP No	  */
 	public String getRoyaltyNo();
+
+    /** Column name SecondWeighbridgeName */
+    public static final String COLUMNNAME_SecondWeighbridgeName = "SecondWeighbridgeName";
+
+	/** Set Second Weighbridge Name	  */
+	public void setSecondWeighbridgeName (String SecondWeighbridgeName);
+
+	/** Get Second Weighbridge Name	  */
+	public String getSecondWeighbridgeName();
 
     /** Column name ShipmentTo */
     public static final String COLUMNNAME_ShipmentTo = "ShipmentTo";

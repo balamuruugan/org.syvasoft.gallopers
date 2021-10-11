@@ -748,20 +748,22 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		
 		BigDecimal unitRent = BigDecimal.ZERO;
 		
-		if(MSysConfig.getValue("INCLUDE_RENT_AMOUNT_IN_INVOICE").equals("Y"))
+		//if(MSysConfig.getValue("INCLUDE_RENT_AMOUNT_IN_INVOICE").equals("Y"))
+		if(isIncludeRentAmtInvoice())
 			unitRent = getRent_Amt().divide(getNetWeightUnit(), 2,RoundingMode.HALF_EVEN);
 		
 		return getPrice().add(unitRent);
 	}
 	
 	public BigDecimal getMaterialPriceIncludedRoyaltyPass(BigDecimal price) {
-		if(getPermitPassAmount() == null || getPermitPassAmount().doubleValue() == 0 || getPassQtyIssued() == null || getPassQtyIssued().doubleValue() == 0)
+		if(getPermitPassAmount() == null || getPermitPassAmount().doubleValue() == 0 || getPermitIssuedQty() == null || getPermitIssuedQty().doubleValue() == 0)
 			return price;
 		
 		BigDecimal unitPassAmt = BigDecimal.ZERO;
 		
-		if(MSysConfig.getValue("INCLUDE_PASS_AMOUNT_IN_INVOICE").equals("Y"))
-			unitPassAmt = getPermitPassAmount().divide(getPassQtyIssued(), 2,RoundingMode.HALF_EVEN);
+		//if(MSysConfig.getValue("INCLUDE_PASS_AMOUNT_IN_INVOICE", getAD_Client_ID(), getAD_Org_ID()).equals("Y"))
+		if(isIncludePassAmtInvoice())
+			unitPassAmt = getPermitPassAmount().divide(getNetWeightUnit(), 2,RoundingMode.HALF_EVEN);
 		
 		return price.add(unitPassAmt);
 	}
