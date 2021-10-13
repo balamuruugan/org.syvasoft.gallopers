@@ -512,15 +512,33 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	 * Returns Sales Quick Entry Document Type ID
 	 * @return
 	 */
-	public int getC_DocType_ID() {
-		if(isGST())
-			return TF_MOrder.GSTOrderDocType_ID(getCtx());
-		else
-			return TF_MOrder.NonGSTOrderDocType_ID(getCtx());
+	public int getC_DocType_ID(String WeighmentEntryType) {
+		
+		if(WeighmentEntryType.equals(WEIGHMENTENTRYTYPE_Sales)) {
+			if(isGST())
+				return TF_MOrder.GSTOrderDocType_ID(getCtx());
+			else
+				return TF_MOrder.NonGSTOrderDocType_ID(getCtx());
+		}
+		else if(WeighmentEntryType.equals(WEIGHMENTENTRYTYPE_Input)) {
+			if(isGST())
+				return TF_MOrder.GSTPurchaeDocType_ID(getCtx());
+			else
+				return TF_MOrder.NonGSTPurchaeDocType_ID(getCtx());
+		}
+		return 0;
 	}
 	
 	public int getRoyaltyPass_DocType_ID() {
 		return TF_MOrder.RoyaltyPassOrderDocType_ID(getCtx());
+	}
+	
+	public static int getTransporterInvoiceDocType_ID() {
+		return TF_MOrder.getC_TransporterInvoiceDocType_ID();
+	}
+	
+	public static int getC_ServiceInvoiceDocType_ID() {
+		return TF_MOrder.getC_ServiceInvoiceDocType_ID();
 	}
 	
 	/***
@@ -528,12 +546,12 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	 * @return
 	 */
 	public int getC_DocTypeShipment_ID() {
-		MDocType dt = new MDocType(getCtx(), getC_DocType_ID(), get_TrxName());
+		MDocType dt = new MDocType(getCtx(), getC_DocType_ID(getWeighmentEntryType()), get_TrxName());
 		return dt.getC_DocTypeShipment_ID();                                                                           
 	}
 	
 	public int getC_DocTypeInvoice_ID() {
-		MDocType dt = new MDocType(getCtx(), getC_DocType_ID(), get_TrxName());
+		MDocType dt = new MDocType(getCtx(), getC_DocType_ID(getWeighmentEntryType()), get_TrxName());
 		return dt.getC_DocTypeInvoice_ID();
 	}
 	

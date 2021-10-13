@@ -32,10 +32,11 @@ import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
 public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 
 	private int C_DocType_ID = 1000050;
+	private int RecordId = 0;
 	
 	@Override
 	protected void prepare() {		
-
+		RecordId = getRecord_ID();
 	}
 
 	protected String doIt() throws Exception {
@@ -49,29 +50,29 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 				+ " AND NOT EXISTS(SELECT M_InOut.TF_WeighmentEntry_ID FROM M_InOut WHERE "
 				+ " M_InOut.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID AND M_InOut.DocStatus IN ('CO','CL'))";*/
 		
-		String whereClause = " WeighmentEntryType = '2PO' AND Status = 'CO' AND EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +
-				" T_Selection.AD_PInstance_ID=? AND T_Selection.T_Selection_ID = TF_WeighmentEntry.TF_WeighmentEntry_ID) "
-				+ " AND NOT EXISTS(SELECT C_Order.TF_WeighmentEntry_ID FROM C_Order WHERE "
-				+ "C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)"
-				+ " AND NOT EXISTS(SELECT M_InOut.TF_WeighmentEntry_ID FROM M_InOut WHERE "
-				+ " M_InOut.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID AND M_InOut.DocStatus IN ('CO','CL'))";
+		String whereClause = " WeighmentEntryType = '2PO' AND ((Status = 'CO' "
+				+ " AND NOT EXISTS(SELECT C_Order.TF_WeighmentEntry_ID FROM C_Order WHERE C_Order.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID))"
+				+ " OR (TF_WeighmentEntry_ID = ? AND TF_WeighmentEntry.Status IN ('UR','CO')))";
+				
 		int i = 0;
 		List<MWeighmentEntry> wEntries = new Query(getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
-				.setClient_ID().setParameters(getAD_PInstance_ID()).list();
+				.setClient_ID().setParameters(RecordId).list();
 		for(MWeighmentEntry wEntry : wEntries) {
 			Trx trx = Trx.get(get_TrxName(), false);
 			int C_BParner_ID = wEntry.getC_BPartner_ID();
 			if(C_BParner_ID == 0)
 				C_BParner_ID = 1000020;		
 			TF_MBPartner bp = new TF_MBPartner(getCtx(), C_BParner_ID, get_TrxName());
-			createConsolidatedPurchaseInvoice = MSysConfig.getBooleanValue("CONSOLIDATED_PURCHASE_INVOICE_ENABLED", true , getAD_Client_ID(), wEntry.getAD_Org_ID());
+			//createConsolidatedPurchaseInvoice = MSysConfig.getBooleanValue("CONSOLIDATED_PURCHASE_INVOICE_ENABLED", true , getAD_Client_ID(), wEntry.getAD_Org_ID());
 			Savepoint sp = null;
 			try {
-				if(!createConsolidatedPurchaseInvoice) {
+				//if(!createConsolidatedPurchaseInvoice) 
+				{
+					sp = trx.setSavepoint(wEntry.getDocumentNo());
 					TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
 					ord.setAD_Org_ID(wEntry.getAD_Org_ID());
-					ord.setC_DocTypeTarget_ID(C_DocType_ID);
-					ord.setC_DocType_ID(C_DocType_ID);
+					ord.setC_DocTypeTarget_ID(wEntry.getC_DocType_ID(wEntry.getWeighmentEntryType()));
+					ord.setC_DocType_ID(wEntry.getC_DocType_ID(wEntry.getWeighmentEntryType()));
 					ord.setM_Warehouse_ID(wEntry.getM_Warehouse_ID());
 					ord.setDateAcct(wEntry.getGrossWeightTime());
 					ord.setDateOrdered(wEntry.getGrossWeightTime());
@@ -79,7 +80,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					ord.setDescription(wEntry.getDescription());				
 					ord.setPaymentRule(wEntry.getPaymentRule());		
 					//Price List
-					int m_M_PriceList_ID = Env.getContextAsInt(getCtx(), "#M_PriceList_ID");
+					int m_M_PriceList_ID = MPriceList.getDefault(getCtx(), false).getM_PriceList_ID();
 					if(bp.getPO_PriceList_ID() > 0)
 						m_M_PriceList_ID = bp.getPO_PriceList_ID();			
 					ord.setM_PriceList_ID(m_M_PriceList_ID);
@@ -167,15 +168,15 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 						}
 						
 						
-						ord.setRent_Amt(RentAmt);										
+						ord.setRent_Amt(wEntry.getRent_Amt());										
 						ord.setRentMargin(BigDecimal.ZERO);
-						ord.setRentPayable(RentAmt);
+						ord.setRentPayable(wEntry.getRent_Amt());
 						
 					}
 					
 					ord.saveEx();				
 					
-					sp = trx.setSavepoint(wEntry.getDocumentNo());
+					
 					ord.setDocAction(DocAction.ACTION_Complete);
 					ord.completeIt();
 					ord.setDocStatus(TF_MOrder.DOCSTATUS_Completed);
@@ -187,8 +188,11 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					//}
 					trx.releaseSavepoint(sp);
 					addLog(ord.get_Table_ID(), ord.getCreated(), null, ord.getDocumentNo() + " is created!", ord.get_Table_ID(), ord.get_ID());
+					wEntry.setStatus(MWeighmentEntry.STATUS_Billed);
+					wEntry.saveEx();
+					i++;
 				}
-				else {
+				/*else {
 					//Material Receipt
 			
 					TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
@@ -230,7 +234,11 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 															
 					trx.releaseSavepoint(sp);
 					addLog(inout.get_Table_ID(), inout.getCreated(), null, inout.getDocumentNo() + " is created!", inout.get_Table_ID(), inout.get_ID());
-				}
+					wEntry.setStatus(MWeighmentEntry.STATUS_Billed);
+					wEntry.setProcessed(true);
+					wEntry.saveEx();
+					i++;
+				}*/
 			}
 			catch (Exception ex) {
 				if(sp != null)
@@ -245,10 +253,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 				wEntry.saveEx();
 				addLog(wEntry.get_Table_ID(), wEntry.getGrossWeightTime(), null, ex.getMessage(), wEntry.get_Table_ID(), wEntry.get_ID());
 			}
-			wEntry.setStatus(MWeighmentEntry.STATUS_Billed);
-			wEntry.setProcessed(true);
-			wEntry.saveEx();
-			i++;
+			
 		}
 		return i + " Weighment Entries are processed!";
 

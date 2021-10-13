@@ -184,6 +184,11 @@ public class TF_MInOut extends MInOut {
 		if(rv.getC_BPartner_ID() == getC_BPartner_ID())
 			return;
 		
+		if(!isSOTrx() && we.isRentInclusive())
+			return;
+		
+		MDocType dt = new MDocType(getCtx(), we.getTransporterInvoiceDocType_ID(), get_TrxName());
+		
 		MDestination dest = new MDestination(getCtx(), we.getTF_Destination_ID(), get_TrxName());
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), rv.getC_BPartner_ID(), get_TrxName());
 		
@@ -191,9 +196,10 @@ public class TF_MInOut extends MInOut {
 		inout.materialReceipt = false;
 		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
 		inout.setIsSOTrx(false);
-		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
+		inout.setC_DocType_ID(dt.getC_DocTypeShipment_ID());
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
-		inout.setDateAcct(getDateAcct());		
+		inout.setDateAcct(getDateAcct());
+		inout.setMovementDate(getDateAcct());
 		inout.setC_BPartner_ID(rv.getC_BPartner_ID());
 		inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
 		inout.setAD_User_ID(bp.getAD_User_ID());
@@ -224,17 +230,77 @@ public class TF_MInOut extends MInOut {
 				.setParameters(getM_InOut_ID(), rv.getM_Product_ID())
 				.first();
 		
-		
-		if(srcLine != null) {
-			Rent_UOM_ID = srcLine.getC_UOM_ID();
-			qty = srcLine.getQtyEntered();
-			Object srcPrice = srcLine.get_Value("Price");
-			if(srcPrice != null)
-				price = (BigDecimal) srcPrice; 
+		if(isSOTrx()) {
+			if(srcLine != null) {
+				Rent_UOM_ID = srcLine.getC_UOM_ID();
+				qty = srcLine.getQtyEntered();
+				Object srcPrice = srcLine.get_Value("Price");
+				if(srcPrice != null)
+					price = (BigDecimal) srcPrice; 
+				
+				//put transporter freight charge without margin.
+				if(srcLine.getTF_LumpSumRent_Config_ID() > 0) { 
+					MLumpSumRentConfig rentConfig = new MLumpSumRentConfig(getCtx(), srcLine.getTF_LumpSumRent_Config_ID(), get_TrxName());
+					price = rentConfig.getFreightPrice();
+					
+					ioLine.setC_Tax_ID(rentConfig.getC_Tax_ID());
+					ioLine.setIsTaxIncluded(rentConfig.isTaxIncluded());
+					ioLine.set_ValueOfColumn("TF_LumpSumRent_Config_ID", rentConfig.getTF_LumpSumRent_Config_ID());
+				}			
+				else {
+					ioLine.setC_Tax_ID(No_Tax_ID);
+				}
+				
+			}
+			else {
+				Rent_UOM_ID = we.getC_UOM_ID();
+				qty = we.getNetWeightUnit();
+			}
+			
+			/*rentMargin = price.multiply(srcLine.getRentMargin().divide(new BigDecimal(100)));
+			price = price.subtract(rentMargin);*/
+			
+			ioLine.setQty(qty);
+			ioLine.setC_UOM_ID(Rent_UOM_ID);
+			ioLine.setTF_Destination_ID(srcLine.getTF_Destination_ID());
+			ioLine.setDistance(srcLine.getDistance());
+			ioLine.setRateMTKM(srcLine.getRateMTKM());
+			ioLine.setPrice(price);
+		}
+		else
+		{
+			int Load_UOM_ID = MSysConfig.getIntValue("LOAD_UOM", 1000072, we.getAD_Client_ID());
+			int KM_UOM_ID = MSysConfig.getIntValue("KM_UOM", 1000071, we.getAD_Client_ID());
+			int MT_KM_UOM_ID = MSysConfig.getIntValue("MT_KM_UOM", 1000071, we.getAD_Client_ID());
+			BigDecimal RateMTKM = BigDecimal.ZERO;
+			
+			Rent_UOM_ID = we.getFreightRule_ID();
+			
+			if(we.getFreightRule_ID() == Load_UOM_ID)
+			{
+				Rent_UOM_ID = Load_UOM_ID;
+				qty = BigDecimal.ONE;							
+			}
+			else if(we.getFreightRule_ID() == KM_UOM_ID)
+			{
+				Rent_UOM_ID = KM_UOM_ID;
+				qty = dest.getDistance();							
+			}
+			else if(we.getFreightRule_ID() == MT_KM_UOM_ID)
+			{
+				Rent_UOM_ID = MT_KM_UOM_ID;
+				qty = we.getMT();							
+				RateMTKM =  price;
+			}
+			else
+			{
+				Rent_UOM_ID = we.getFreightRule_ID();
+				qty = we.getNetWeightUnit();							
+			}
 			
 			//put transporter freight charge without margin.
-			if(srcLine.getTF_LumpSumRent_Config_ID() > 0) { 
-				MLumpSumRentConfig rentConfig = new MLumpSumRentConfig(getCtx(), srcLine.getTF_LumpSumRent_Config_ID(), get_TrxName());
+			if(we.getTF_LumpSumRent_Config_ID() > 0) { 
+				MLumpSumRentConfig rentConfig = new MLumpSumRentConfig(getCtx(), we.getTF_LumpSumRent_Config_ID(), get_TrxName());
 				price = rentConfig.getFreightPrice();
 				
 				ioLine.setC_Tax_ID(rentConfig.getC_Tax_ID());
@@ -242,24 +308,19 @@ public class TF_MInOut extends MInOut {
 				ioLine.set_ValueOfColumn("TF_LumpSumRent_Config_ID", rentConfig.getTF_LumpSumRent_Config_ID());
 			}			
 			else {
+				price = we.getFreightPrice();
 				ioLine.setC_Tax_ID(No_Tax_ID);
 			}
 			
-		}
-		else {
-			Rent_UOM_ID = we.getC_UOM_ID();
-			qty = we.getNetWeightUnit();
+			ioLine.setQty(qty);
+			ioLine.setC_UOM_ID(Rent_UOM_ID);
+			ioLine.setTF_Destination_ID(we.getTF_Destination_ID());
+			ioLine.setDistance(dest.getDistance());
+			ioLine.setRateMTKM(RateMTKM);
+			ioLine.setPrice(price);
+			
 		}
 		
-		/*rentMargin = price.multiply(srcLine.getRentMargin().divide(new BigDecimal(100)));
-		price = price.subtract(rentMargin);*/
-		
-		ioLine.setQty(qty);
-		ioLine.setC_UOM_ID(Rent_UOM_ID);
-		ioLine.set_ValueOfColumn("TF_Destination_ID", srcLine.getTF_Destination_ID());
-		ioLine.set_ValueOfColumn("Distance", srcLine.getDistance());
-		ioLine.set_ValueOfColumn("RateMTKM", srcLine.getRateMTKM());
-		ioLine.set_ValueOfColumn("Price", price);
 		ioLine.set_ValueOfColumn("DocStatus", MWeighmentEntry.STATUS_Unbilled);
 		if(we.getTF_Destination_ID() > 0)
 			ioLine.setDescription("Destination : " + dest.getName());		

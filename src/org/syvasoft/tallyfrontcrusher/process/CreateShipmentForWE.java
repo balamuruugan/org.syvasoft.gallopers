@@ -26,7 +26,7 @@ public class CreateShipmentForWE extends SvrProcess {
 
 	@Override
 	protected String doIt() throws Exception {
-		String whereClause = " TF_WeighmentEntry.WeighmentEntryType = '1SO' AND TF_WeighmentEntry.Status IN ('CO','CL','PV') AND TF_WeighmentEntry.Processed='N' AND IsSecondary='N' ";
+		String whereClause = " TF_WeighmentEntry.WeighmentEntryType IN ('1SO','2PO') AND TF_WeighmentEntry.Status IN ('CO','CL','PV') AND TF_WeighmentEntry.Processed='N' AND IsSecondary='N' ";
 				
 		List<MWeighmentEntry> list = new Query(getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
@@ -43,7 +43,12 @@ public class CreateShipmentForWE extends SvrProcess {
 
 			if(!we.getNetWeightUnit().equals(BigDecimal.ZERO))
 			{
-				createShipmentDocument(we);
+				if(we.getWeighmentEntryType().equals(MWeighmentEntry.WEIGHMENTENTRYTYPE_Sales)) {
+					createShipmentDocument(we);
+				}
+				else if(we.getWeighmentEntryType().equals(MWeighmentEntry.WEIGHMENTENTRYTYPE_Input)) {
+					createMaterialReceiptDocument(we);
+				}
 				i=i+1;
 			}
 			else {
@@ -82,15 +87,18 @@ public class CreateShipmentForWE extends SvrProcess {
 			inout.setMovementDate(we.getGrossWeightTime());
 			inout.setC_DocType_ID(shipmentDocId);
 			inout.setM_Warehouse_ID(we.getM_Warehouse_ID());
-			inout.setDeliveryRule(TF_MInOut.DELIVERYRULE_Availability);
-			inout.setDeliveryViaRule(TF_MInOut.DELIVERYVIARULE_Pickup);
-			inout.setIsSOTrx(true); 
-			
 			inout.setTF_WeighmentEntry_ID(we.getTF_WeighmentEntry_ID());
 			inout.setDescription(we.getDescription());
-			inout.setMovementType(TF_MInOut.MOVEMENTTYPE_CustomerShipment);
+			
+			
 			if(we.getC_OrderLine_ID() > 0)
 				inout.setC_Order_ID(order.getC_Order_ID());
+			
+			inout.setDeliveryRule(TF_MInOut.DELIVERYRULE_Availability);
+			inout.setDeliveryViaRule(TF_MInOut.DELIVERYVIARULE_Pickup);
+			inout.setIsSOTrx(true);
+			inout.setMovementType(TF_MInOut.MOVEMENTTYPE_CustomerShipment);
+			
 			inout.saveEx(get_TrxName());
 			
 			//Material Issue Line
@@ -117,7 +125,7 @@ public class CreateShipmentForWE extends SvrProcess {
 			
 			
 			//Create Vehicle Rent Line for the Hired and Owned Vehicle
-			if(we.getTF_RentedVehicle() != null) {
+			if(inout.isSOTrx() && we.getTF_RentedVehicle() != null) {
 				MRentedVehicle rv = (MRentedVehicle) we.getTF_RentedVehicle();
 				if(rv.isOwnVehicle() || (rv.isTransporter() && rv.getC_BPartner_ID() != we.getC_BPartner_ID() && !we.isCustomerTransporter())) {
 					int Vendor_ID = rv.getC_BPartner_ID();
@@ -253,4 +261,82 @@ public class CreateShipmentForWE extends SvrProcess {
 						
 		 }
 	}
+
+	public void createMaterialReceiptDocument(MWeighmentEntry we) {
+		
+		if(we.hasShipmentGenerated()) {
+			we.shipped();
+			we.saveEx();
+			return;
+		}
+		
+		 TF_MOrderLine orderLine = new  TF_MOrderLine(getCtx(), we.getC_OrderLine_ID(), get_TrxName());
+		 
+		 if(orderLine != null) {	
+			 MOrder order = orderLine.getParent();
+			 
+			 int shipmentDocId = we.getC_DocTypeShipment_ID();
+			 
+			 //Material Issue
+			TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
+			inout.setAD_Org_ID(we.getAD_Org_ID());
+			inout.setC_BPartner_ID(we.getC_BPartner_ID());
+			TF_MBPartner bp = new TF_MBPartner(getCtx(), we.getC_BPartner_ID(), get_TrxName());
+			inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
+			inout.setAD_User_ID(bp.getAD_User_ID());
+			inout.setDateAcct(we.getGrossWeightTime());
+			inout.setMovementDate(we.getGrossWeightTime());
+			inout.setC_DocType_ID(shipmentDocId);
+			inout.setM_Warehouse_ID(we.getM_Warehouse_ID());
+			inout.setTF_WeighmentEntry_ID(we.getTF_WeighmentEntry_ID());
+			inout.setDescription(we.getDescription());			
+			
+			if(we.getC_OrderLine_ID() > 0)
+				inout.setC_Order_ID(order.getC_Order_ID());
+			
+			inout.setPriorityRule(TF_MInOut.PRIORITYRULE_Medium);
+			inout.setFreightCostRule(TF_MInOut.FREIGHTCOSTRULE_FreightIncluded);
+			inout.setIsSOTrx(false);
+			inout.setMovementType(TF_MInOut.MOVEMENTTYPE_VendorReceipts);
+			inout.saveEx(get_TrxName());
+			
+			//Material Issue Line
+			TF_MInOutLine ioLine = new TF_MInOutLine(inout);			
+			//ioLine.setOrderLine(orderLine, wh.getDefaultLocator().get_ID(), we.getNetWeightUnit());
+			ioLine.setM_Product_ID(we.getM_Product_ID());
+			ioLine.setC_UOM_ID(we.getC_UOM_ID());			
+			ioLine.setQty(we.getNetWeightUnit());
+			ioLine.setM_Locator_ID(we.getNetWeightUnit());
+			ioLine.setC_OrderLine_ID(we.getC_OrderLine_ID());
+			ioLine.saveEx(get_TrxName());			
+			
+			//Royalty Pass Issue Line
+			//it is applicable even for Non GST
+			if(we.getPassQtyIssued().doubleValue() != 0) {
+				ioLine = new TF_MInOutLine(inout);
+				ioLine.setM_Product_ID(we.getM_Product2_ID());
+				ioLine.setC_UOM_ID(we.getC_UOM_ID());
+				ioLine.setQty(we.getPassQtyIssued());
+				ioLine.setM_Locator_ID(we.getPassQtyIssued());
+				ioLine.saveEx(get_TrxName());
+			}
+			
+			//Material Issue DocAction
+			if (!inout.processIt(DocAction.ACTION_Complete)) {
+				//throw new AdempiereException("Failed when processing document - " + order.getProcessMsg());
+				String desc = we.getDescription();
+				if(desc == null)
+					desc = "";
+				if(!desc.contains("ERROR:")) {
+					we.setDescription(desc + " | ERROR: " + "Failed when processing document - " + inout.getProcessMsg());					
+				}					
+				we.saveEx();
+			}
+			
+			inout.saveEx();
+			//End DocAction
+						
+		 }
+	}
 }
+

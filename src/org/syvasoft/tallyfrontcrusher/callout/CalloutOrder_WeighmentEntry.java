@@ -97,7 +97,7 @@ public class CalloutOrder_WeighmentEntry implements IColumnCallout {
 				price = weighment.getPrice();
 			
 			if(isSOTrx)
-				mTab.setValue(TF_MOrder.COLUMNNAME_C_DocTypeTarget_ID, weighment.getC_DocType_ID());
+				mTab.setValue(TF_MOrder.COLUMNNAME_C_DocTypeTarget_ID, weighment.getC_DocType_ID(weighment.getWeighmentEntryType()));
 			
 			if(isSOTrx && weighment.getPassQtyIssued().doubleValue() != 0) {				
 				mTab.setValue(TF_MOrder.COLUMNNAME_Item2_ID, weighment.getM_Product2_ID());

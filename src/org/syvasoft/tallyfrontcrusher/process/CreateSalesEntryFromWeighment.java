@@ -166,8 +166,8 @@ public class CreateSalesEntryFromWeighment extends SvrProcess {
 		TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
 		ord.firstInvoice = firstInvoice;
 		ord.setAD_Org_ID(wEntry.getAD_Org_ID());
-		ord.setC_DocType_ID(wEntry.getC_DocType_ID());
-		ord.setC_DocTypeTarget_ID(wEntry.getC_DocType_ID());
+		ord.setC_DocType_ID(wEntry.getC_DocType_ID(wEntry.getWeighmentEntryType()));
+		ord.setC_DocTypeTarget_ID(wEntry.getC_DocType_ID(wEntry.getWeighmentEntryType()));
 		ord.setM_Warehouse_ID(wEntry.getM_Warehouse_ID());
 		ord.setDateAcct(wEntry.getGrossWeightTime());
 		ord.setDateOrdered(wEntry.getGrossWeightTime());

@@ -14,6 +14,7 @@ import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MAcctSchema;
 import org.compiere.model.MClient;
 import org.compiere.model.MCostDetail;
+import org.compiere.model.MDocType;
 import org.compiere.model.MInOut;
 import org.compiere.model.MInOutLine;
 import org.compiere.model.MInventory;
@@ -700,12 +701,14 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), proj.getC_BPartner_ID(), get_TrxName());
 		
+		MDocType dt = new MDocType(getCtx(), TF_MOrder.getC_ServiceInvoiceDocType_ID(), get_TrxName());
+		
 		//Service Receipt Header		
 		TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
 		inout.materialReceipt = false;
 		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
 		inout.setIsSOTrx(false);
-		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
+		inout.setC_DocType_ID(dt.getC_DocTypeShipment_ID());
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
 		inout.setDateAcct(getDateAcct());
 		inout.setMovementDate(getDateAcct());		
@@ -763,12 +766,13 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), C_BPartnerSubcon2_ID, get_TrxName());
 		
+		MDocType dt = new MDocType(getCtx(), TF_MOrder.getC_ServiceInvoiceDocType_ID(), get_TrxName());
 		//Service Receipt Header		
 		TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
 		inout.materialReceipt = false;
 		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
 		inout.setIsSOTrx(false);
-		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
+		inout.setC_DocType_ID(dt.getC_DocTypeShipment_ID());
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
 		inout.setDateAcct(getDateAcct());	
 		inout.setMovementDate(getDateAcct());		
@@ -826,6 +830,7 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 			return;
 		
 				
+		MDocType dt = new MDocType(getCtx(), we.getTransporterInvoiceDocType_ID(), get_TrxName());
 		MDestination dest = new MDestination(getCtx(), we.getTF_Destination_ID(), get_TrxName());
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), rv.getC_BPartner_ID(), get_TrxName());
 		
@@ -833,7 +838,7 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		inout.materialReceipt = false;
 		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
 		inout.setIsSOTrx(false);
-		inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
+		inout.setC_DocType_ID(dt.getC_DocTypeShipment_ID());
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
 		inout.setDateAcct(getDateAcct());	
 		inout.setMovementDate(getDateAcct());
