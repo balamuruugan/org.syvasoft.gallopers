@@ -28,6 +28,7 @@ import org.syvasoft.tallyfrontcrusher.model.MWeighmentEntry;
 import org.syvasoft.tallyfrontcrusher.model.TF_MBPartner;
 import org.syvasoft.tallyfrontcrusher.model.TF_MInOut;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrder;
+import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
 
 public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 
@@ -104,13 +105,9 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 						ord.setItem1_SandType(TF_MOrder.ITEM1_SANDTYPE_WithoutPermit);
 					ord.setItem1_ID(wEntry.getM_Product_ID());
 					
-					int tonnage_uom_id = MSysConfig.getIntValue("TONNAGE_UOM", 1000069, Env.getAD_Client_ID(getCtx()));
-					int uom_id = wEntry.getC_UOM_ID();
-					ord.setItem1_UOM_ID(ord.getItem1().getC_UOM_ID());
-					ord.setItem1_Tax_ID(1000000);
+					ord.setItem1_UOM_ID(wEntry.getC_UOM_ID());
+					ord.setItem1_Tax_ID(wEntry.getC_Tax_ID());
 					BigDecimal qty = wEntry.getNetWeightUnit();
-					/*if(uom_id == tonnage_uom_id)
-						qty = qty.divide(new BigDecimal(1000));*/
 					ord.setItem1_TotalLoad(BigDecimal.ONE);
 					ord.setItem1_PermitIssued(wEntry.getPermitIssuedQty()); 
 					ord.setMDPNo(wEntry.getMDPNo());
@@ -135,7 +132,20 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 					ord.setItem1_Amt(ord.getItem1_Qty().multiply(ord.getItem1_Price()));
 					ord.setCreateTransporterInvoice(!pprice.isRentInclusive());
 					
-					//Setting Transporter Charge
+					//Pass
+					ord.setItem2_ID(wEntry.getM_Product_Pass_ID());
+					
+					TF_MProduct product = new TF_MProduct(getCtx(),wEntry.getM_Product_Pass_ID(),get_TrxName());
+					
+					ord.setItem2_UOM_ID(product.getC_UOM_ID());
+					ord.setItem2_Tax_ID(product.getTax_ID(false, bp.isInterState()));
+					ord.setItem2_Qty(wEntry.getPermitIssuedQty());
+					
+					BigDecimal passprice = wEntry.getPassPricePerUnit();
+					ord.setItem2_Price(passprice);
+					ord.setItem1_Amt(ord.getItem2_Qty().multiply(ord.getItem2_Price()));
+					
+				/*	//Setting Transporter Charge
 					if(!pprice.isRentInclusive() && ord.getTF_RentedVehicle_ID() > 0) {					
 						MDestination dest = new MDestination(getCtx(), ord.getTF_Destination_ID(), get_TrxName());
 						MRentedVehicle rv = new MRentedVehicle(getCtx(), ord.getTF_RentedVehicle_ID(), get_TrxName());
@@ -172,7 +182,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 						ord.setRentMargin(BigDecimal.ZERO);
 						ord.setRentPayable(wEntry.getRent_Amt());
 						
-					}
+					}*/
 					
 					ord.saveEx();				
 					
