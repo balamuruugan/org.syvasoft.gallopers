@@ -66,7 +66,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 				createPurchaseQuickEntry(wEntry, trx);
 				
 				if(wEntry.isIncludePassAmtInvoice()) {
-					if(wEntry.getPermitIssuedQty().doubleValue() > 0) {
+					if(wEntry.getPermitPassAmount().doubleValue() > 0) {
 						createPurchaseQuickEntryForRoyaltyPass(wEntry, wEntry.getPermitIssuedQty(), true, trx);
 					}
 				}
