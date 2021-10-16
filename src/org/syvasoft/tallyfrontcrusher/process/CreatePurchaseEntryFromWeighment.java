@@ -32,6 +32,7 @@ import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
 
 public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 
+	Savepoint sp = null;
 	private int C_DocType_ID = 1000050;
 	private int RecordId = 0;
 	
@@ -60,195 +61,16 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 				.setClient_ID().setParameters(RecordId).list();
 		for(MWeighmentEntry wEntry : wEntries) {
 			Trx trx = Trx.get(get_TrxName(), false);
-			int C_BParner_ID = wEntry.getC_BPartner_ID();
-			if(C_BParner_ID == 0)
-				C_BParner_ID = 1000020;		
-			TF_MBPartner bp = new TF_MBPartner(getCtx(), C_BParner_ID, get_TrxName());
-			//createConsolidatedPurchaseInvoice = MSysConfig.getBooleanValue("CONSOLIDATED_PURCHASE_INVOICE_ENABLED", true , getAD_Client_ID(), wEntry.getAD_Org_ID());
-			Savepoint sp = null;
-			try {
-				//if(!createConsolidatedPurchaseInvoice) 
-				{
-					sp = trx.setSavepoint(wEntry.getDocumentNo());
-					TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
-					ord.setAD_Org_ID(wEntry.getAD_Org_ID());
-					ord.setC_DocTypeTarget_ID(wEntry.getC_DocType_ID(wEntry.getWeighmentEntryType()));
-					ord.setC_DocType_ID(wEntry.getC_DocType_ID(wEntry.getWeighmentEntryType()));
-					ord.setM_Warehouse_ID(wEntry.getM_Warehouse_ID());
-					ord.setDateAcct(wEntry.getGrossWeightTime());
-					ord.setDateOrdered(wEntry.getGrossWeightTime());
-					ord.setBPartner(bp);
-					ord.setDescription(wEntry.getDescription());				
-					ord.setPaymentRule(wEntry.getPaymentRule());		
-					//Price List
-					int m_M_PriceList_ID = MPriceList.getDefault(getCtx(), false).getM_PriceList_ID();
-					if(bp.getPO_PriceList_ID() > 0)
-						m_M_PriceList_ID = bp.getPO_PriceList_ID();			
-					ord.setM_PriceList_ID(m_M_PriceList_ID);
-					ord.setC_Currency_ID(MPriceList.get(getCtx(), m_M_PriceList_ID, get_TrxName()).getC_Currency_ID());
-					ord.setIsSOTrx(false);
-					ord.setTF_WeighmentEntry_ID(wEntry.getTF_WeighmentEntry_ID());	
-					ord.setTF_Destination_ID(wEntry.getTF_Destination_ID());
-					ord.setVehicleNo(wEntry.getVehicleNo());
-					ord.setTF_RentedVehicle_ID(wEntry.getTF_RentedVehicle_ID());
-					ord.setItem1_BucketQty(null);
-					ord.setTF_Send_To(wEntry.getTF_Send_To());
-					ord.setTF_ProductionPlant_ID(wEntry.getTF_ProductionPlant_ID());
-					ord.setTF_BlueMetal_Type(wEntry.getTF_BlueMetal_Type());
-					
-					//Item
-					ord.setItem1_IsPermitSales(wEntry.isHasBalance());
-					ord.setItem1_VehicleType_ID(wEntry.getTF_VehicleType_ID());
-					if(wEntry.isHasBalance())
-						ord.setItem1_SandType(TF_MOrder.ITEM1_SANDTYPE_PermitSand);
-					else
-						ord.setItem1_SandType(TF_MOrder.ITEM1_SANDTYPE_WithoutPermit);
-					ord.setItem1_ID(wEntry.getM_Product_ID());
-					
-					ord.setItem1_UOM_ID(wEntry.getC_UOM_ID());
-					ord.setItem1_Tax_ID(wEntry.getC_Tax_ID());
-					BigDecimal qty = wEntry.getNetWeightUnit();
-					ord.setItem1_TotalLoad(BigDecimal.ONE);
-					ord.setItem1_PermitIssued(wEntry.getPermitIssuedQty()); 
-					ord.setMDPNo(wEntry.getMDPNo());
-					ord.setItem1_Qty(qty);
-					
-					//Get price from Purchase Price List by UOM
-					BigDecimal price =BigDecimal.ZERO;
-					
-					MPriceListUOM pprice = MPriceListUOM.getPriceListUOM(getCtx(), wEntry.getM_Product_ID(),
-							ord.getItem1_UOM_ID(), bp.getC_BPartner_ID(),0, false, wEntry.getGrossWeightTime());
-					if( pprice == null)
-						throw new AdempiereException("Please configure the Purchase Price!");
-					
-					MWarehouse wh = (MWarehouse) wEntry.getM_Warehouse();
-					
-					ord.setM_Locator_ID(wh.getDefaultLocator().get_ID());
-					//price = pprice.getPrice();
-					price = wEntry.getPrice();
-					
-					ord.setItem1_Price(price);
-					ord.setItem1_UnitPrice(price);
-					ord.setItem1_Amt(ord.getItem1_Qty().multiply(ord.getItem1_Price()));
-					ord.setCreateTransporterInvoice(!pprice.isRentInclusive());
-					
-					//Pass
-					ord.setItem2_ID(wEntry.getM_Product_Pass_ID());
-					
-					TF_MProduct product = new TF_MProduct(getCtx(),wEntry.getM_Product_Pass_ID(),get_TrxName());
-					
-					ord.setItem2_UOM_ID(product.getC_UOM_ID());
-					ord.setItem2_Tax_ID(product.getTax_ID(false, bp.isInterState()));
-					ord.setItem2_Qty(wEntry.getPermitIssuedQty());
-					
-					BigDecimal passprice = wEntry.getPassPricePerUnit();
-					ord.setItem2_Price(passprice);
-					ord.setItem1_Amt(ord.getItem2_Qty().multiply(ord.getItem2_Price()));
-					
-				/*	//Setting Transporter Charge
-					if(!pprice.isRentInclusive() && ord.getTF_RentedVehicle_ID() > 0) {					
-						MDestination dest = new MDestination(getCtx(), ord.getTF_Destination_ID(), get_TrxName());
-						MRentedVehicle rv = new MRentedVehicle(getCtx(), ord.getTF_RentedVehicle_ID(), get_TrxName());
-						int Vendor_ID = rv.getC_BPartner_ID();					
-						BigDecimal RateMT = MLumpSumRentConfig.getRateMT(getCtx(), ord.getAD_Org_ID(), Vendor_ID, ord.getC_BPartner_ID(), ord.getItem1_ID(), 
-								ord.getTF_Destination_ID(), ord.getItem1_VehicleType_ID(), dest.getDistance(), get_TrxName());
-						BigDecimal RateKM = MLumpSumRentConfig.getRateKm(getCtx(), ord.getAD_Org_ID(), Vendor_ID, ord.getC_BPartner_ID(), ord.getItem1_ID(),
-								ord.getTF_Destination_ID(), ord.getItem1_VehicleType_ID(), dest.getDistance(), get_TrxName());
-						BigDecimal RateMTKM = MLumpSumRentConfig.getRateMTKm(getCtx(), ord.getAD_Org_ID(), Vendor_ID, ord.getC_BPartner_ID(),
-								ord.getItem1_ID(), ord.getTF_Destination_ID(), ord.getItem1_VehicleType_ID(), dest.getDistance(), get_TrxName());
-						BigDecimal RentAmt = BigDecimal.ZERO;
-						
-						if(RateMT.doubleValue() > 0) {
-							ord.setRate(RateMT);						
-							RentAmt = RateMT.multiply(qty);				
-						}
-						else if(RateKM.doubleValue() > 0) {
-							ord.setRate(RateKM);
-							RentAmt = RateKM.multiply(dest.getDistance());
-						}
-						else if(RateMTKM.doubleValue() > 0) {
-							ord.setRate(RateMTKM);
-							RentAmt = RateMTKM.multiply(ord.getDistance()).multiply(qty);
-						}
-						else {								
-							RentAmt=MLumpSumRentConfig.getLumpSumRent(getCtx(),ord.getAD_Org_ID(),Vendor_ID, ord.getC_BPartner_ID(), 
-									ord.getItem1_ID(), ord.getTF_Destination_ID(), ord.getItem1_VehicleType_ID(), dest.getDistance(), get_TrxName());
-							if(RentAmt.doubleValue() > 0)
-								ord.setIsLumpSumRent(true);
-						}
-						
-						
-						ord.setRent_Amt(wEntry.getRent_Amt());										
-						ord.setRentMargin(BigDecimal.ZERO);
-						ord.setRentPayable(wEntry.getRent_Amt());
-						
-					}*/
-					
-					ord.saveEx();				
-					
-					
-					ord.setDocAction(DocAction.ACTION_Complete);
-					ord.completeIt();
-					ord.setDocStatus(TF_MOrder.DOCSTATUS_Completed);
-					ord.saveEx();
-					
-					//String error = DocumentEngine.postImmediate(Env.getCtx(), ord.getAD_Client_ID(), ord.get_Table_ID(), ord.get_ID(), true, ord.get_TrxName());				
-					//if (! Util.isEmpty(error)) {
-					//		throw new AdempiereException(error);
-					//}
-					trx.releaseSavepoint(sp);
-					addLog(ord.get_Table_ID(), ord.getCreated(), null, ord.getDocumentNo() + " is created!", ord.get_Table_ID(), ord.get_ID());
-					wEntry.setStatus(MWeighmentEntry.STATUS_Billed);
-					wEntry.saveEx();
-					i++;
-				}
-				/*else {
-					//Material Receipt
 			
-					TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
-					inout.setAD_Org_ID(wEntry.getAD_Org_ID());
-					inout.setTF_WeighmentEntry_ID(wEntry.getTF_WeighmentEntry_ID());					
-					inout.setDescription(wEntry.getDescription());
-					inout.setC_DocType_ID(MGLPostingConfig.getMGLPostingConfig(getCtx()).getMaterialReceipt_DocType_ID());
-					inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);
-					inout.setMovementDate(wEntry.getGrossWeightTime());
-					inout.setDateAcct(wEntry.getGrossWeightTime());
-					inout.setC_BPartner_ID(wEntry.getC_BPartner_ID());
-					inout.setC_BPartner_Location_ID(bp.getPrimaryC_BPartner_Location_ID());
-					inout.setAD_User_ID(bp.getAD_User_ID());					
-					inout.setM_Warehouse_ID(wEntry.getM_Warehouse_ID());
-					inout.setPriorityRule(TF_MInOut.PRIORITYRULE_Medium);
-					inout.setFreightCostRule(TF_MInOut.FREIGHTCOSTRULE_FreightIncluded);
-					inout.setIsSOTrx(false);
-					inout.saveEx(get_TrxName());
-					
-					//Material Issue Line
-					MInOutLine ioLine = new MInOutLine(inout);
-					MWarehouse wh = (MWarehouse) wEntry.getM_Warehouse();
-					
-					ioLine.setLine(10);
-					ioLine.setM_Product_ID(wEntry.getM_Product_ID());
-					ioLine.setM_Locator_ID(wh.getDefaultLocator().get_ID());
-					ioLine.setQty(wEntry.getNetWeightUnit());
-					ioLine.setC_UOM_ID(wEntry.getC_UOM_ID());
-					ioLine.saveEx(get_TrxName());
-					
-					sp = trx.setSavepoint(wEntry.getDocumentNo());	
-					//Material Issue DocAction
-					if (!inout.processIt(DocAction.ACTION_Complete))
-						throw new AdempiereException("Failed when processing document - " + inout.getProcessMsg());
-					
-					inout.saveEx();
-					
-							
-															
-					trx.releaseSavepoint(sp);
-					addLog(inout.get_Table_ID(), inout.getCreated(), null, inout.getDocumentNo() + " is created!", inout.get_Table_ID(), inout.get_ID());
-					wEntry.setStatus(MWeighmentEntry.STATUS_Billed);
-					wEntry.setProcessed(true);
-					wEntry.saveEx();
-					i++;
-				}*/
+			try {
+				createPurchaseQuickEntry(wEntry, trx);
+				
+				if(wEntry.isIncludePassAmtInvoice()) {
+					if(wEntry.getPermitIssuedQty().doubleValue() > 0) {
+						createPurchaseQuickEntryForRoyaltyPass(wEntry, wEntry.getPermitIssuedQty(), true, trx);
+					}
+				}
+				i++;
 			}
 			catch (Exception ex) {
 				if(sp != null)
@@ -266,6 +88,150 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 			
 		}
 		return i + " Weighment Entries are processed!";
+	}
+	
+	private void createPurchaseQuickEntry(MWeighmentEntry wEntry, Trx trx) throws Exception {
+		sp = trx.setSavepoint(wEntry.getDocumentNo());
+		
+		int C_BParner_ID = wEntry.getC_BPartner_ID();
+		if(C_BParner_ID == 0)
+			C_BParner_ID = 1000020;		
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), C_BParner_ID, get_TrxName());
+		TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
+		ord.setAD_Org_ID(wEntry.getAD_Org_ID());
+		ord.setC_DocTypeTarget_ID(wEntry.getC_DocType_ID(wEntry.getWeighmentEntryType()));
+		ord.setC_DocType_ID(wEntry.getC_DocType_ID(wEntry.getWeighmentEntryType()));
+		ord.setM_Warehouse_ID(wEntry.getM_Warehouse_ID());
+		ord.setDateAcct(wEntry.getGrossWeightTime());
+		ord.setDateOrdered(wEntry.getGrossWeightTime());
+		ord.setBPartner(bp);
+		ord.setDescription(wEntry.getDescription());				
+		ord.setPaymentRule(wEntry.getPaymentRule());		
+		//Price List
+		int m_M_PriceList_ID = MPriceList.getDefault(getCtx(), false).getM_PriceList_ID();
+		if(bp.getPO_PriceList_ID() > 0)
+			m_M_PriceList_ID = bp.getPO_PriceList_ID();			
+		ord.setM_PriceList_ID(m_M_PriceList_ID);
+		ord.setC_Currency_ID(MPriceList.get(getCtx(), m_M_PriceList_ID, get_TrxName()).getC_Currency_ID());
+		ord.setIsSOTrx(false);
+		ord.setTF_WeighmentEntry_ID(wEntry.getTF_WeighmentEntry_ID());	
+		ord.setTF_Destination_ID(wEntry.getTF_Destination_ID());
+		ord.setVehicleNo(wEntry.getVehicleNo());
+		ord.setTF_RentedVehicle_ID(wEntry.getTF_RentedVehicle_ID());
+		ord.setItem1_BucketQty(null);
+		ord.setTF_Send_To(wEntry.getTF_Send_To());
+		ord.setTF_ProductionPlant_ID(wEntry.getTF_ProductionPlant_ID());
+		ord.setTF_BlueMetal_Type(wEntry.getTF_BlueMetal_Type());
+		
+		//Item
+		ord.setItem1_IsPermitSales(wEntry.isHasBalance());
+		ord.setItem1_VehicleType_ID(wEntry.getTF_VehicleType_ID());
+		if(wEntry.isHasBalance())
+			ord.setItem1_SandType(TF_MOrder.ITEM1_SANDTYPE_PermitSand);
+		else
+			ord.setItem1_SandType(TF_MOrder.ITEM1_SANDTYPE_WithoutPermit);
+		ord.setItem1_ID(wEntry.getM_Product_ID());
+		
+		ord.setItem1_UOM_ID(wEntry.getC_UOM_ID());
+		ord.setItem1_Tax_ID(wEntry.getC_Tax_ID());
+		BigDecimal qty = wEntry.getNetWeightUnit();
+		ord.setItem1_TotalLoad(BigDecimal.ONE);
+		ord.setItem1_PermitIssued(wEntry.getPermitIssuedQty()); 
+		ord.setMDPNo(wEntry.getMDPNo());
+		ord.setItem1_Qty(qty);
+		
+		MWarehouse wh = (MWarehouse) wEntry.getM_Warehouse();
+		ord.setM_Locator_ID(wh.getDefaultLocator().get_ID());
+		
+		//Get price from Purchase Price List by UOM
+		BigDecimal price = wEntry.getMaterialPriceIncludedRent();
+		price = wEntry.getMaterialPriceIncludedRoyaltyPass(price);
+		
+		ord.setItem1_Price(price);
+		ord.setItem1_UnitPrice(price);
+		ord.setItem1_Amt(ord.getItem1_Qty().multiply(ord.getItem1_Price()));
+				
+		ord.saveEx();				
+				
+		ord.setDocAction(DocAction.ACTION_Complete);
+		ord.completeIt();
+		ord.setDocStatus(TF_MOrder.DOCSTATUS_Completed);
+		ord.saveEx();
+		
+		trx.releaseSavepoint(sp);
+		addLog(ord.get_Table_ID(), ord.getCreated(), null, ord.getDocumentNo() + " is created!", ord.get_Table_ID(), ord.get_ID());
+		wEntry.setStatus(MWeighmentEntry.STATUS_Billed);
+		wEntry.saveEx();
+	}
+	
+	private void createPurchaseQuickEntryForRoyaltyPass(MWeighmentEntry wEntry, BigDecimal billedQty, boolean firstInvoice, Trx trx) throws Exception {
+		TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
+		ord.setAD_Org_ID(wEntry.getAD_Org_ID());
+		ord.setC_DocType_ID(wEntry.getRoyaltyPass_DocType_ID());
+		ord.setC_DocTypeTarget_ID(wEntry.getRoyaltyPass_DocType_ID());
+		ord.setM_Warehouse_ID(wEntry.getM_Warehouse_ID());
+		ord.setDateAcct(wEntry.getGrossWeightTime());
+		ord.setDateOrdered(wEntry.getGrossWeightTime());
+		int C_BParner_ID = wEntry.getC_BPartner_ID();
+		if(C_BParner_ID == 0)
+			C_BParner_ID = 1000020;		
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), C_BParner_ID, get_TrxName());
+		ord.setBPartner(bp);
+		ord.setPartyName(wEntry.getPartyName());
+		ord.setPhone(wEntry.getPhone());
+		ord.setDescription(wEntry.getDescription());
+		if(wEntry.getPartyName() != null && bp.getIsPOSCashBP())
+			ord.addDescription("Customer Name : " + wEntry.getPartyName());
+		
+		ord.setPaymentRule(wEntry.getPaymentRule());
+		ord.setOnAccount(false);
 
+		//Price List
+		int m_M_PriceList_ID = MPriceList.getDefault(getCtx(), true).getM_PriceList_ID();							
+		ord.setM_PriceList_ID(m_M_PriceList_ID);
+		ord.setC_Currency_ID(MPriceList.get(getCtx(), m_M_PriceList_ID, get_TrxName()).getC_Currency_ID());
+		ord.setIsSOTrx(false);
+		ord.setTF_WeighmentEntry_ID(wEntry.getTF_WeighmentEntry_ID());	
+		ord.setTF_Destination_ID(wEntry.getTF_Destination_ID());
+		ord.setVehicleNo(wEntry.getVehicleNo());
+		ord.setTF_RentedVehicle_ID(wEntry.getTF_RentedVehicle_ID());
+		
+		//Item
+		ord.setItem1_VehicleType_ID(wEntry.getTF_VehicleType_ID());
+		ord.setItem1_ID(wEntry.getM_Product_Pass_ID());
+		
+		TF_MProduct product = new TF_MProduct(getCtx(),wEntry.getM_Product_Pass_ID(),get_TrxName());
+		
+		int uom_id = product.getC_UOM_ID();
+		
+		ord.setItem1_UOM_ID(product.getC_UOM_ID());
+		ord.setItem1_Tax_ID(product.getTax_ID(false, bp.isInterState()));
+		BigDecimal qty = wEntry.getPermitIssuedQty();
+		if(billedQty != null)
+			qty = billedQty;
+		
+		if(qty.doubleValue() == 0)
+			throw new AdempiereException("Invalid Billing Qty!");
+		
+		ord.setTonnage(qty);
+		ord.setItem1_TotalLoad(BigDecimal.ONE);
+		
+		ord.setItem1_Qty(qty);
+		BigDecimal price = wEntry.getPassPricePerUnit();
+		ord.setItem1_Price(price);
+		ord.setItem1_UnitPrice(price);
+		ord.setItem1_Amt(ord.getItem1_Qty().multiply(ord.getItem1_Price()));			
+	
+		ord.setProcessed(false);		
+		ord.saveEx();				
+		
+		sp = trx.setSavepoint(wEntry.getDocumentNo());
+		ord.setDocAction(DocAction.ACTION_Complete);
+		ord.completeIt();
+		ord.setDocStatus(TF_MOrder.DOCSTATUS_Completed);
+		ord.saveEx();
+	
+		trx.releaseSavepoint(sp);
+		addLog(ord.get_Table_ID(), ord.getCreated(), null, " Purchase Entry : " + ord.getDocumentNo() + " is created!", ord.get_Table_ID(), ord.get_ID());
 	}
 }

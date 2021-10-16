@@ -567,7 +567,7 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		TF_MProduct p = new TF_MProduct(getCtx(), getM_Product_ID(), get_TrxName());
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
 		
-		if(MSysConfig.getValue("APPLY_GST_ALWAYS").equals("Y")) {
+		if(MSysConfig.getValue("APPLY_GST_ALWAYS").equals("Y") && getWeighmentEntryType().equals(WEIGHMENTENTRYTYPE_Sales)) {
 			if(isApplyTCS()) {
 				return p.getTax_ID(true, isApplyTCS(), bp.isInterState());
 			}
