@@ -181,7 +181,7 @@ public class TF_MInOut extends MInOut {
 		
 		//Don't Create Material Receipt for the same Transporter
 		//It stops the recursive loop
-		if(rv.getC_BPartner_ID() == getC_BPartner_ID())
+		if(isSOTrx() && (rv.getC_BPartner_ID() == getC_BPartner_ID()))
 			return;
 		
 		if(!isSOTrx() && we.isRentInclusive())
