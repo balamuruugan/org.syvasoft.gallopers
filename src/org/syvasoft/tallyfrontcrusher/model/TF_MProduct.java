@@ -392,7 +392,7 @@ public class TF_MProduct extends MProduct {
 	public int getTax_ID(boolean isTaxIncluded, boolean isInterState) {
 		String whereClause = "";
 		
-		if(getGSTRate().doubleValue() > 0) {
+		if(isTaxIncluded) {
 			whereClause = "Rate=? AND IsSummary=? AND IsInterState=? AND ad_org_id=0";
 		
 			MTax tax = new Query(getCtx(), MTax.Table_Name, whereClause, get_TrxName())

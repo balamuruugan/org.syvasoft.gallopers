@@ -189,6 +189,9 @@ public class TF_MInOut extends MInOut {
 		
 		MDocType dt = new MDocType(getCtx(), we.getTransporterInvoiceDocType_ID(), get_TrxName());
 		
+		if(getC_DocType_ID() == dt.getC_DocTypeShipment_ID())
+			return;
+		
 		MDestination dest = new MDestination(getCtx(), we.getTF_Destination_ID(), get_TrxName());
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), rv.getC_BPartner_ID(), get_TrxName());
 		
