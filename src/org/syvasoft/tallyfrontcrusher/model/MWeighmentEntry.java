@@ -60,9 +60,9 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		if(getPartyName()!=null && getC_BPartner_ID()==0) {
 			
 			//Check Customer with Phone No
-			String whereClause="lower(replace(Phone,' ',''))=lower(replace(?,' ','')) and IsCustomer='Y'";
+			String whereClause=" AD_Org_ID = ? AND lower(replace(Phone,' ',''))=lower(replace(?,' ','')) and IsCustomer='Y'";
 			TF_MBPartner bp = new Query(getCtx(), TF_MBPartner.Table_Name, whereClause, get_TrxName())
-					.setClient_ID().setParameters(getPhone().replace(" ", "")).first();
+					.setClient_ID().setParameters(getAD_Org_ID(), getPhone().replace(" ", "")).first();
 			if(bp != null)
 				setC_BPartner_ID(bp.getC_BPartner_ID());
 			else{
@@ -112,8 +112,8 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 					setVehicleNo(getTF_RentedVehicle().getVehicleNo());
 			
 			if(getC_BPartner_ID() == 0 && getPaymentRule().equals(PAYMENTRULE_Cash)) {
-				TF_MBPartner bp = new Query(getCtx(), TF_MBPartner.Table_Name, "IsPOSCashBP='Y'", get_TrxName())
-						.setClient_ID().first();
+				TF_MBPartner bp = new Query(getCtx(), TF_MBPartner.Table_Name, " AD_Org_ID = ? AND IsPOSCashBP='Y'", get_TrxName())
+						.setClient_ID().setParameters(getAD_Org_ID()).first();
 				if(bp != null) {
 					setC_BPartner_ID(bp.getC_BPartner_ID());				
 				}
@@ -124,10 +124,10 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 				setPaymentRule(PAYMENTRULE_OnCredit);
 			*/
 			if(getTF_RentedVehicle_ID()>0) {
-				String rvwhere="COALESCE(Tareweight,0)!=? AND IsTransporter='N' AND TF_RentedVehicle_ID=?";
+				String rvwhere=" AD_Org_ID = ? AND COALESCE(Tareweight,0)!=? AND IsTransporter='N' AND TF_RentedVehicle_ID=?";
 				MRentedVehicle rv= new Query(getCtx(), MRentedVehicle.Table_Name, rvwhere, get_TrxName())
 						.setClient_ID()
-						.setParameters(getTareWeight(),getTF_RentedVehicle_ID())
+						.setParameters(getAD_Org_ID(), getTareWeight(),getTF_RentedVehicle_ID())
 						.first();
 				
 				if(rv!=null) {
@@ -260,9 +260,9 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		MRentedVehicle rentedVehicle = new MRentedVehicle(getCtx(), getTF_RentedVehicle_ID(), get_TrxName());
 		
 		if(rentedVehicle.isOwnVehicle()) {
-			String where = "M_Product_ID = " + rentedVehicle.getM_Product_ID();
+			String where = " AD_Org_ID = ? AND M_Product_ID = " + rentedVehicle.getM_Product_ID();
 			
-			MMachinery machinery = new Query(getCtx(), MMachinery.Table_Name, where, get_TrxName()).first();
+			MMachinery machinery = new Query(getCtx(), MMachinery.Table_Name, where, get_TrxName()).setClient_ID().setParameters(getAD_Org_ID()).first();
 			
 			if(machinery != null) {
 				CreateTripSheet(machinery);
@@ -409,14 +409,14 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	}
 
 	void CreateCustomerVehicle() {
-		if(getC_BPartner_ID()>0) {
+		if(getC_BPartner_ID()>0 && getTF_VehicleType_ID() == 0) {
 			TF_MBPartner bp=new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
 			
 			if(!bp.getIsPOSCashBP()) {
-				String whereClause="UPPER(replace(vehicleno,' ',''))='"+getVehicleNo().replace(" ","").toUpperCase()+"'";
+				String whereClause=" AD_Org_ID = ? AND UPPER(replace(vehicleno,' ',''))='"+getVehicleNo().replace(" ","").toUpperCase()+"'";
 				
 				MRentedVehicle rentedVehicle = new Query(getCtx(), MRentedVehicle.Table_Name, whereClause, get_TrxName())
-												.setClient_ID()
+												.setClient_ID().setParameters(getAD_Org_ID())
 												.first();
 				
 				if(rentedVehicle != null) {
@@ -455,9 +455,9 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	
 	void CreateDestination() {
 		if(getNewDestination()!=null && getTF_Destination_ID()==0) {
-			String whereClause="UPPER(replace(Name,' ',''))='"+getNewDestination().replace(" ","").toUpperCase()+"'";
+			String whereClause=" AD_Org_ID = ? AND UPPER(replace(Name,' ',''))='"+getNewDestination().replace(" ","").toUpperCase()+"'";
 			MDestination dest=new Query(getCtx(),MDestination.Table_Name, whereClause,get_TrxName())
-					.setClient_ID()
+					.setClient_ID().setParameters(getAD_Org_ID())
 					.first();
 			if(dest!=null) {
 				setTF_Destination_ID(dest.getTF_Destination_ID());
