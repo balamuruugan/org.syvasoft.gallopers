@@ -3855,7 +3855,7 @@ public class TF_MOrder extends MOrder {
 		
 		//Financial Dimension - Profit Center		
 		//invoice.setC_Project_ID(counterProj.getC_Project_ID());
-		//invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
+		invoice.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());
 		
 		invoice.saveEx();
 		
