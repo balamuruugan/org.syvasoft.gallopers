@@ -529,6 +529,10 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		return 0;
 	}
 	
+	public int getRoyaltyPassPurchase_DocType_ID() {
+		return TF_MOrder.RoyaltyPassOrderPurchaseDocType_ID(getCtx());
+	}
+	
 	public int getRoyaltyPass_DocType_ID() {
 		return TF_MOrder.RoyaltyPassOrderDocType_ID(getCtx());
 	}

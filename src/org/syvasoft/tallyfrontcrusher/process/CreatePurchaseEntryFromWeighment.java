@@ -167,8 +167,8 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 	private void createPurchaseQuickEntryForRoyaltyPass(MWeighmentEntry wEntry, BigDecimal billedQty, boolean firstInvoice, Trx trx) throws Exception {
 		TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
 		ord.setAD_Org_ID(wEntry.getAD_Org_ID());
-		ord.setC_DocType_ID(wEntry.getRoyaltyPass_DocType_ID());
-		ord.setC_DocTypeTarget_ID(wEntry.getRoyaltyPass_DocType_ID());
+		ord.setC_DocType_ID(wEntry.getRoyaltyPassPurchase_DocType_ID());
+		ord.setC_DocTypeTarget_ID(wEntry.getRoyaltyPassPurchase_DocType_ID());
 		ord.setM_Warehouse_ID(wEntry.getM_Warehouse_ID());
 		ord.setDateAcct(wEntry.getGrossWeightTime());
 		ord.setDateOrdered(wEntry.getGrossWeightTime());

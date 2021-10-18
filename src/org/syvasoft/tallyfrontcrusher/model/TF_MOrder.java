@@ -3563,6 +3563,11 @@ public class TF_MOrder extends MOrder {
 		return DocType_ID;
 	}
 	
+	public static int RoyaltyPassOrderPurchaseDocType_ID(Properties ctx) {
+		int DocType_ID = MSysConfig.getIntValue("ROYALTY_PASS_PURCHASE_DOCTYPE_ID", 1000062, Env.getAD_Client_ID(ctx));
+		return DocType_ID;
+	}
+	
 	public static int RoyaltyPassOrderDocType_ID(Properties ctx) {
 		int DocType_ID = MSysConfig.getIntValue("ROYALTY_PASS_DOCTYPE_ID", 1000062, Env.getAD_Client_ID(ctx));
 		return DocType_ID;
