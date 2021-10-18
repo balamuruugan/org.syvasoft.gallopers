@@ -187,7 +187,7 @@ public class CreatePurchaseEntryFromWeighment extends SvrProcess {
 		ord.setOnAccount(false);
 
 		//Price List
-		int m_M_PriceList_ID = MPriceList.getDefault(getCtx(), true).getM_PriceList_ID();							
+		int m_M_PriceList_ID = MPriceList.getDefault(getCtx(), false).getM_PriceList_ID();							
 		ord.setM_PriceList_ID(m_M_PriceList_ID);
 		ord.setC_Currency_ID(MPriceList.get(getCtx(), m_M_PriceList_ID, get_TrxName()).getC_Currency_ID());
 		ord.setIsSOTrx(false);
