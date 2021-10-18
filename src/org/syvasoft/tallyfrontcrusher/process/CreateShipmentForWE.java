@@ -16,6 +16,7 @@ import org.syvasoft.tallyfrontcrusher.model.MRentedVehicle;
 import org.syvasoft.tallyfrontcrusher.model.MWeighmentEntry;
 import org.syvasoft.tallyfrontcrusher.model.TF_MBPartner;
 import org.syvasoft.tallyfrontcrusher.model.TF_MOrderLine;
+import org.syvasoft.tallyfrontcrusher.model.TF_MProduct;
 
 public class CreateShipmentForWE extends SvrProcess {
 		
@@ -116,12 +117,16 @@ public class CreateShipmentForWE extends SvrProcess {
 			//it is applicable even for Non GST
 			if(we.getPermitIssuedQty().doubleValue() != 0) {
 				ioLine = new TF_MInOutLine(inout);
-				ioLine.setM_Product_ID(we.getM_Product2_ID());
-				ioLine.setC_UOM_ID(we.getC_UOM_ID());
-				ioLine.setQty(we.getPassQtyIssued());
+				ioLine.setM_Product_ID(we.getM_Product_Pass_ID());
+				
+				TF_MProduct passproduct = new TF_MProduct(getCtx(), we.getM_Product_Pass_ID(), get_TrxName());				
+				ioLine.setC_UOM_ID(passproduct.getC_UOM_ID());
+				
+				ioLine.setQty(we.getPermitIssuedQty());
 				ioLine.setM_Locator_ID(we.getPassQtyIssued());
 				ioLine.saveEx(get_TrxName());
 			}
+			
 			
 			
 			//Create Vehicle Rent Line for the Hired and Owned Vehicle
@@ -312,11 +317,14 @@ public class CreateShipmentForWE extends SvrProcess {
 			
 			//Royalty Pass Issue Line
 			//it is applicable even for Non GST
-			if(we.getPassQtyIssued().doubleValue() != 0) {
+			if(we.getPermitIssuedQty().doubleValue() != 0) {
 				ioLine = new TF_MInOutLine(inout);
-				ioLine.setM_Product_ID(we.getM_Product2_ID());
-				ioLine.setC_UOM_ID(we.getC_UOM_ID());
-				ioLine.setQty(we.getPassQtyIssued());
+				ioLine.setM_Product_ID(we.getM_Product_Pass_ID());
+				
+				TF_MProduct passproduct = new TF_MProduct(getCtx(), we.getM_Product_Pass_ID(), get_TrxName());				
+				ioLine.setC_UOM_ID(passproduct.getC_UOM_ID());
+				
+				ioLine.setQty(we.getPermitIssuedQty());
 				ioLine.setM_Locator_ID(we.getPassQtyIssued());
 				ioLine.saveEx(get_TrxName());
 			}
