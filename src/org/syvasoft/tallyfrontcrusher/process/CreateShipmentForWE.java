@@ -114,7 +114,7 @@ public class CreateShipmentForWE extends SvrProcess {
 			
 			//Royalty Pass Issue Line
 			//it is applicable even for Non GST
-			if(we.getPassQtyIssued().doubleValue() != 0) {
+			if(we.getPermitIssuedQty().doubleValue() != 0) {
 				ioLine = new TF_MInOutLine(inout);
 				ioLine.setM_Product_ID(we.getM_Product2_ID());
 				ioLine.setC_UOM_ID(we.getC_UOM_ID());
