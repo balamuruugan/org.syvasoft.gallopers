@@ -770,9 +770,12 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		
 		BigDecimal unitRent = BigDecimal.ZERO;
 		
+		//Incomplete Functionality
 		//if(MSysConfig.getValue("INCLUDE_RENT_AMOUNT_IN_INVOICE").equals("Y"))
-		if(isIncludeRentAmtInvoice())
+		//if(isIncludeRentAmtInvoice()) {
+		if(getWeighmentEntryType().equals(WEIGHMENTENTRYTYPE_Sales)) {
 			unitRent = getRent_Amt().divide(getNetWeightUnit(), 2,RoundingMode.HALF_EVEN);
+		}
 		
 		return getPrice().add(unitRent);
 	}
