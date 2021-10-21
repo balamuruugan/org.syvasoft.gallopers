@@ -15,7 +15,7 @@ Import-Package: org.apache.commons.collections.keyvalue;version="3.2.0",
  org.apache.commons.lang.time;version="2.6.0",
  org.json,
  org.osgi.framework;version="1.8.0"
-Service-Component: OSGi-INF/CrusherModelFactory.xml,OSGi-INF/CrusherProcessFactory.xml,OSGi-INF/CrusherEventHandler.xml,
+Service-Component: OSGi-INF/CrusherModelFactory.xml,OSGi-INF/CrusherProcessFactory.xml,OSGi-INF/CrusherEventHandler.xml,OSGi-INF/NotificationEventHandler.xml,
  OSGi-INF/CrusherCalloutFactory.xml
 Export-Package: org.syvasoft.tallyfrontcrusher.callout
 Eclipse-Registerbuddy: org.adempiere.base
