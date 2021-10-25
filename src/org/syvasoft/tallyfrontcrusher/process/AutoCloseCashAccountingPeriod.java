@@ -20,7 +20,7 @@ public class AutoCloseCashAccountingPeriod extends SvrProcess {
 	@Override
 	protected String doIt() throws Exception {
 		String whereClause = "C_BankAccount_ID NOT IN (SELECT C_BankAccount_ID FROM "
-				+ "TF_AcctPeriod WHERE DateTo < now() - 1)";
+				+ "TF_AcctPeriod WHERE DateTo <= now() - 1)";
 		List<TF_MBankAccount> list = new Query(getCtx(), TF_MBankAccount.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
 				.setOnlyActiveRecords(true)
