@@ -319,6 +319,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MPLCReadingLog.class;
 		else if(MWeek.Table_Name.equals(tableName))			
 			return MWeek.class;
+		else if(MBPAcctPeriod.Table_Name.equals(tableName))			
+			return MBPAcctPeriod.class;
 
 		return null;
 	}
@@ -632,7 +634,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MPLCReadingLog(ctx, Record_ID, trxName);
 		else if(MWeek.Table_Name.equals(tableName))			
 			return new MWeek(ctx, Record_ID, trxName);
-
+		else if(MBPAcctPeriod.Table_Name.equals(tableName))			
+			return new MBPAcctPeriod(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -947,7 +950,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MPLCReadingLog(ctx, rs, trxName);
 		else if(MWeek.Table_Name.equals(tableName))			
 			return new MWeek(ctx, rs, trxName);
-
+		else if(MBPAcctPeriod.Table_Name.equals(tableName))			
+			return new MBPAcctPeriod(ctx, rs, trxName);
 		return null;
 	}
 }

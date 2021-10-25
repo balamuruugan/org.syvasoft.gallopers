@@ -49,6 +49,7 @@ import org.compiere.util.Env;
 import org.compiere.util.Trx;
 import org.osgi.service.event.Event;
 import org.syvasoft.tallyfrontcrusher.model.MAdditionalTransactionSetup;
+import org.syvasoft.tallyfrontcrusher.model.MBPAcctPeriod;
 import org.syvasoft.tallyfrontcrusher.model.MBoulderReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MCashAcctPeriod;
 import org.syvasoft.tallyfrontcrusher.model.MCashCounter;
@@ -92,6 +93,9 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		registerTableEvent(IEventTopics.PO_BEFORE_CHANGE, MPayment.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MInvoiceLine.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MInvoice.Table_Name);
+		registerTableEvent(IEventTopics.PO_BEFORE_CHANGE, MInvoice.Table_Name);
+		registerTableEvent(IEventTopics.PO_BEFORE_CHANGE, MInOut.Table_Name);
+		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MInOut.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MTransaction.Table_Name);
 		registerTableEvent(IEventTopics.PO_AFTER_NEW, MTyre.Table_Name);
 		registerTableEvent(IEventTopics.PO_BEFORE_NEW, MJournal.Table_Name);
@@ -119,10 +123,14 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		PO po = getPO(event);
 		if(po.get_TableName().equals(MPayment.Table_Name)) {
 			MPayment payment = (MPayment) po;
+			if(!MBPAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BPartner_ID(), payment.getDateTrx()))
+				throw new AdempiereUserError("Business Partner Accounting Period is closed!, Please contact Administrator!");
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
 				//Period Open
 				if(!MCashAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BankAccount_ID(), payment.getDateTrx()))
 					throw new AdempiereUserError("Cash Accounting Period is closed!, Please contact Administrator!");
+				
+				
 				
 				//To show party name and phone for cash sales...
 				if(payment.getC_Invoice_ID() > 0 && payment.getReversal_ID() == 0) {
@@ -213,7 +221,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			if(event.getTopic().equals(IEventTopics.DOC_AFTER_REVERSECORRECT)) {
 				//reverseAdditionalTransactions(srcInv);
 			}
-			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
+			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {				
 				if (inv.getC_Order_ID() > 0) {
 					TF_MOrder ord = new TF_MOrder(Env.getCtx(), inv.getC_Order_ID(), inv.get_TrxName());
 					srcInv.set_ValueOfColumn(TF_MOrder.COLUMNNAME_VehicleNo, ord.getVehicleNo());
@@ -221,6 +229,10 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					srcInv.setTF_WeighmentEntry_ID(ord.getTF_WeighmentEntry_ID());
 				}
 			}
+			
+			if(!MBPAcctPeriod.isOpen(inv.getCtx(), inv.getAD_Org_ID(), inv.getC_BPartner_ID(), inv.getDateAcct()))
+				throw new AdempiereUserError("Business Partner Accounting Period is closed!, Please contact Administrator!");
+		
 		}
 		else if(po.get_TableName().equals(MInvoiceLine.Table_Name)) {
 			MInvoiceLine iLine = (MInvoiceLine) po;
@@ -237,6 +249,11 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					iLine.set_ValueOfColumn(TF_MOrderLine.COLUMNNAME_TF_VehicleType_ID, oLine.getTF_VehicleType_ID() == 0 ? null : oLine.getTF_VehicleType_ID());
 				}
 			}
+		}
+		else if(po.get_TableName().equals(MInOut.Table_Name)) {
+			MInOut io = (MInOut) po;
+			if(!MBPAcctPeriod.isOpen(io.getCtx(), io.getAD_Org_ID(), io.getC_BPartner_ID(), io.getDateAcct()))
+				throw new AdempiereUserError("Business Partner Accounting Period is closed!, Please contact Administrator!");
 		}
 		else if(po.get_TableName().equals(MInOutLine.Table_Name)) {
 			MInOutLine iLine = (MInOutLine) po;
