@@ -34,4 +34,16 @@ public class MMachineryStatement extends X_PM_MachineStmt {
 			mStatement.delete(true);
 		
 	}
+	
+	public static void deletePaymentEntries(Properties ctx, int C_Payment_ID, String trxName) {
+		String whereClause="C_Payment_ID=?";
+		List<MMachineryStatement> list =new Query(ctx, MMachineryStatement.Table_Name, whereClause, trxName)
+						.setClient_ID()
+						.setParameters(C_Payment_ID)
+						.list();
+		for(MMachineryStatement mStatement : list)
+			mStatement.delete(true);
+		
+	}
+	
 }

@@ -872,6 +872,7 @@ public class TF_MPayment extends MPayment {
 		
 		reverseAdvanceAdjustmentJournal();
 		reverseCreditNote();
+		MMachineryStatement.deletePaymentEntries(getCtx(), getC_Payment_ID(), get_TrxName());
 		
 		boolean ok = super.reverseCorrectIt();
 		ok = ok && reverseInterCashBookEntry();
