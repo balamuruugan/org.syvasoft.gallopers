@@ -328,7 +328,7 @@ public class MTripSheet extends X_TF_TripSheet {
 			ms.setPM_Machinery_ID(getPM_Machinery_ID());				
 			ms.setQty(rent.getTotalMT());
 			ms.setM_Product_ID(rent.getM_Product_ID());
-			ms.setC_UOM_ID(getRent_UOM_ID());
+			ms.setC_UOM_ID(rent.getC_UOM_ID() > 0 ? rent.getC_UOM_ID() :  getRent_UOM_ID());
 			ms.setRate(rent.getRateMT());
 			ms.setIncome(rent.getRent_Amt());
 			ms.setDescription(rent.getDescription());
@@ -584,7 +584,7 @@ public class MTripSheet extends X_TF_TripSheet {
 		int ownVehicle_ID = getPM_Machinery().getTF_RentedVehicle_ID();
 		
 		//Selecting right weighment entries for the current machinery
-		String sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = ? " +  
+		String sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = ?, TF_TripSheetProduct_ID = NULL " +  
 				"  WHERE AD_Org_ID = ? AND TF_RentedVehicle_ID = ? AND GrossWeightTime BETWEEN ? AND ? AND Status IN ('CO','CL')";			
 		ArrayList<Object> params = new ArrayList<Object>();
 		params.add(getTF_TripSheet_ID());
@@ -661,6 +661,9 @@ public class MTripSheet extends X_TF_TripSheet {
 		}
 		
 		/*
+		 * 5KA = Stock to Crusher
+		 * 9CA = Crusher to Stock (Sledge)
+		 * 
 		sql="SELECT " + 
 				   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,max(r.unitrent)unitrent " + 
 				   " FROM " + 
@@ -706,41 +709,70 @@ public class MTripSheet extends X_TF_TripSheet {
 			pstmt = null;
 		}
 		
-		sql = "SELECT " + 
-				   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,sum(we.rent_amt)/sum(we.netweight / 1000) unitrent " + 
-				   " FROM " + 
-				   " tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id " + 
-				   " WHERE " + 
-				   " WeighmentEntryType IN ('1SO') AND GrossWeightTime BETWEEN ? AND ? AND " + 
-				   " TF_RentedVehicle_ID =  (SELECT TF_RentedVehicle_ID FROM PM_Machinery WHERE PM_Machinery.PM_Machinery_ID = ?) " + 
-				   " GROUP BY we.m_product_id,p.m_product_category_id,we.quarryproductiontype";
+		*/
+		
+		sql = "SELECT \r\n" + 
+				"	we.m_product_id,p.m_product_category_id,	\r\n" + 
+				"	count(*) loads, \r\n" + 
+				"	sum(IL.QtyEntered)netweight,\r\n" + 
+				"	il.C_UOM_ID,\r\n" + 
+				"	il.Price unitrent\r\n" + 
+				//"	'Sales Delivery - ' || il.Description Description \r\n" + 
+				"FROM\r\n" + 
+				"	tf_weighmententry we INNER JOIN M_InOut io \r\n" + 
+				"		ON we.TF_WeighmentEntry_ID = io.TF_WeighmentEntry_ID AND\r\n" + 
+				"			io.DocStatus IN ('CO','CL')\r\n" + 
+				"	INNER JOIN TF_RentedVehicle rv \r\n" + 
+				"		ON rv.TF_RentedVehicle_ID = we.TF_RentedVehicle_ID\r\n" + 
+				"	INNER JOIN M_InOutLine il \r\n" + 
+				"		ON il.M_Product_ID = rv.M_Product_ID AND il.M_InOut_ID = io.M_InOut_ID	\r\n" + 
+				"	INNER JOIN M_Product p\r\n" + 
+				"		ON p.M_Product_ID = we.M_Product_ID\r\n" + 
+				"WHERE \r\n" + 
+				"	we.WeighmentEntryType IN ('1SO') AND we.TF_TripSheet_ID = ?  \r\n" + 
+				"GROUP BY \r\n" + 
+				"	we.m_product_id,p.m_product_category_id,il.Price, il.C_UOM_ID";
 
 		pstmt = null;
 		rs = null;
-		
+		params = new ArrayList<Object>();
+		params.add(getTF_TripSheet_ID());
 		try {
 			pstmt = DB.prepareStatement(sql, get_TrxName());
+			DB.setParameters(pstmt, params.toArray());
 			rs = pstmt.executeQuery();		
 			while (rs.next()) {
 				MTripSheetProduct product = new MTripSheetProduct(getCtx(), 0, get_TrxName());
 				
 				product.setAD_Org_ID(getAD_Org_ID());
-				product.setTF_TripSheet_ID(getTF_TripSheet_ID());
-				product.setQuarryProductionType(rs.getString("quarryproductiontype"));
+				product.setTF_TripSheet_ID(getTF_TripSheet_ID());				
 				product.setM_Product_Category_ID(rs.getInt("m_product_category_id"));
 				product.setM_Product_ID(rs.getInt("m_product_id"));
-				product.setNoOfLoad(rs.getBigDecimal("loads"));
-				
+				product.setNoOfLoad(rs.getBigDecimal("loads"));				
 				BigDecimal unitrent = rs.getBigDecimal("unitrent");
-				BigDecimal totalmt = rs.getBigDecimal("netweight");
-				
+				BigDecimal totalmt = rs.getBigDecimal("netweight");				
 				product.setTotalMT(totalmt);
 				product.setRateMT(unitrent);
+				product.setC_UOM_ID(rs.getInt("C_UOM_ID"));
 				product.setRent_Amt(unitrent.multiply(totalmt));
-				product.setDescription("Customer Delivery");			
+				//product.setDescription(rs.getString("Description"));	
+				product.setDescription("Sales Delivery");
 				product.setIsGenerated(true);
 				
 				product.saveEx();
+				
+				
+				sql = "UPDATE TF_WeighmentEntry SET TF_TripSheetProduct_ID = ? "   
+						+ " WHERE TF_TripSheet_ID = ? AND WeighmentEntryType IN ('1SO') AND M_Product_ID = ? "
+						+ " AND FreightRule_ID = ? AND FreightPrice = ?";
+				params = new ArrayList<Object>();
+				params.add(product.getTF_TripSheetProduct_ID());
+				params.add(getTF_TripSheet_ID());
+				params.add(product.getM_Product_ID());
+				params.add(product.getC_UOM_ID());
+				params.add(product.getRateMT());
+				DB.executeUpdateEx(sql,params.toArray(), get_TrxName());
+					
 			}
 		} catch (SQLException e) {
 			throw new DBException(e, sql);
@@ -750,6 +782,7 @@ public class MTripSheet extends X_TF_TripSheet {
 			pstmt = null;
 		}
 		
+		/*
 		sql="SELECT " + 
 				   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,sum(we.rent_amt)/sum(we.netweight / 1000) unitrent " + 
 				   " FROM " + 
