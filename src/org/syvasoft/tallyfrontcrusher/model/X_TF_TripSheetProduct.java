@@ -32,7 +32,7 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210901L;
+	private static final long serialVersionUID = 20211028L;
 
     /** Standard Constructor */
     public X_TF_TripSheetProduct (Properties ctx, int TF_TripSheetProduct_ID, String trxName)
@@ -40,6 +40,8 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
       super (ctx, TF_TripSheetProduct_ID, trxName);
       /** if (TF_TripSheetProduct_ID == 0)
         {
+			setIsGenerated (false);
+// N
 			setM_Product_Category_ID (0);
 			setM_Product_ID (0);
 			setTF_TripSheetProduct_ID (0);
@@ -98,6 +100,34 @@ public class X_TF_TripSheetProduct extends PO implements I_TF_TripSheetProduct, 
 	public int getC_Activity_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Activity_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_UOM getC_UOM() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_UOM)MTable.get(getCtx(), org.compiere.model.I_C_UOM.Table_Name)
+			.getPO(getC_UOM_ID(), get_TrxName());	}
+
+	/** Set UOM.
+		@param C_UOM_ID 
+		Unit of Measure
+	  */
+	public void setC_UOM_ID (int C_UOM_ID)
+	{
+		if (C_UOM_ID < 1) 
+			set_Value (COLUMNNAME_C_UOM_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_UOM_ID, Integer.valueOf(C_UOM_ID));
+	}
+
+	/** Get UOM.
+		@return Unit of Measure
+	  */
+	public int getC_UOM_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_UOM_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

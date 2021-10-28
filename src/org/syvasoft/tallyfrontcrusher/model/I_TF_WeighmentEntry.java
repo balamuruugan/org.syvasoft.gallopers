@@ -1121,6 +1121,28 @@ public interface I_TF_WeighmentEntry
 	/** Get Send To	  */
 	public String getTF_Send_To();
 
+    /** Column name TF_TripSheet_ID */
+    public static final String COLUMNNAME_TF_TripSheet_ID = "TF_TripSheet_ID";
+
+	/** Set Trip Sheet	  */
+	public void setTF_TripSheet_ID (int TF_TripSheet_ID);
+
+	/** Get Trip Sheet	  */
+	public int getTF_TripSheet_ID();
+
+	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException;
+
+    /** Column name TF_TripSheetProduct_ID */
+    public static final String COLUMNNAME_TF_TripSheetProduct_ID = "TF_TripSheetProduct_ID";
+
+	/** Set Trip Sheet Product Detail	  */
+	public void setTF_TripSheetProduct_ID (int TF_TripSheetProduct_ID);
+
+	/** Get Trip Sheet Product Detail	  */
+	public int getTF_TripSheetProduct_ID();
+
+	public I_TF_TripSheetProduct getTF_TripSheetProduct() throws RuntimeException;
+
     /** Column name TF_VehicleType_ID */
     public static final String COLUMNNAME_TF_VehicleType_ID = "TF_VehicleType_ID";
 
@@ -1218,6 +1240,15 @@ public interface I_TF_WeighmentEntry
 
 	/** Get Vehicle No	  */
 	public String getVehicleNo();
+
+    /** Column name VendorDCNo */
+    public static final String COLUMNNAME_VendorDCNo = "VendorDCNo";
+
+	/** Set Vendor DC #	  */
+	public void setVendorDCNo (String VendorDCNo);
+
+	/** Get Vendor DC #	  */
+	public String getVendorDCNo();
 
     /** Column name WeighmentEntryType */
     public static final String COLUMNNAME_WeighmentEntryType = "WeighmentEntryType";

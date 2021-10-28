@@ -33,7 +33,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211011L;
+	private static final long serialVersionUID = 20211028L;
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)
@@ -428,7 +428,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		@param CustomerTransporter Customer's Transporter	  */
 	public void setCustomerTransporter (boolean CustomerTransporter)
 	{
-		set_ValueNoCheck (COLUMNNAME_CustomerTransporter, Boolean.valueOf(CustomerTransporter));
+		set_Value (COLUMNNAME_CustomerTransporter, Boolean.valueOf(CustomerTransporter));
 	}
 
 	/** Get Customer's Transporter.
@@ -573,6 +573,8 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String FIRSTWEIGHBRIDGENAME_EastWeighbridge = "EW";
 	/** West Weighbridge  = WW */
 	public static final String FIRSTWEIGHBRIDGENAME_WestWeighbridge = "WW";
+	/** Blue Metals = BM */
+	public static final String FIRSTWEIGHBRIDGENAME_BlueMetals = "BM";
 	/** Set First Weighbridge Name.
 		@param FirstWeighbridgeName First Weighbridge Name	  */
 	public void setFirstWeighbridgeName (String FirstWeighbridgeName)
@@ -1285,7 +1287,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULE_MixedPOSPayment = "M";
 	/** Cash  = Z */
-	public static final String PAYMENTRULE_PreapidCash = "Z";
+	public static final String PAYMENTRULE_Prepaid = "Z";
 	/** Set Payment Rule.
 		@param PaymentRule 
 		How you pay the invoice
@@ -1613,6 +1615,8 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String SECONDWEIGHBRIDGENAME_EastWeighbridge = "EW";
 	/** West Weighbridge  = WW */
 	public static final String SECONDWEIGHBRIDGENAME_WestWeighbridge = "WW";
+	/** Blue Metals = BM */
+	public static final String SECONDWEIGHBRIDGENAME_BlueMetals = "BM";
 	/** Set Second Weighbridge Name.
 		@param SecondWeighbridgeName Second Weighbridge Name	  */
 	public void setSecondWeighbridgeName (String SecondWeighbridgeName)
@@ -2039,6 +2043,56 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		return (String)get_Value(COLUMNNAME_TF_Send_To);
 	}
 
+	public I_TF_TripSheet getTF_TripSheet() throws RuntimeException
+    {
+		return (I_TF_TripSheet)MTable.get(getCtx(), I_TF_TripSheet.Table_Name)
+			.getPO(getTF_TripSheet_ID(), get_TrxName());	}
+
+	/** Set Trip Sheet.
+		@param TF_TripSheet_ID Trip Sheet	  */
+	public void setTF_TripSheet_ID (int TF_TripSheet_ID)
+	{
+		if (TF_TripSheet_ID < 1) 
+			set_Value (COLUMNNAME_TF_TripSheet_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_TripSheet_ID, Integer.valueOf(TF_TripSheet_ID));
+	}
+
+	/** Get Trip Sheet.
+		@return Trip Sheet	  */
+	public int getTF_TripSheet_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_TripSheet_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_TripSheetProduct getTF_TripSheetProduct() throws RuntimeException
+    {
+		return (I_TF_TripSheetProduct)MTable.get(getCtx(), I_TF_TripSheetProduct.Table_Name)
+			.getPO(getTF_TripSheetProduct_ID(), get_TrxName());	}
+
+	/** Set Trip Sheet Product Detail.
+		@param TF_TripSheetProduct_ID Trip Sheet Product Detail	  */
+	public void setTF_TripSheetProduct_ID (int TF_TripSheetProduct_ID)
+	{
+		if (TF_TripSheetProduct_ID < 1) 
+			set_Value (COLUMNNAME_TF_TripSheetProduct_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_TripSheetProduct_ID, Integer.valueOf(TF_TripSheetProduct_ID));
+	}
+
+	/** Get Trip Sheet Product Detail.
+		@return Trip Sheet Product Detail	  */
+	public int getTF_TripSheetProduct_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_TripSheetProduct_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 	public I_TF_VehicleType getTF_VehicleType() throws RuntimeException
     {
 		return (I_TF_VehicleType)MTable.get(getCtx(), I_TF_VehicleType.Table_Name)
@@ -2194,6 +2248,20 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public String getVehicleNo () 
 	{
 		return (String)get_Value(COLUMNNAME_VehicleNo);
+	}
+
+	/** Set Vendor DC #.
+		@param VendorDCNo Vendor DC #	  */
+	public void setVendorDCNo (String VendorDCNo)
+	{
+		set_Value (COLUMNNAME_VendorDCNo, VendorDCNo);
+	}
+
+	/** Get Vendor DC #.
+		@return Vendor DC #	  */
+	public String getVendorDCNo () 
+	{
+		return (String)get_Value(COLUMNNAME_VendorDCNo);
 	}
 
 	/** Sales = 1SO */
