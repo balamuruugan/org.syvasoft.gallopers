@@ -45,7 +45,7 @@ public class MMachineryRentConfig extends X_TF_Machinery_RentConfig {
 
 	public static MMachineryRentConfig getExpense(Properties ctx, int PM_Machinery_ID, int jobwork_id, int UOM_ID) {
 		
-		String whereClause = "(PM_Machinery_ID = ? OR  PM_Machinery_ID IS NULL ) and COALESCE(JobWork_Product_ID,0)  = ? AND C_UOM_ID = ?";
+		String whereClause = " (PM_Machinery_ID = ? OR  PM_Machinery_ID IS NULL ) and COALESCE(JobWork_Product_ID,0)  = ? AND C_UOM_ID = ?";
 		MMachineryRentConfig m = new Query(ctx, Table_Name, whereClause, null)
 				.setClient_ID()
 				.setOnlyActiveRecords(true)

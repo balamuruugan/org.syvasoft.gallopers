@@ -194,4 +194,13 @@ public interface I_TF_Machinery_RentConfig
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name WeighmentEntryType */
+    public static final String COLUMNNAME_WeighmentEntryType = "WeighmentEntryType";
+
+	/** Set Type	  */
+	public void setWeighmentEntryType (String WeighmentEntryType);
+
+	/** Get Type	  */
+	public String getWeighmentEntryType();
 }

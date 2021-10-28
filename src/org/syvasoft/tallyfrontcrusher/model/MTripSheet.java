@@ -607,9 +607,9 @@ public class MTripSheet extends X_TF_TripSheet {
 				"	 sum(we.netweightunit)netweight, we.C_UOM_ID, max(r.unitrent)unitrent\r\n" + 
 				"FROM \r\n" + 
 				"	 tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id \r\n" + 
-				"	 INNER JOIN TF_Machinery_RentConfig R ON we.m_product_id = r.JobWork_Product_ID \r\n" + 
+				"	 INNER JOIN TF_Machinery_RentConfig R ON r.WeighmentEntryType IS NULL AND we.m_product_id = r.JobWork_Product_ID \r\n" + 
 				"WHERE \r\n" + 
-				"	 WeighmentEntryType IN ('3PR','4SR') AND TF_TripSheet_ID = ? \r\n" + 
+				"	 we.WeighmentEntryType IN ('3PR','4SR') AND TF_TripSheet_ID = ? \r\n" + 
 				"GROUP BY \r\n" + 
 				"	we.m_product_id,p.m_product_category_id,we.quarryproductiontype, we.C_UOM_ID";
 		
@@ -663,22 +663,28 @@ public class MTripSheet extends X_TF_TripSheet {
 		/*
 		 * 5KA = Stock to Crusher
 		 * 9CA = Crusher to Stock (Sledge)
-		 * 
-		sql="SELECT " + 
-				   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,max(r.unitrent)unitrent " + 
-				   " FROM " + 
-				   " tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id " + 
-				   " INNER JOIN TF_Machinery_RentConfig R ON we.m_product_id = r.JobWork_Product_ID " + 
-				   " WHERE " + 
-				   " WeighmentEntryType IN ('5KA') AND GrossWeightTime BETWEEN ? AND ? AND " + 
-				   " TF_RentedVehicle_ID =  (SELECT TF_RentedVehicle_ID FROM PM_Machinery WHERE PM_Machinery.PM_Machinery_ID = ?) " + 
-				   " GROUP BY we.m_product_id,p.m_product_category_id,we.quarryproductiontype";
+		 */
+		sql = "SELECT \r\n" + 
+				"	we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,\r\n" + 
+				"	 sum(we.netweightunit)netweight, we.C_UOM_ID, max(r.unitrent)unitrent, \r\n" + 
+				"	 R.DESCRIPTION, we.WeighmentEntryType \r\n" + 
+				"FROM\r\n" + 
+				"	tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id \r\n" + 
+				"	 INNER JOIN TF_Machinery_RentConfig R ON we.m_product_id = r.JobWork_Product_ID  AND \r\n" + 
+				"	 	r.WeighmentEntryType = we.WeighmentEntryType\r\n" + 
+				"WHERE\r\n" + 
+				"	 we.WeighmentEntryType IN ('5KA', '9CA') AND TF_TripSheet_ID = ? \n" +
+				 
+				"GROUP BY we.m_product_id,p.m_product_category_id,we.quarryproductiontype, we.C_UOM_ID,\r\n" + 
+				"	R.DESCRIPTION,  we.WeighmentEntryType" ;
 
 		pstmt = null;
 		rs = null;
-		
+		params = new ArrayList<Object>();
+		params.add(getTF_TripSheet_ID());		
 		try {
 			pstmt = DB.prepareStatement(sql, get_TrxName());
+			DB.setParameters(pstmt, params.toArray());
 			rs = pstmt.executeQuery();		
 			while (rs.next()) {
 				MTripSheetProduct product = new MTripSheetProduct(getCtx(), 0, get_TrxName());
@@ -693,13 +699,27 @@ public class MTripSheet extends X_TF_TripSheet {
 				BigDecimal unitrent = rs.getBigDecimal("unitrent");
 				BigDecimal totalmt = rs.getBigDecimal("netweight");
 				
+				product.setC_UOM_ID(rs.getInt("C_UOM_ID"));
 				product.setTotalMT(totalmt);
 				product.setRateMT(unitrent);
 				product.setRent_Amt(unitrent.multiply(totalmt));
-				product.setDescription("Stock to Crusher");				
+				product.setDescription(rs.getString("Description"));				
 				product.setIsGenerated(true);
 				
 				product.saveEx();
+				
+				
+				sql = "UPDATE TF_WeighmentEntry SET TF_TripSheetProduct_ID = ?, Status='CL' "   
+						+ " WHERE TF_TripSheet_ID = ? AND WeighmentEntryType IN  ('5KA', '9CA') AND M_Product_ID = ? "
+						+ " AND C_UOM_ID = ? AND WeighmentEntryType = ?";
+				params = new ArrayList<Object>();
+				params.add(product.getTF_TripSheetProduct_ID());
+				params.add(getTF_TripSheet_ID());
+				params.add(product.getM_Product_ID());
+				params.add(product.getC_UOM_ID());				
+				params.add(rs.getString("WeighmentEntryType"));
+				DB.executeUpdateEx(sql,params.toArray(), get_TrxName());
+				
 			}
 		} catch (SQLException e) {
 			throw new DBException(e, sql);
@@ -709,7 +729,7 @@ public class MTripSheet extends X_TF_TripSheet {
 			pstmt = null;
 		}
 		
-		*/
+	
 		
 		sql = "SELECT \r\n" + 
 				"	we.m_product_id,p.m_product_category_id,	\r\n" + 

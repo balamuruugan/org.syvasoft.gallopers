@@ -32,7 +32,7 @@ public class X_TF_Machinery_RentConfig extends PO implements I_TF_Machinery_Rent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210618L;
+	private static final long serialVersionUID = 20211028L;
 
     /** Standard Constructor */
     public X_TF_Machinery_RentConfig (Properties ctx, int TF_Machinery_RentConfig_ID, String trxName)
@@ -41,7 +41,6 @@ public class X_TF_Machinery_RentConfig extends PO implements I_TF_Machinery_Rent
       /** if (TF_Machinery_RentConfig_ID == 0)
         {
 			setC_UOM_ID (0);
-			setPM_Machinery_ID (0);
 			setTF_Machinery_RentConfig_ID (0);
         } */
     }
@@ -235,5 +234,34 @@ public class X_TF_Machinery_RentConfig extends PO implements I_TF_Machinery_Rent
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Sales = 1SO */
+	public static final String WEIGHMENTENTRYTYPE_Sales = "1SO";
+	/** Input = 2PO */
+	public static final String WEIGHMENTENTRYTYPE_Input = "2PO";
+	/** Own Production Receipt = 3PR */
+	public static final String WEIGHMENTENTRYTYPE_OwnProductionReceipt = "3PR";
+	/** Subcontract Production Receipt = 4SR */
+	public static final String WEIGHMENTENTRYTYPE_SubcontractProductionReceipt = "4SR";
+	/** Stock to Crusher = 5KA */
+	public static final String WEIGHMENTENTRYTYPE_StockToCrusher = "5KA";
+	/** Other Purchase = 8OP */
+	public static final String WEIGHMENTENTRYTYPE_OtherPurchase = "8OP";
+	/** Crusher to Stock = 9CA */
+	public static final String WEIGHMENTENTRYTYPE_CrusherToStock = "9CA";
+	/** Set Type.
+		@param WeighmentEntryType Type	  */
+	public void setWeighmentEntryType (String WeighmentEntryType)
+	{
+
+		set_Value (COLUMNNAME_WeighmentEntryType, WeighmentEntryType);
+	}
+
+	/** Get Type.
+		@return Type	  */
+	public String getWeighmentEntryType () 
+	{
+		return (String)get_Value(COLUMNNAME_WeighmentEntryType);
 	}
 }
