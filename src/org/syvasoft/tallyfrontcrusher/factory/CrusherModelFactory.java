@@ -321,7 +321,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MWeek.class;
 		else if(MBPAcctPeriod.Table_Name.equals(tableName))			
 			return MBPAcctPeriod.class;
-
+		else if(MLoadingSlip.Table_Name.equals(tableName))			
+			return MLoadingSlip.class;
 		return null;
 	}
 
@@ -636,6 +637,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MWeek(ctx, Record_ID, trxName);
 		else if(MBPAcctPeriod.Table_Name.equals(tableName))			
 			return new MBPAcctPeriod(ctx, Record_ID, trxName);
+		else if(MLoadingSlip.Table_Name.equals(tableName))			
+			return new MLoadingSlip(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -952,6 +955,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MWeek(ctx, rs, trxName);
 		else if(MBPAcctPeriod.Table_Name.equals(tableName))			
 			return new MBPAcctPeriod(ctx, rs, trxName);
+		else if(MLoadingSlip.Table_Name.equals(tableName))			
+			return new MLoadingSlip(ctx, rs, trxName);
 		return null;
 	}
 }
