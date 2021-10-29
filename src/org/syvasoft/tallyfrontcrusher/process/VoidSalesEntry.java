@@ -67,6 +67,7 @@ public class VoidSalesEntry extends SvrProcess {
 				
 				wEntry.voidWeighmentEntry();
 				wEntry.setStatus(MWeighmentEntry.STATUS_UnderReview);
+				wEntry.setProcessed(false);
 				wEntry.saveEx();
 				
 				trx.releaseSavepoint(sp);

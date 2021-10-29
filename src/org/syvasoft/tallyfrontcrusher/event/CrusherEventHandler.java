@@ -126,9 +126,7 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			if(!MBPAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BPartner_ID(), payment.getDateTrx()))
 				throw new AdempiereUserError("Business Partner Accounting Period is closed!, Please contact Administrator!");
 			if(event.getTopic().equals(IEventTopics.PO_BEFORE_NEW)) {
-				//Period Open
-				if(!MCashAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BankAccount_ID(), payment.getDateTrx()))
-					throw new AdempiereUserError("Cash Accounting Period is closed!, Please contact Administrator!");
+				
 				
 				
 				
@@ -159,6 +157,9 @@ public class CrusherEventHandler extends AbstractEventHandler {
 					}
 				}
 				
+			//Period Open
+			if(!MCashAcctPeriod.isOpen(payment.getCtx(), payment.getAD_Org_ID(), payment.getC_BankAccount_ID(), payment.getDateTrx()))
+				throw new AdempiereUserError("Cash Accounting Period is closed!, Please contact Administrator!");
 
 			  if(payment.is_new() && payment.get_ValueAsInt("TF_CashCounter_ID")==0) {
 				 
