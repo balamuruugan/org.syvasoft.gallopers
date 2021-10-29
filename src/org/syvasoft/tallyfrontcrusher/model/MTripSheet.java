@@ -709,7 +709,7 @@ public class MTripSheet extends X_TF_TripSheet {
 				product.saveEx();
 				
 				
-				sql = "UPDATE TF_WeighmentEntry SET TF_TripSheetProduct_ID = ?, Status='CL' "   
+				sql = "UPDATE TF_WeighmentEntry SET TF_TripSheetProduct_ID = ?, Status='CL' "   // There may be a bug arise incase of scheduler delay of processing
 						+ " WHERE TF_TripSheet_ID = ? AND WeighmentEntryType IN  ('5KA', '9CA') AND M_Product_ID = ? "
 						+ " AND C_UOM_ID = ? AND WeighmentEntryType = ?";
 				params = new ArrayList<Object>();
@@ -730,7 +730,7 @@ public class MTripSheet extends X_TF_TripSheet {
 		}
 		
 	
-		
+		// Sales Delivery
 		sql = "SELECT \r\n" + 
 				"	we.m_product_id,p.m_product_category_id,	\r\n" + 
 				"	count(*) loads, \r\n" + 
@@ -802,28 +802,40 @@ public class MTripSheet extends X_TF_TripSheet {
 			pstmt = null;
 		}
 		
-		/*
-		sql="SELECT " + 
-				   " we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,sum(we.netweight / 1000)netweight,sum(we.rent_amt)/sum(we.netweight / 1000) unitrent " + 
-				   " FROM " + 
-				   " tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id " + 
-				   " WHERE " + 
-				   " WeighmentEntryType IN ('2PO') AND GrossWeightTime BETWEEN ? AND ? AND " + 
-				   " TF_RentedVehicle_ID =  (SELECT TF_RentedVehicle_ID FROM PM_Machinery WHERE PM_Machinery.PM_Machinery_ID = ?) " + 
-				   " GROUP BY we.m_product_id,p.m_product_category_id,we.quarryproductiontype";
+		
+		updatePurchaseFreightDetails();
+		
+		
+		sql = "SELECT \r\n" + 
+				"	we.m_product_id, p.m_product_category_id,	\r\n" + 
+				"	count(*) loads, \r\n" + 
+				"	sum(we.FreightQty )netweight,\r\n" + 
+				"	we.FreightRule_ID C_UOM_ID,\r\n" + 
+				"	we.FreightPrice  unitrent\r\n" + 
+				"	\r\n" + 
+				"FROM\r\n" + 
+				"	tf_weighmententry we INNER JOIN M_Product p\r\n" + 
+				"	 ON p.M_Product_ID = we.M_Product_ID\r\n" + 
+				"WHERE \r\n" + 
+				"	we.WeighmentEntryType IN ('2PO') AND we.TF_TripSheet_ID = ? \r\n" + 
+				"GROUP BY \r\n" + 
+				"	p.m_product_category_id, we.m_product_id,we.FreightPrice , WE.FreightRule_ID \r\n"; 
+				
 
 		pstmt = null;
 		rs = null;
 		
+		params = new ArrayList<Object>();
+		params.add(getTF_TripSheet_ID());
 		try {
 			pstmt = DB.prepareStatement(sql, get_TrxName());
+			DB.setParameters(pstmt, params.toArray());
 			rs = pstmt.executeQuery();		
 			while (rs.next()) {
 				MTripSheetProduct product = new MTripSheetProduct(getCtx(), 0, get_TrxName());
 				
 				product.setAD_Org_ID(getAD_Org_ID());
-				product.setTF_TripSheet_ID(getTF_TripSheet_ID());
-				product.setQuarryProductionType(rs.getString("quarryproductiontype"));
+				product.setTF_TripSheet_ID(getTF_TripSheet_ID());				
 				product.setM_Product_Category_ID(rs.getInt("m_product_category_id"));
 				product.setM_Product_ID(rs.getInt("m_product_id"));
 				product.setNoOfLoad(rs.getBigDecimal("loads"));
@@ -834,10 +846,23 @@ public class MTripSheet extends X_TF_TripSheet {
 				product.setTotalMT(totalmt);
 				product.setRateMT(unitrent);
 				product.setRent_Amt(unitrent.multiply(totalmt));
-				product.setDescription("Purchase");			
+				product.setC_UOM_ID(rs.getInt("C_UOM_ID"));
+				product.setDescription("Purchase Delivery");			
 				product.setIsGenerated(true);
 				
 				product.saveEx();
+				
+				
+				sql = "UPDATE TF_WeighmentEntry SET TF_TripSheetProduct_ID = ? "   
+						+ " WHERE TF_TripSheet_ID = ? AND WeighmentEntryType IN ('2PO') AND M_Product_ID = ? "
+						+ " AND FreightRule_ID = ? AND FreightPrice = ?";
+				params = new ArrayList<Object>();
+				params.add(product.getTF_TripSheetProduct_ID());
+				params.add(getTF_TripSheet_ID());
+				params.add(product.getM_Product_ID());
+				params.add(product.getC_UOM_ID());
+				params.add(product.getRateMT());
+				DB.executeUpdateEx(sql,params.toArray(), get_TrxName());
 			}
 		} catch (SQLException e) {
 			throw new DBException(e, sql);
@@ -846,6 +871,75 @@ public class MTripSheet extends X_TF_TripSheet {
 			rs = null;
 			pstmt = null;
 		}
-		*/
+		
+	}
+	
+	public void updatePurchaseFreightDetails() {
+		String whereClause = "WeighmentEntryType='2PO' AND Status IN ('CO','CL') AND TF_TripSheet_ID = ? AND TF_TripSheetProduct_ID IS NULL";
+				
+		List<MWeighmentEntry> weList = new Query(getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_TripSheet_ID())
+				.list();
+		
+		BigDecimal qty = BigDecimal.ZERO;
+		BigDecimal price = BigDecimal.ZERO;
+		BigDecimal RateMTKM = BigDecimal.ZERO;
+		MLumpSumRentConfig lumpsumConfig;
+		int Load_UOM_ID = MSysConfig.getIntValue("LOAD_UOM", 1000072, getAD_Client_ID());
+		int KM_UOM_ID = MSysConfig.getIntValue("KM_UOM", 1000071, getAD_Client_ID());
+		int MT_KM_UOM_ID = MSysConfig.getIntValue("MT_KM_UOM", 1000071, getAD_Client_ID());
+		int Rent_UOM_ID = 0;
+		int TF_LumpSumRentConfig_ID = 0;
+		BigDecimal RentMargin = BigDecimal.ZERO;
+		
+		for(MWeighmentEntry we : weList) {
+			MDestination dest = new MDestination(getCtx(), we.getTF_Destination_ID(), get_TrxName());
+			lumpsumConfig = MLumpSumRentConfig.getFreightConfig(getCtx(), we.getAD_Org_ID(), 0, we.getC_BPartner_ID(), we.getM_Product_ID(), 
+					we.getTF_Destination_ID(), we.getTF_VehicleType_ID(), dest.getDistance(), get_TrxName());
+				
+			if(lumpsumConfig != null) {
+				//ioLine.set_ValueOfColumn("FreightRule", we.getFreightRule());
+				price = lumpsumConfig.getCustomerFreightPrice(we.getC_BPartner_ID());
+				
+				if(lumpsumConfig.getC_UOM_ID() == Load_UOM_ID)
+				{
+					Rent_UOM_ID = Load_UOM_ID;
+					qty = BigDecimal.ONE;
+					
+				}
+				else if(lumpsumConfig.getC_UOM_ID() == KM_UOM_ID)
+				{
+					Rent_UOM_ID = KM_UOM_ID;
+					qty = dest.getDistance();									
+				}
+				else if(lumpsumConfig.getC_UOM_ID() == MT_KM_UOM_ID)
+				{
+					Rent_UOM_ID = MT_KM_UOM_ID;
+					qty = we.getMT();									
+					RateMTKM = price;
+				}
+				else
+				{
+					Rent_UOM_ID = lumpsumConfig.getC_UOM_ID();
+					qty = we.getNetWeightUnit();									
+				}
+				TF_LumpSumRentConfig_ID = lumpsumConfig.getTF_LumpSumRent_Config_ID();
+				RentMargin = (BigDecimal) lumpsumConfig.getCustomerFreightMargin(we.getC_BPartner_ID());
+				
+				we.setTF_LumpSumRent_Config_ID(TF_LumpSumRentConfig_ID);	
+				
+			}
+			else {
+				Rent_UOM_ID = Load_UOM_ID;
+				qty = BigDecimal.ONE;
+				price = BigDecimal.ZERO;
+			}
+			we.setFreightRule_ID(Rent_UOM_ID);
+			we.setFreightPrice(price);
+			we.setFreightQty(qty);
+			//MT KM is pending 
+			we.saveEx();
+		}
 	}
 }

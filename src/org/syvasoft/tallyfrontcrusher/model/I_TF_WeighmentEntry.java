@@ -368,6 +368,19 @@ public interface I_TF_WeighmentEntry
 	/** Get Freight Rate	  */
 	public BigDecimal getFreightPrice();
 
+    /** Column name FreightQty */
+    public static final String COLUMNNAME_FreightQty = "FreightQty";
+
+	/** Set Freight Qty.
+	  * Own Vehicle Freight Qty for TripSheet and Machinery Statement Posting
+	  */
+	public void setFreightQty (BigDecimal FreightQty);
+
+	/** Get Freight Qty.
+	  * Own Vehicle Freight Qty for TripSheet and Machinery Statement Posting
+	  */
+	public BigDecimal getFreightQty();
+
     /** Column name FreightRule_ID */
     public static final String COLUMNNAME_FreightRule_ID = "FreightRule_ID";
 

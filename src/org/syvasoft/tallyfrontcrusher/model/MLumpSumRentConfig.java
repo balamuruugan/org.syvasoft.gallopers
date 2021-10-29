@@ -232,6 +232,18 @@ public class MLumpSumRentConfig extends X_TF_LumpSumRent_Config {
 		if(lumpDistConfig != null)
 			return lumpDistConfig;
 		
+		//5 -- Vehicle Type, Vendor
+		Where=" AD_Org_ID=? AND COALESCE(C_BPartner_ID,0) = ? AND COALESCE(Vendor_ID,0) = ? AND TF_VehicleType_ID=? AND M_Product_ID IS NULL AND "
+				+ " (COALESCE(TF_Destination_ID,0) = ? OR (C_UOM_ID IN (?,?) AND TF_Destination_ID IS NULL)) ";
+		lumpDistConfig=new Query(ctx, Table_Name, Where, trxName)
+				.setClient_ID()
+				.setOnlyActiveRecords(true)
+				.setParameters(AD_Org_ID,C_BPartner_ID, Vendor_ID, TF_VehicleType_ID, TF_Destination_ID, KM_UOM_ID, MT_KM_UOM_ID)
+				.setOrderBy("COALESCE(TF_Destination_ID,0) DESC")
+				.first();
+		if(lumpDistConfig != null)
+			return lumpDistConfig;
+		
 		return lumpDistConfig;
 	}
 	
@@ -244,11 +256,11 @@ public class MLumpSumRentConfig extends X_TF_LumpSumRent_Config {
 		//Transporter is mandatory for the transporter vehicle
 		//For the Own Vehicle Transporter is blank
 		
-		//1 -- Vehicle Type, Vendor, Customer, Product
-		//2 -- Vehicle Type, Vendor, Product
-		//3 -- Vehicle Type, Vendor, Customer for any product		
-		//4 -- Vehicle Type, Vendor		
-		
+		//1 -- Vehicle Type, Transporter, Customer, Product
+		//2 -- Vehicle Type, Transporter, Product
+		//3 -- Vehicle Type, Transporter, Customer for any product		
+		//4 -- Vehicle Type, Transporter		
+		//5 -- Vehicle Type, Customer, any transporter and any product
 		
 		if(Distance.doubleValue() == 0)
 			Distance = BigDecimal.ONE;
@@ -293,6 +305,18 @@ public class MLumpSumRentConfig extends X_TF_LumpSumRent_Config {
 		
 		//4 -- Vehicle Type, Vendor
 		Where=" AD_Org_ID=? AND C_BPartner_ID IS NULL AND Vendor_ID = ? AND TF_VehicleType_ID=? AND M_Product_ID IS NULL AND "
+				+ "(COALESCE(TF_Destination_ID,0) = ? OR (C_UOM_ID IN (?,?) AND TF_Destination_ID IS NULL)) AND C_UOM_ID = ?";
+		lumpDistConfig=new Query(ctx, Table_Name, Where, trxName)
+				.setClient_ID()
+				.setOnlyActiveRecords(true)
+				.setParameters(AD_Org_ID,Vendor_ID, TF_VehicleType_ID,TF_Destination_ID, KM_UOM_ID, MT_KM_UOM_ID, C_UOM_ID)
+				.setOrderBy("COALESCE(TF_Destination_ID,0) DESC")
+				.first();
+		if(lumpDistConfig != null)
+			return lumpDistConfig;
+		
+		//5 -- Vehicle Type, Customer
+		Where=" AD_Org_ID=? AND C_BPartner_ID = ? AND Vendor_ID IS NULL AND TF_VehicleType_ID=? AND M_Product_ID IS NULL AND "
 				+ "(COALESCE(TF_Destination_ID,0) = ? OR (C_UOM_ID IN (?,?) AND TF_Destination_ID IS NULL)) AND C_UOM_ID = ?";
 		lumpDistConfig=new Query(ctx, Table_Name, Where, trxName)
 				.setClient_ID()

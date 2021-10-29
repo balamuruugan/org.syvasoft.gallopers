@@ -33,7 +33,7 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211028L;
+	private static final long serialVersionUID = 20211029L;
 
     /** Standard Constructor */
     public X_TF_WeighmentEntry (Properties ctx, int TF_WeighmentEntry_ID, String trxName)
@@ -602,6 +602,26 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public BigDecimal getFreightPrice () 
 	{
 		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_FreightPrice);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
+	/** Set Freight Qty.
+		@param FreightQty 
+		Own Vehicle Freight Qty for TripSheet and Machinery Statement Posting
+	  */
+	public void setFreightQty (BigDecimal FreightQty)
+	{
+		set_Value (COLUMNNAME_FreightQty, FreightQty);
+	}
+
+	/** Get Freight Qty.
+		@return Own Vehicle Freight Qty for TripSheet and Machinery Statement Posting
+	  */
+	public BigDecimal getFreightQty () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_FreightQty);
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
@@ -1286,8 +1306,8 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 	public static final String PAYMENTRULE_DirectDebit = "D";
 	/** Mixed POS Payment = M */
 	public static final String PAYMENTRULE_MixedPOSPayment = "M";
-	/** Cash  = Z */
-	public static final String PAYMENTRULE_Prepaid = "Z";
+	/** Prepaid Cash = Z */
+	public static final String PAYMENTRULE_PrepaidCash = "Z";
 	/** Set Payment Rule.
 		@param PaymentRule 
 		How you pay the invoice

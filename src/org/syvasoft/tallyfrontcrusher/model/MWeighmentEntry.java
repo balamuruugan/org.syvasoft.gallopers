@@ -7,21 +7,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.sql.ResultSet;
-import java.sql.Savepoint;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
-
 import org.adempiere.exceptions.AdempiereException;
-import org.adempiere.exceptions.DBException;
-import org.apache.commons.lang.time.DateUtils;
 import org.compiere.model.MDocType;
-import org.compiere.model.MInOut;
 import org.compiere.model.MInOutLine;
-import org.compiere.model.MProduct;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MUOM;
 import org.compiere.model.MUOMConversion;
@@ -31,7 +24,7 @@ import org.compiere.process.DocAction;
 import org.compiere.util.CLogger;
 import org.compiere.util.DB;
 import org.compiere.util.Env;
-import org.compiere.util.Trx;
+
 
 
 public class MWeighmentEntry extends X_TF_WeighmentEntry {
