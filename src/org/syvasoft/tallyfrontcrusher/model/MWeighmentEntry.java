@@ -409,7 +409,7 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 	}
 
 	void CreateCustomerVehicle() {
-		if(getC_BPartner_ID()>0 && getTF_VehicleType_ID() == 0) {
+		if(getC_BPartner_ID()>0) {
 			TF_MBPartner bp=new TF_MBPartner(getCtx(), getC_BPartner_ID(), get_TrxName());
 			
 			if(!bp.getIsPOSCashBP()) {
