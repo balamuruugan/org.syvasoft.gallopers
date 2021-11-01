@@ -325,6 +325,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MLoadingSlip.class;
 		else if(MBiometricAttedence.Table_Name.equals(tableName))			
 			return MBiometricAttedence.class;
+		else if(MEmployeeShift.Table_Name.equals(tableName))			
+			return MEmployeeShift.class;
 
 		return null;
 	}
@@ -644,6 +646,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MLoadingSlip(ctx, Record_ID, trxName);
 		else if(MBiometricAttedence.Table_Name.equals(tableName))			
 			return new MBiometricAttedence(ctx, Record_ID, trxName);
+		else if(MEmployeeShift.Table_Name.equals(tableName))			
+			return new MEmployeeShift(ctx, Record_ID, trxName);
 
 		return null;
 	}
@@ -965,6 +969,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MLoadingSlip(ctx, rs, trxName);
 		else if(MBiometricAttedence.Table_Name.equals(tableName))			
 			return new MBiometricAttedence(ctx, rs, trxName);
+		else if(MEmployeeShift.Table_Name.equals(tableName))			
+			return new MEmployeeShift(ctx, rs, trxName);
 
 		return null;
 	}
