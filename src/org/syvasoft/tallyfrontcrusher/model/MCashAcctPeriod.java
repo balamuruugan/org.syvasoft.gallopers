@@ -4,7 +4,9 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
 
+import org.compiere.model.MSysConfig;
 import org.compiere.model.Query;
+import org.compiere.util.Env;
 
 public class MCashAcctPeriod extends X_TF_AcctPeriod {
 
@@ -24,6 +26,11 @@ public class MCashAcctPeriod extends X_TF_AcctPeriod {
 	}
 
 	public static boolean isOpen(Properties ctx,int AD_Org_ID, int C_BankAccount_ID, Timestamp dateAcct) {
+		boolean acctPeriodLock = MSysConfig.getBooleanValue("ACCOUNTING_PERIOD_LOCK", true, Env.getAD_Client_ID(ctx), AD_Org_ID);
+		
+		if(!acctPeriodLock)
+			return true;
+		
 		String whereClause = "AD_Org_ID = ? AND C_BankAccount_ID = ? AND  "
 				+ " DateTo >= TRUNC(?::Timestamp) AND IsActive='Y'";
 		MCashAcctPeriod period = new Query(ctx, Table_Name, whereClause, null)
