@@ -30,7 +30,7 @@ public class X_TF_EmpShift extends PO implements I_TF_EmpShift, I_Persistent
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211101L;
+	private static final long serialVersionUID = 20211105L;
 
     /** Standard Constructor */
     public X_TF_EmpShift (Properties ctx, int TF_EmpShift_ID, String trxName)
@@ -39,12 +39,12 @@ public class X_TF_EmpShift extends PO implements I_TF_EmpShift, I_Persistent
       /** if (TF_EmpShift_ID == 0)
         {
 			setBeginTime (null);
-			setBreak1BeginTime (null);
-			setBreak1EndTime (null);
-			setBreak2BeginTime (null);
-			setBreak2EndTime (null);
 			setEndTime (null);
 			setGraceTime (0);
+			setIsBreak1 (false);
+// N
+			setIsBreak2 (false);
+// N
 			setIsFlexiShift (false);
 			setName (null);
 			setPartialDay (null);
@@ -85,77 +85,77 @@ public class X_TF_EmpShift extends PO implements I_TF_EmpShift, I_Persistent
       return sb.toString();
     }
 
-	/** Set Begin Time.
-		@param BeginTime Begin Time	  */
+	/** Set Begin Time (HH:MM 24hr fmt).
+		@param BeginTime Begin Time (HH:MM 24hr fmt)	  */
 	public void setBeginTime (String BeginTime)
 	{
 		set_Value (COLUMNNAME_BeginTime, BeginTime);
 	}
 
-	/** Get Begin Time.
-		@return Begin Time	  */
+	/** Get Begin Time (HH:MM 24hr fmt).
+		@return Begin Time (HH:MM 24hr fmt)	  */
 	public String getBeginTime () 
 	{
 		return (String)get_Value(COLUMNNAME_BeginTime);
 	}
 
-	/** Set Break1 Begin Time.
-		@param Break1BeginTime Break1 Begin Time	  */
+	/** Set Break1 Begin Time (HH:MM 24hr fmt).
+		@param Break1BeginTime Break1 Begin Time (HH:MM 24hr fmt)	  */
 	public void setBreak1BeginTime (String Break1BeginTime)
 	{
 		set_Value (COLUMNNAME_Break1BeginTime, Break1BeginTime);
 	}
 
-	/** Get Break1 Begin Time.
-		@return Break1 Begin Time	  */
+	/** Get Break1 Begin Time (HH:MM 24hr fmt).
+		@return Break1 Begin Time (HH:MM 24hr fmt)	  */
 	public String getBreak1BeginTime () 
 	{
 		return (String)get_Value(COLUMNNAME_Break1BeginTime);
 	}
 
-	/** Set Break1 End Time.
-		@param Break1EndTime Break1 End Time	  */
+	/** Set Break1 End Time (HH:MM 24hr fmt).
+		@param Break1EndTime Break1 End Time (HH:MM 24hr fmt)	  */
 	public void setBreak1EndTime (String Break1EndTime)
 	{
 		set_Value (COLUMNNAME_Break1EndTime, Break1EndTime);
 	}
 
-	/** Get Break1 End Time.
-		@return Break1 End Time	  */
+	/** Get Break1 End Time (HH:MM 24hr fmt).
+		@return Break1 End Time (HH:MM 24hr fmt)	  */
 	public String getBreak1EndTime () 
 	{
 		return (String)get_Value(COLUMNNAME_Break1EndTime);
 	}
 
-	/** Set Break2 Begin Time.
-		@param Break2BeginTime Break2 Begin Time	  */
+	/** Set Break2 Begin Time (HH:MM 24hr fmt).
+		@param Break2BeginTime Break2 Begin Time (HH:MM 24hr fmt)	  */
 	public void setBreak2BeginTime (String Break2BeginTime)
 	{
 		set_Value (COLUMNNAME_Break2BeginTime, Break2BeginTime);
 	}
 
-	/** Get Break2 Begin Time.
-		@return Break2 Begin Time	  */
+	/** Get Break2 Begin Time (HH:MM 24hr fmt).
+		@return Break2 Begin Time (HH:MM 24hr fmt)	  */
 	public String getBreak2BeginTime () 
 	{
 		return (String)get_Value(COLUMNNAME_Break2BeginTime);
 	}
 
-	/** Set Break2 End Time.
-		@param Break2EndTime Break2 End Time	  */
+	/** Set Break2 End Time (HH:MM 24hr fmt).
+		@param Break2EndTime Break2 End Time (HH:MM 24hr fmt)	  */
 	public void setBreak2EndTime (String Break2EndTime)
 	{
 		set_Value (COLUMNNAME_Break2EndTime, Break2EndTime);
 	}
 
-	/** Get Break2 End Time.
-		@return Break2 End Time	  */
+	/** Get Break2 End Time (HH:MM 24hr fmt).
+		@return Break2 End Time (HH:MM 24hr fmt)	  */
 	public String getBreak2EndTime () 
 	{
 		return (String)get_Value(COLUMNNAME_Break2EndTime);
 	}
 
-	/** Set End Time.
+	/** Set End Time (HH:MM 24hr fmt).
 		@param EndTime 
 		End of the time span
 	  */
@@ -164,7 +164,7 @@ public class X_TF_EmpShift extends PO implements I_TF_EmpShift, I_Persistent
 		set_Value (COLUMNNAME_EndTime, EndTime);
 	}
 
-	/** Get End Time.
+	/** Get End Time (HH:MM 24hr fmt).
 		@return End of the time span
 	  */
 	public String getEndTime () 
@@ -172,21 +172,66 @@ public class X_TF_EmpShift extends PO implements I_TF_EmpShift, I_Persistent
 		return (String)get_Value(COLUMNNAME_EndTime);
 	}
 
-	/** Set Grace Time.
-		@param GraceTime Grace Time	  */
+	/** Set Grace Time (mins).
+		@param GraceTime 
+		To calculate late attendance
+	  */
 	public void setGraceTime (int GraceTime)
 	{
 		set_Value (COLUMNNAME_GraceTime, Integer.valueOf(GraceTime));
 	}
 
-	/** Get Grace Time.
-		@return Grace Time	  */
+	/** Get Grace Time (mins).
+		@return To calculate late attendance
+	  */
 	public int getGraceTime () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_GraceTime);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();
+	}
+
+	/** Set Break1.
+		@param IsBreak1 Break1	  */
+	public void setIsBreak1 (boolean IsBreak1)
+	{
+		set_Value (COLUMNNAME_IsBreak1, Boolean.valueOf(IsBreak1));
+	}
+
+	/** Get Break1.
+		@return Break1	  */
+	public boolean isBreak1 () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsBreak1);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Break2.
+		@param IsBreak2 Break2	  */
+	public void setIsBreak2 (boolean IsBreak2)
+	{
+		set_Value (COLUMNNAME_IsBreak2, Boolean.valueOf(IsBreak2));
+	}
+
+	/** Get Break2.
+		@return Break2	  */
+	public boolean isBreak2 () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsBreak2);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	/** Set Is Flexi Shift.
@@ -286,15 +331,15 @@ public class X_TF_EmpShift extends PO implements I_TF_EmpShift, I_Persistent
 		return (String)get_Value(COLUMNNAME_PartialDayEndTime);
 	}
 
-	/** Set Punch Begin Before.
-		@param PunchBeginBefore Punch Begin Before	  */
+	/** Set Punch Begin Before (mins).
+		@param PunchBeginBefore Punch Begin Before (mins)	  */
 	public void setPunchBeginBefore (int PunchBeginBefore)
 	{
 		set_Value (COLUMNNAME_PunchBeginBefore, Integer.valueOf(PunchBeginBefore));
 	}
 
-	/** Get Punch Begin Before.
-		@return Punch Begin Before	  */
+	/** Get Punch Begin Before (mins).
+		@return Punch Begin Before (mins)	  */
 	public int getPunchBeginBefore () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_PunchBeginBefore);
@@ -303,15 +348,18 @@ public class X_TF_EmpShift extends PO implements I_TF_EmpShift, I_Persistent
 		return ii.intValue();
 	}
 
-	/** Set Punch End After.
-		@param PunchEndAfter Punch End After	  */
+	/** Set Punch End After (mins).
+		@param PunchEndAfter 
+		Default is Next Day Shift Begin Time - Punch Begin Duration
+	  */
 	public void setPunchEndAfter (int PunchEndAfter)
 	{
 		set_Value (COLUMNNAME_PunchEndAfter, Integer.valueOf(PunchEndAfter));
 	}
 
-	/** Get Punch End After.
-		@return Punch End After	  */
+	/** Get Punch End After (mins).
+		@return Default is Next Day Shift Begin Time - Punch Begin Duration
+	  */
 	public int getPunchEndAfter () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_PunchEndAfter);

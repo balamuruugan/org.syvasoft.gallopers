@@ -323,11 +323,12 @@ public class CrusherModelFactory implements IModelFactory {
 			return MBPAcctPeriod.class;
 		else if(MLoadingSlip.Table_Name.equals(tableName))			
 			return MLoadingSlip.class;
-		else if(MBiometricAttedence.Table_Name.equals(tableName))			
-			return MBiometricAttedence.class;
+		else if(MBiometricAttedenceLog.Table_Name.equals(tableName))			
+			return MBiometricAttedenceLog.class;
 		else if(MEmployeeShift.Table_Name.equals(tableName))			
 			return MEmployeeShift.class;
-
+		else if(MEmployeeAttendance.Table_Name.equals(tableName))			
+			return MEmployeeAttendance.class;
 		return null;
 	}
 
@@ -644,11 +645,12 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MBPAcctPeriod(ctx, Record_ID, trxName);
 		else if(MLoadingSlip.Table_Name.equals(tableName))			
 			return new MLoadingSlip(ctx, Record_ID, trxName);
-		else if(MBiometricAttedence.Table_Name.equals(tableName))			
-			return new MBiometricAttedence(ctx, Record_ID, trxName);
+		else if(MBiometricAttedenceLog.Table_Name.equals(tableName))			
+			return new MBiometricAttedenceLog(ctx, Record_ID, trxName);
 		else if(MEmployeeShift.Table_Name.equals(tableName))			
 			return new MEmployeeShift(ctx, Record_ID, trxName);
-
+		else if(MEmployeeAttendance.Table_Name.equals(tableName))			
+			return new MEmployeeAttendance(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -967,11 +969,12 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MBPAcctPeriod(ctx, rs, trxName);
 		else if(MLoadingSlip.Table_Name.equals(tableName))			
 			return new MLoadingSlip(ctx, rs, trxName);
-		else if(MBiometricAttedence.Table_Name.equals(tableName))			
-			return new MBiometricAttedence(ctx, rs, trxName);
+		else if(MBiometricAttedenceLog.Table_Name.equals(tableName))			
+			return new MBiometricAttedenceLog(ctx, rs, trxName);
 		else if(MEmployeeShift.Table_Name.equals(tableName))			
 			return new MEmployeeShift(ctx, rs, trxName);
-
+		else if(MEmployeeAttendance.Table_Name.equals(tableName))			
+			return new MEmployeeAttendance(ctx, rs, trxName);
 		return null;
 	}
 }

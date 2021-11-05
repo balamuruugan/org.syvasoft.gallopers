@@ -21,25 +21,25 @@ import java.sql.Timestamp;
 import org.compiere.model.*;
 import org.compiere.util.KeyNamePair;
 
-/** Generated Interface for TF_BiometricAttendence
+/** Generated Interface for TF_EmployeeAttendance
  *  @author iDempiere (generated) 
  *  @version Release 5.1
  */
 @SuppressWarnings("all")
-public interface I_TF_BiometricAttendence 
+public interface I_TF_EmployeeAttendance 
 {
 
-    /** TableName=TF_BiometricAttendence */
-    public static final String Table_Name = "TF_BiometricAttendence";
+    /** TableName=TF_EmployeeAttendance */
+    public static final String Table_Name = "TF_EmployeeAttendance";
 
-    /** AD_Table_ID=1000382 */
+    /** AD_Table_ID=1000384 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 1 - Org 
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(3);
+    BigDecimal accessLevel = BigDecimal.valueOf(1);
 
     /** Load Meta Data */
 
@@ -63,15 +63,6 @@ public interface I_TF_BiometricAttendence
 	  * Organizational entity within client
 	  */
 	public int getAD_Org_ID();
-
-    /** Column name AttendenceTime */
-    public static final String COLUMNNAME_AttendenceTime = "AttendenceTime";
-
-	/** Set Attendence Time	  */
-	public void setAttendenceTime (Timestamp AttendenceTime);
-
-	/** Get Attendence Time	  */
-	public Timestamp getAttendenceTime();
 
     /** Column name C_BPartner_ID */
     public static final String COLUMNNAME_C_BPartner_ID = "C_BPartner_ID";
@@ -104,23 +95,62 @@ public interface I_TF_BiometricAttendence
 	  */
 	public int getCreatedBy();
 
-    /** Column name EnrollNo */
-    public static final String COLUMNNAME_EnrollNo = "EnrollNo";
+    /** Column name DateAcct */
+    public static final String COLUMNNAME_DateAcct = "DateAcct";
 
-	/** Set Enroll No	  */
-	public void setEnrollNo (int EnrollNo);
+	/** Set Account Date.
+	  * Accounting Date
+	  */
+	public void setDateAcct (Timestamp DateAcct);
 
-	/** Get Enroll No	  */
-	public int getEnrollNo();
+	/** Get Account Date.
+	  * Accounting Date
+	  */
+	public Timestamp getDateAcct();
 
-    /** Column name InOutMode */
-    public static final String COLUMNNAME_InOutMode = "InOutMode";
+    /** Column name DateInTime */
+    public static final String COLUMNNAME_DateInTime = "DateInTime";
 
-	/** Set In Out Mode	  */
-	public void setInOutMode (String InOutMode);
+	/** Set In Time	  */
+	public void setDateInTime (Timestamp DateInTime);
 
-	/** Get In Out Mode	  */
-	public String getInOutMode();
+	/** Get In Time	  */
+	public Timestamp getDateInTime();
+
+    /** Column name DateOutTime */
+    public static final String COLUMNNAME_DateOutTime = "DateOutTime";
+
+	/** Set Out Time	  */
+	public void setDateOutTime (Timestamp DateOutTime);
+
+	/** Get Out Time	  */
+	public Timestamp getDateOutTime();
+
+    /** Column name Description */
+    public static final String COLUMNNAME_Description = "Description";
+
+	/** Set Description.
+	  * Optional short description of the record
+	  */
+	public void setDescription (String Description);
+
+	/** Get Description.
+	  * Optional short description of the record
+	  */
+	public String getDescription();
+
+    /** Column name Duration */
+    public static final String COLUMNNAME_Duration = "Duration";
+
+	/** Set Duration.
+	  * Normal Duration in Duration Unit
+	  */
+	public void setDuration (String Duration);
+
+	/** Get Duration.
+	  * Normal Duration in Duration Unit
+	  */
+	public String getDuration();
 
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
@@ -135,23 +165,47 @@ public interface I_TF_BiometricAttendence
 	  */
 	public boolean isActive();
 
-    /** Column name TF_Biometricattendence_ID */
-    public static final String COLUMNNAME_TF_Biometricattendence_ID = "TF_Biometricattendence_ID";
+    /** Column name Status */
+    public static final String COLUMNNAME_Status = "Status";
 
-	/** Set Biometric Attendence	  */
-	public void setTF_Biometricattendence_ID (int TF_Biometricattendence_ID);
+	/** Set Status.
+	  * Status of the currently running check
+	  */
+	public void setStatus (String Status);
 
-	/** Get Biometric Attendence	  */
-	public int getTF_Biometricattendence_ID();
+	/** Get Status.
+	  * Status of the currently running check
+	  */
+	public String getStatus();
 
-    /** Column name TF_Biometricattendence_UU */
-    public static final String COLUMNNAME_TF_Biometricattendence_UU = "TF_Biometricattendence_UU";
+    /** Column name TF_EmployeeAttendance_ID */
+    public static final String COLUMNNAME_TF_EmployeeAttendance_ID = "TF_EmployeeAttendance_ID";
 
-	/** Set TF_Biometricattendence_UU	  */
-	public void setTF_Biometricattendence_UU (String TF_Biometricattendence_UU);
+	/** Set Employee Attendance	  */
+	public void setTF_EmployeeAttendance_ID (int TF_EmployeeAttendance_ID);
 
-	/** Get TF_Biometricattendence_UU	  */
-	public String getTF_Biometricattendence_UU();
+	/** Get Employee Attendance	  */
+	public int getTF_EmployeeAttendance_ID();
+
+    /** Column name TF_EmployeeAttendance_UU */
+    public static final String COLUMNNAME_TF_EmployeeAttendance_UU = "TF_EmployeeAttendance_UU";
+
+	/** Set TF_EmployeeAttendance_UU	  */
+	public void setTF_EmployeeAttendance_UU (String TF_EmployeeAttendance_UU);
+
+	/** Get TF_EmployeeAttendance_UU	  */
+	public String getTF_EmployeeAttendance_UU();
+
+    /** Column name TF_EmpShift_ID */
+    public static final String COLUMNNAME_TF_EmpShift_ID = "TF_EmpShift_ID";
+
+	/** Set Employee Shift	  */
+	public void setTF_EmpShift_ID (int TF_EmpShift_ID);
+
+	/** Get Employee Shift	  */
+	public int getTF_EmpShift_ID();
+
+	public I_TF_EmpShift getTF_EmpShift() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
@@ -168,22 +222,4 @@ public interface I_TF_BiometricAttendence
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
-
-    /** Column name VerifyMode */
-    public static final String COLUMNNAME_VerifyMode = "VerifyMode";
-
-	/** Set Verify Mode	  */
-	public void setVerifyMode (String VerifyMode);
-
-	/** Get Verify Mode	  */
-	public String getVerifyMode();
-
-    /** Column name WorkCode */
-    public static final String COLUMNNAME_WorkCode = "WorkCode";
-
-	/** Set Work Code	  */
-	public void setWorkCode (int WorkCode);
-
-	/** Get Work Code	  */
-	public int getWorkCode();
 }

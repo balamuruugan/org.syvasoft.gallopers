@@ -32,7 +32,7 @@ public interface I_TF_EmpShift
     /** TableName=TF_EmpShift */
     public static final String Table_Name = "TF_EmpShift";
 
-    /** AD_Table_ID=1000372 */
+    /** AD_Table_ID=1000383 */
     public static final int Table_ID = MTable.getTable_ID(Table_Name);
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
@@ -67,46 +67,46 @@ public interface I_TF_EmpShift
     /** Column name BeginTime */
     public static final String COLUMNNAME_BeginTime = "BeginTime";
 
-	/** Set Begin Time	  */
+	/** Set Begin Time (HH:MM 24hr fmt)	  */
 	public void setBeginTime (String BeginTime);
 
-	/** Get Begin Time	  */
+	/** Get Begin Time (HH:MM 24hr fmt)	  */
 	public String getBeginTime();
 
     /** Column name Break1BeginTime */
     public static final String COLUMNNAME_Break1BeginTime = "Break1BeginTime";
 
-	/** Set Break1 Begin Time	  */
+	/** Set Break1 Begin Time (HH:MM 24hr fmt)	  */
 	public void setBreak1BeginTime (String Break1BeginTime);
 
-	/** Get Break1 Begin Time	  */
+	/** Get Break1 Begin Time (HH:MM 24hr fmt)	  */
 	public String getBreak1BeginTime();
 
     /** Column name Break1EndTime */
     public static final String COLUMNNAME_Break1EndTime = "Break1EndTime";
 
-	/** Set Break1 End Time	  */
+	/** Set Break1 End Time (HH:MM 24hr fmt)	  */
 	public void setBreak1EndTime (String Break1EndTime);
 
-	/** Get Break1 End Time	  */
+	/** Get Break1 End Time (HH:MM 24hr fmt)	  */
 	public String getBreak1EndTime();
 
     /** Column name Break2BeginTime */
     public static final String COLUMNNAME_Break2BeginTime = "Break2BeginTime";
 
-	/** Set Break2 Begin Time	  */
+	/** Set Break2 Begin Time (HH:MM 24hr fmt)	  */
 	public void setBreak2BeginTime (String Break2BeginTime);
 
-	/** Get Break2 Begin Time	  */
+	/** Get Break2 Begin Time (HH:MM 24hr fmt)	  */
 	public String getBreak2BeginTime();
 
     /** Column name Break2EndTime */
     public static final String COLUMNNAME_Break2EndTime = "Break2EndTime";
 
-	/** Set Break2 End Time	  */
+	/** Set Break2 End Time (HH:MM 24hr fmt)	  */
 	public void setBreak2EndTime (String Break2EndTime);
 
-	/** Get Break2 End Time	  */
+	/** Get Break2 End Time (HH:MM 24hr fmt)	  */
 	public String getBreak2EndTime();
 
     /** Column name Created */
@@ -128,12 +128,12 @@ public interface I_TF_EmpShift
     /** Column name EndTime */
     public static final String COLUMNNAME_EndTime = "EndTime";
 
-	/** Set End Time.
+	/** Set End Time (HH:MM 24hr fmt).
 	  * End of the time span
 	  */
 	public void setEndTime (String EndTime);
 
-	/** Get End Time.
+	/** Get End Time (HH:MM 24hr fmt).
 	  * End of the time span
 	  */
 	public String getEndTime();
@@ -141,10 +141,14 @@ public interface I_TF_EmpShift
     /** Column name GraceTime */
     public static final String COLUMNNAME_GraceTime = "GraceTime";
 
-	/** Set Grace Time	  */
+	/** Set Grace Time (mins).
+	  * To calculate late attendance
+	  */
 	public void setGraceTime (int GraceTime);
 
-	/** Get Grace Time	  */
+	/** Get Grace Time (mins).
+	  * To calculate late attendance
+	  */
 	public int getGraceTime();
 
     /** Column name IsActive */
@@ -159,6 +163,24 @@ public interface I_TF_EmpShift
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsBreak1 */
+    public static final String COLUMNNAME_IsBreak1 = "IsBreak1";
+
+	/** Set Break1	  */
+	public void setIsBreak1 (boolean IsBreak1);
+
+	/** Get Break1	  */
+	public boolean isBreak1();
+
+    /** Column name IsBreak2 */
+    public static final String COLUMNNAME_IsBreak2 = "IsBreak2";
+
+	/** Set Break2	  */
+	public void setIsBreak2 (boolean IsBreak2);
+
+	/** Get Break2	  */
+	public boolean isBreak2();
 
     /** Column name IsFlexiShift */
     public static final String COLUMNNAME_IsFlexiShift = "IsFlexiShift";
@@ -212,19 +234,23 @@ public interface I_TF_EmpShift
     /** Column name PunchBeginBefore */
     public static final String COLUMNNAME_PunchBeginBefore = "PunchBeginBefore";
 
-	/** Set Punch Begin Before	  */
+	/** Set Punch Begin Before (mins)	  */
 	public void setPunchBeginBefore (int PunchBeginBefore);
 
-	/** Get Punch Begin Before	  */
+	/** Get Punch Begin Before (mins)	  */
 	public int getPunchBeginBefore();
 
     /** Column name PunchEndAfter */
     public static final String COLUMNNAME_PunchEndAfter = "PunchEndAfter";
 
-	/** Set Punch End After	  */
+	/** Set Punch End After (mins).
+	  * Default is Next Day Shift Begin Time - Punch Begin Duration
+	  */
 	public void setPunchEndAfter (int PunchEndAfter);
 
-	/** Get Punch End After	  */
+	/** Get Punch End After (mins).
+	  * Default is Next Day Shift Begin Time - Punch Begin Duration
+	  */
 	public int getPunchEndAfter();
 
     /** Column name SName */

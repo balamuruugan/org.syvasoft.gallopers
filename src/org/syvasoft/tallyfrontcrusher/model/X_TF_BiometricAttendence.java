@@ -31,7 +31,7 @@ public class X_TF_BiometricAttendence extends PO implements I_TF_BiometricAttend
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211101L;
+	private static final long serialVersionUID = 20211105L;
 
     /** Standard Constructor */
     public X_TF_BiometricAttendence (Properties ctx, int TF_BiometricAttendence_ID, String trxName)
@@ -194,10 +194,10 @@ public class X_TF_BiometricAttendence extends PO implements I_TF_BiometricAttend
 		return (String)get_Value(COLUMNNAME_TF_Biometricattendence_UU);
 	}
 
-	/** Finger Print = 1 */
-	public static final String VERIFYMODE_FingerPrint = "1";
 	/** Face = 15 */
 	public static final String VERIFYMODE_Face = "15";
+	/** Finger Print = 1 */
+	public static final String VERIFYMODE_FingerPrint = "1";
 	/** Set Verify Mode.
 		@param VerifyMode Verify Mode	  */
 	public void setVerifyMode (String VerifyMode)
