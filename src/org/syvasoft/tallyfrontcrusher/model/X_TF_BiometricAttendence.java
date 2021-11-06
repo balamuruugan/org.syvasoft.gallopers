@@ -31,7 +31,7 @@ public class X_TF_BiometricAttendence extends PO implements I_TF_BiometricAttend
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211105L;
+	private static final long serialVersionUID = 20211106L;
 
     /** Standard Constructor */
     public X_TF_BiometricAttendence (Properties ctx, int TF_BiometricAttendence_ID, String trxName)
@@ -42,6 +42,8 @@ public class X_TF_BiometricAttendence extends PO implements I_TF_BiometricAttend
 			setAttendenceTime (new Timestamp( System.currentTimeMillis() ));
 			setC_BPartner_ID (0);
 			setEnrollNo (0);
+			setProcessed (false);
+// N
 			setTF_Biometricattendence_ID (0);
         } */
     }
@@ -53,7 +55,7 @@ public class X_TF_BiometricAttendence extends PO implements I_TF_BiometricAttend
     }
 
     /** AccessLevel
-      * @return 3 - Client - Org 
+      * @return 1 - Org 
       */
     protected int get_AccessLevel()
     {
@@ -116,6 +118,23 @@ public class X_TF_BiometricAttendence extends PO implements I_TF_BiometricAttend
 		return ii.intValue();
 	}
 
+	/** Set Account Date.
+		@param DateAcct 
+		Accounting Date
+	  */
+	public void setDateAcct (Timestamp DateAcct)
+	{
+		set_Value (COLUMNNAME_DateAcct, DateAcct);
+	}
+
+	/** Get Account Date.
+		@return Accounting Date
+	  */
+	public Timestamp getDateAcct () 
+	{
+		return (Timestamp)get_Value(COLUMNNAME_DateAcct);
+	}
+
 	/** Set Enroll No.
 		@param EnrollNo Enroll No	  */
 	public void setEnrollNo (int EnrollNo)
@@ -160,6 +179,30 @@ public class X_TF_BiometricAttendence extends PO implements I_TF_BiometricAttend
 		return (String)get_Value(COLUMNNAME_InOutMode);
 	}
 
+	/** Set Processed.
+		@param Processed 
+		The document has been processed
+	  */
+	public void setProcessed (boolean Processed)
+	{
+		set_Value (COLUMNNAME_Processed, Boolean.valueOf(Processed));
+	}
+
+	/** Get Processed.
+		@return The document has been processed
+	  */
+	public boolean isProcessed () 
+	{
+		Object oo = get_Value(COLUMNNAME_Processed);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
 	/** Set Biometric Attendence.
 		@param TF_Biometricattendence_ID Biometric Attendence	  */
 	public void setTF_Biometricattendence_ID (int TF_Biometricattendence_ID)
@@ -192,6 +235,56 @@ public class X_TF_BiometricAttendence extends PO implements I_TF_BiometricAttend
 	public String getTF_Biometricattendence_UU () 
 	{
 		return (String)get_Value(COLUMNNAME_TF_Biometricattendence_UU);
+	}
+
+	public I_TF_EmployeeAttendance getTF_EmployeeAttendance() throws RuntimeException
+    {
+		return (I_TF_EmployeeAttendance)MTable.get(getCtx(), I_TF_EmployeeAttendance.Table_Name)
+			.getPO(getTF_EmployeeAttendance_ID(), get_TrxName());	}
+
+	/** Set Employee Attendance.
+		@param TF_EmployeeAttendance_ID Employee Attendance	  */
+	public void setTF_EmployeeAttendance_ID (int TF_EmployeeAttendance_ID)
+	{
+		if (TF_EmployeeAttendance_ID < 1) 
+			set_Value (COLUMNNAME_TF_EmployeeAttendance_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_EmployeeAttendance_ID, Integer.valueOf(TF_EmployeeAttendance_ID));
+	}
+
+	/** Get Employee Attendance.
+		@return Employee Attendance	  */
+	public int getTF_EmployeeAttendance_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_EmployeeAttendance_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_EmpShift getTF_EmpShift() throws RuntimeException
+    {
+		return (I_TF_EmpShift)MTable.get(getCtx(), I_TF_EmpShift.Table_Name)
+			.getPO(getTF_EmpShift_ID(), get_TrxName());	}
+
+	/** Set Employee Shift.
+		@param TF_EmpShift_ID Employee Shift	  */
+	public void setTF_EmpShift_ID (int TF_EmpShift_ID)
+	{
+		if (TF_EmpShift_ID < 1) 
+			set_Value (COLUMNNAME_TF_EmpShift_ID, null);
+		else 
+			set_Value (COLUMNNAME_TF_EmpShift_ID, Integer.valueOf(TF_EmpShift_ID));
+	}
+
+	/** Get Employee Shift.
+		@return Employee Shift	  */
+	public int getTF_EmpShift_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_EmpShift_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
 	}
 
 	/** Face = 15 */

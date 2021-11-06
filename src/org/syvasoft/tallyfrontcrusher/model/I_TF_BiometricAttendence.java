@@ -37,9 +37,9 @@ public interface I_TF_BiometricAttendence
 
     KeyNamePair Model = new KeyNamePair(Table_ID, Table_Name);
 
-    /** AccessLevel = 3 - Client - Org 
+    /** AccessLevel = 1 - Org 
      */
-    BigDecimal accessLevel = BigDecimal.valueOf(3);
+    BigDecimal accessLevel = BigDecimal.valueOf(1);
 
     /** Load Meta Data */
 
@@ -104,6 +104,19 @@ public interface I_TF_BiometricAttendence
 	  */
 	public int getCreatedBy();
 
+    /** Column name DateAcct */
+    public static final String COLUMNNAME_DateAcct = "DateAcct";
+
+	/** Set Account Date.
+	  * Accounting Date
+	  */
+	public void setDateAcct (Timestamp DateAcct);
+
+	/** Get Account Date.
+	  * Accounting Date
+	  */
+	public Timestamp getDateAcct();
+
     /** Column name EnrollNo */
     public static final String COLUMNNAME_EnrollNo = "EnrollNo";
 
@@ -135,6 +148,19 @@ public interface I_TF_BiometricAttendence
 	  */
 	public boolean isActive();
 
+    /** Column name Processed */
+    public static final String COLUMNNAME_Processed = "Processed";
+
+	/** Set Processed.
+	  * The document has been processed
+	  */
+	public void setProcessed (boolean Processed);
+
+	/** Get Processed.
+	  * The document has been processed
+	  */
+	public boolean isProcessed();
+
     /** Column name TF_Biometricattendence_ID */
     public static final String COLUMNNAME_TF_Biometricattendence_ID = "TF_Biometricattendence_ID";
 
@@ -152,6 +178,28 @@ public interface I_TF_BiometricAttendence
 
 	/** Get TF_Biometricattendence_UU	  */
 	public String getTF_Biometricattendence_UU();
+
+    /** Column name TF_EmployeeAttendance_ID */
+    public static final String COLUMNNAME_TF_EmployeeAttendance_ID = "TF_EmployeeAttendance_ID";
+
+	/** Set Employee Attendance	  */
+	public void setTF_EmployeeAttendance_ID (int TF_EmployeeAttendance_ID);
+
+	/** Get Employee Attendance	  */
+	public int getTF_EmployeeAttendance_ID();
+
+	public I_TF_EmployeeAttendance getTF_EmployeeAttendance() throws RuntimeException;
+
+    /** Column name TF_EmpShift_ID */
+    public static final String COLUMNNAME_TF_EmpShift_ID = "TF_EmpShift_ID";
+
+	/** Set Employee Shift	  */
+	public void setTF_EmpShift_ID (int TF_EmpShift_ID);
+
+	/** Get Employee Shift	  */
+	public int getTF_EmpShift_ID();
+
+	public I_TF_EmpShift getTF_EmpShift() throws RuntimeException;
 
     /** Column name Updated */
     public static final String COLUMNNAME_Updated = "Updated";
