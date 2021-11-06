@@ -8,15 +8,17 @@ import org.compiere.model.Query;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
 import org.syvasoft.tallyfrontcrusher.model.MBiometricAttedenceLog;
+import org.syvasoft.tallyfrontcrusher.model.MEmployeeAttendance;
 
 public class CalculateAttendance extends SvrProcess {
-
+	/*
 	private int AD_Org_ID ;
 	private Timestamp dateFrom ;
 	private boolean reCalcualte = false; 
-	
+	*/
 	@Override
 	protected void prepare() {
+		/*
 		ProcessInfoParameter[] para = getParameter();		
 		
 		for (int i = 0; i < para.length; i++)
@@ -30,23 +32,25 @@ public class CalculateAttendance extends SvrProcess {
 				reCalcualte = para[i].getParameterAsBoolean();
 			
 		}
+		*/
 	}
 
 	@Override
 	protected String doIt() throws Exception {
-		String whereClause = "AD_Org_ID = ? AND AttendenceTime  >= ?";
+		String whereClause = "Processed='N'";
 		List<MBiometricAttedenceLog> list = new Query(getCtx(), MBiometricAttedenceLog.Table_Name, whereClause, get_TrxName())
-				.setClient_ID()
-				.setParameters(AD_Org_ID, dateFrom)
+				.setClient_ID()				
 				.setOrderBy("AttendenceTime ")
 				.list();
 		
-		for(MBiometricAttedenceLog bLog : list) {
-			if(reCalcualte && bLog.isProcessed() || !bLog.isProcessed())
+		for(MBiometricAttedenceLog bLog : list) {			
 			bLog.setShift();
 			bLog.saveEx();
 		}
-		return null;
+		
+		int i = MEmployeeAttendance.generateAttendanceRecordsFromBiometricLog(getCtx(), get_TrxName());
+		
+		return i + " records created successfully!";
 	}
 
 }

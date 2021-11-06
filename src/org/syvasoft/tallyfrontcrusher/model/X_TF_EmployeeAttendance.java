@@ -31,7 +31,7 @@ public class X_TF_EmployeeAttendance extends PO implements I_TF_EmployeeAttendan
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211105L;
+	private static final long serialVersionUID = 20211106L;
 
     /** Standard Constructor */
     public X_TF_EmployeeAttendance (Properties ctx, int TF_EmployeeAttendance_ID, String trxName)
@@ -192,6 +192,8 @@ public class X_TF_EmployeeAttendance extends PO implements I_TF_EmployeeAttendan
 	public static final String STATUS_Holiday = "H";
 	/** Leave = L */
 	public static final String STATUS_Leave = "L";
+	/** Unknown = U */
+	public static final String STATUS_Unknown = "U";
 	/** Set Status.
 		@param Status 
 		Status of the currently running check

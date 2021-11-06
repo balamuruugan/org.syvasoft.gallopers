@@ -28,7 +28,7 @@ public class MBiometricAttedenceLog extends X_TF_BiometricAttendence {
 		
 		MEmployeeShift es = new MEmployeeShift(getCtx(), getTF_EmpShift_ID(), get_TrxName());
 		setDateAcct(es.getDateAcct(getAttendenceTime(), getInOutMode()));
-		
+		setProcessed(false);
 	}
 	
 	@Override
