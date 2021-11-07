@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Properties;
 
+import org.adempiere.exceptions.AdempiereException;
 import org.adempiere.exceptions.DBException;
 import org.compiere.model.Query;
 import org.compiere.util.DB;
@@ -27,19 +28,31 @@ public class MEmployeeAttendance extends X_TF_EmployeeAttendance {
 	}
 
 	@Override
+	protected boolean beforeDelete() {
+		if(getBiometricLogs().size() > 0) {
+			throw new AdempiereException("You cannot delete this attendance record since it was generated from Biometric Attendance logs!");
+		}
+		return super.beforeDelete();
+	}
+	
+	@Override
 	protected boolean afterSave(boolean newRecord, boolean success) {
 		processBiometricsLogs();
 		return super.afterSave(newRecord, success);
 	}
 	
-	private void processBiometricsLogs() {
+	public List<MBiometricAttedenceLog> getBiometricLogs() {
 		String whereClause = "TF_EmployeeAttendance_ID = ?";
 		List<MBiometricAttedenceLog> list = new Query(getCtx(), MBiometricAttedenceLog.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
 				.setParameters(getTF_EmployeeAttendance_ID())
 				.list();
-		
-		for(MBiometricAttedenceLog log : list) {
+		return list;
+	}
+	
+	private void processBiometricsLogs() {
+				
+		for(MBiometricAttedenceLog log : getBiometricLogs()) {
 			log.setProcessed(getStatus().equals(STATUS_Present));
 			log.saveEx();
 		}
@@ -47,20 +60,24 @@ public class MEmployeeAttendance extends X_TF_EmployeeAttendance {
 	
 	public static MEmployeeAttendance get(Properties ctx, int AD_Org_ID, int C_BPartner_ID, 
 			Timestamp dateAcct, int TF_EmpShift_ID, String trxName) {
-		String whereClause = "AD_Org_ID = ? AND C_BPartner_ID = ? AND DateAcct =  ? AND TF_EmpShift_ID = ?";
+		String whereClause = "AD_Org_ID = ? AND C_BPartner_ID = ? AND DateAcct =  ? AND (TF_EmpShift_ID = ? OR Status = ?)"; 
+		//OR Status = ?  is added for the attendance record created manually without logs that could be in different shift
+		//using above condition, we are reusing the same record for the correct shift.
+		// that's why after querying the att instance, the correct shift id is set once again.
 		
 		MEmployeeAttendance att = new Query(ctx, Table_Name, whereClause, trxName)
 				.setClient_ID()
-				.setParameters(AD_Org_ID, C_BPartner_ID, dateAcct, TF_EmpShift_ID)
+				.setParameters(AD_Org_ID, C_BPartner_ID, dateAcct, TF_EmpShift_ID, STATUS_Unknown)
+				.setOrderBy("CASE WHEN TF_EmpShift_ID = " + TF_EmpShift_ID + " THEN 1 ELSE 2 END")
 				.first();
 		if(att == null) {
 			att = new MEmployeeAttendance(ctx, 0, trxName);
 			att.setAD_Org_ID(AD_Org_ID);
 			att.setC_BPartner_ID(C_BPartner_ID);
-			att.setDateAcct(dateAcct);
-			att.setTF_EmpShift_ID(TF_EmpShift_ID);
+			att.setDateAcct(dateAcct);			
 			att.setStatus(STATUS_Unknown);			
 		}
+		att.setTF_EmpShift_ID(TF_EmpShift_ID);
 		return att;
 	}
 	
@@ -72,9 +89,7 @@ public class MEmployeeAttendance extends X_TF_EmployeeAttendance {
 		return new Query(ctx, TF_MBPartner.Table_Name, whereClause, null)
 				.setClient_ID()
 				.setParameters(dateAcct)				
-				.list();
-		
-		
+				.list();		
 	}
 	
 	public void setAttendanceFromLogs() {
@@ -116,7 +131,7 @@ public class MEmployeeAttendance extends X_TF_EmployeeAttendance {
 				att.setDateInTime(inTime);
 				att.setDateOutTime(outTime);
 				att.setDuration(duration);
-				att.setStatus(outTime != null ? STATUS_Present : STATUS_Unknown);
+				att.setStatus(outTime != null && inTime != null ? STATUS_Present : STATUS_Unknown);
 				att.saveEx();
 				
 				String whereClause = "AD_Org_ID = ? AND C_BPartner_ID = ? AND TF_EmpShift_ID = ? AND DateAcct = ? ";
