@@ -82,13 +82,13 @@ public class MEmployeeAttendance extends X_TF_EmployeeAttendance {
 	}
 	
 	//It will be used to generate unknown/absent attendance records
-	public static List<TF_MBPartner> getEmployees(Properties ctx, Timestamp dateAcct) {
+	public static List<TF_MBPartner> getEmployees(Properties ctx, int AD_Org_ID, Timestamp dateAcct) {
 		String whereClause = "AD_Org_ID = ? AND IsEmployee='Y' AND EnrollNo > 0 AND "
 				+ "NOT EXISTS(SELECT C_BPartner_ID FROM TF_BiometricAttendence  WHERE TF_BiometricAttendence.C_BPartner_ID = C_BPartner.C_BPartner_ID "
 				+ " AND TF_BiometricAttendence.DateAcct = ? )" ;
 		return new Query(ctx, TF_MBPartner.Table_Name, whereClause, null)
 				.setClient_ID()
-				.setParameters(dateAcct)				
+				.setParameters(AD_Org_ID, dateAcct)				
 				.list();		
 	}
 	
