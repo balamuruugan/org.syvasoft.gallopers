@@ -273,6 +273,15 @@ public interface I_TF_Employee_Salary
 	  */
 	public boolean isActive();
 
+    /** Column name IsBiometricAttendance */
+    public static final String COLUMNNAME_IsBiometricAttendance = "IsBiometricAttendance";
+
+	/** Set Biometric Attendance	  */
+	public void setIsBiometricAttendance (boolean IsBiometricAttendance);
+
+	/** Get Biometric Attendance	  */
+	public boolean isBiometricAttendance();
+
     /** Column name IsCalculated */
     public static final String COLUMNNAME_IsCalculated = "IsCalculated";
 

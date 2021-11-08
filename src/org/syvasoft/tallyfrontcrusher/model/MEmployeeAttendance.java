@@ -1,5 +1,6 @@
 package org.syvasoft.tallyfrontcrusher.model;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
-import org.adempiere.exceptions.DBException;
 import org.compiere.model.Query;
 import org.compiere.util.DB;
 
@@ -153,5 +153,25 @@ public class MEmployeeAttendance extends X_TF_EmployeeAttendance {
 			rs = null; pstmt = null;
 		}
 		return i;
+	}
+	
+	public static BigDecimal getPresentDays(Properties ctx, int AD_Org_ID, int C_BPartner_ID, Timestamp dateFrom, Timestamp dateTo) {
+		
+		String sql = "SELECT COUNT(*) FROM TF_EmployeeAttendance WHERE AD_Org_ID = ? AND C_BPartner_ID =  ? AND "
+				+ " DateAcct >= ? AND DateAcct <= ? AND Status = ? ";
+		
+		BigDecimal presentDays = DB.getSQLValueBD(null, sql, AD_Org_ID, C_BPartner_ID, dateFrom, dateTo, MEmployeeAttendance.STATUS_Present);
+		
+		return presentDays;
+	}
+	
+	public static BigDecimal getUnknownDays(Properties ctx, int AD_Org_ID, int C_BPartner_ID, Timestamp dateFrom, Timestamp dateTo) {
+		
+		String sql = "SELECT COUNT(*) FROM TF_EmployeeAttendance WHERE AD_Org_ID = ? AND C_BPartner_ID =  ? AND "
+				+ " DateAcct >= ? AND DateAcct <= ? AND Status = ? ";
+		
+		BigDecimal unknownDays = DB.getSQLValueBD(null, sql, AD_Org_ID, C_BPartner_ID, dateFrom, dateTo, MEmployeeAttendance.STATUS_Unknown);
+		
+		return unknownDays;
 	}
 }

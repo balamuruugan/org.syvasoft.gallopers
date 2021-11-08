@@ -33,7 +33,7 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210903L;
+	private static final long serialVersionUID = 20211108L;
 
     /** Standard Constructor */
     public X_TF_Employee_Salary (Properties ctx, int TF_Employee_Salary_ID, String trxName)
@@ -45,6 +45,8 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 			setDateAcct (new Timestamp( System.currentTimeMillis() ));
 			setIncentive (Env.ZERO);
 // 0
+			setIsBiometricAttendance (false);
+// N
 			setIsCalculated (true);
 // Y
 			setProcessed (false);
@@ -413,6 +415,27 @@ public class X_TF_Employee_Salary extends PO implements I_TF_Employee_Salary, I_
 		if (bd == null)
 			 return Env.ZERO;
 		return bd;
+	}
+
+	/** Set Biometric Attendance.
+		@param IsBiometricAttendance Biometric Attendance	  */
+	public void setIsBiometricAttendance (boolean IsBiometricAttendance)
+	{
+		set_Value (COLUMNNAME_IsBiometricAttendance, Boolean.valueOf(IsBiometricAttendance));
+	}
+
+	/** Get Biometric Attendance.
+		@return Biometric Attendance	  */
+	public boolean isBiometricAttendance () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsBiometricAttendance);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
 	}
 
 	/** Set Calculated.

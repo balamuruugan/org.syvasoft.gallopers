@@ -58,6 +58,12 @@ public class MEmployeeSalaryOld extends X_TF_Employee_Salary {
 			setDocStatus(DOCSTATUS_Completed);
 			setProcessed(true);
 			
+			if(isBiometricAttendance()) {
+				int unknownDays = MEmployeeAttendance.getUnknownDays(getCtx(), getAD_Org_ID(), getC_BPartner_ID(), getDateFrom(), getDateTo()).intValue();
+				if(unknownDays > 0) 
+					throw new AdempiereException("Please resolve the " + unknownDays + " unknown days attendance records!");
+			}
+			
 			//Posting GL journal for Employee Salary 
 			MJournal j = new MJournal(getCtx(), 0, get_TrxName());
 			j.setAD_Org_ID(getAD_Org_ID());

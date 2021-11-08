@@ -249,6 +249,7 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_DateFrom) 
 				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_DateTo)
 				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_IsCalculated) 
+				|| columnName.equals(MEmployeeSalaryOld.COLUMNNAME_IsBiometricAttendance)
 				)) {
 				list.add(new CalloutEmployeeSalary_Attendance());
 				list.add(new CalloutEmployeeSalary());
