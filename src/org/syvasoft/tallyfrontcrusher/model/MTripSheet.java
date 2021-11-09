@@ -582,7 +582,7 @@ public class MTripSheet extends X_TF_TripSheet {
 	public void createProductDetail() {
 		
 		int ownVehicle_ID = getPM_Machinery().getTF_RentedVehicle_ID();
-		
+		//release previously associated weighment entries for this tripsheet.
 		String sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = NULL, TF_TripSheetProduct_ID = NULL WHERE TF_TripSheet_ID = " + getTF_TripSheet_ID();
 		DB.executeUpdate(sql, get_TrxName());
 		
