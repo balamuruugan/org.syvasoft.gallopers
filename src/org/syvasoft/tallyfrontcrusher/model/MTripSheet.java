@@ -588,7 +588,7 @@ public class MTripSheet extends X_TF_TripSheet {
 		
 		//Selecting right weighment entries for the current machinery
 		sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = ?, TF_TripSheetProduct_ID = NULL " +  
-				"  WHERE AD_Org_ID = ? AND TF_RentedVehicle_ID = ? AND GrossWeightTime BETWEEN ? AND ? AND Status IN ('CO','CL')";			
+				"  WHERE AD_Org_ID = ? AND TF_RentedVehicle_ID = ? AND GrossWeightTime BETWEEN ? AND ? AND Status IN ('CO','CL','UR')";			
 		ArrayList<Object> params = new ArrayList<Object>();
 		params.add(getTF_TripSheet_ID());
 		params.add(getAD_Org_ID());
