@@ -583,8 +583,11 @@ public class MTripSheet extends X_TF_TripSheet {
 		
 		int ownVehicle_ID = getPM_Machinery().getTF_RentedVehicle_ID();
 		
+		String sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = NULL, TF_TripSheetProduct_ID = NULL WHERE TF_TripSheet_ID = " + getTF_TripSheet_ID();
+		DB.executeUpdate(sql, get_TrxName());
+		
 		//Selecting right weighment entries for the current machinery
-		String sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = ?, TF_TripSheetProduct_ID = NULL " +  
+		sql = "UPDATE TF_WeighmentEntry SET TF_TripSheet_ID = ?, TF_TripSheetProduct_ID = NULL " +  
 				"  WHERE AD_Org_ID = ? AND TF_RentedVehicle_ID = ? AND GrossWeightTime BETWEEN ? AND ? AND Status IN ('CO','CL')";			
 		ArrayList<Object> params = new ArrayList<Object>();
 		params.add(getTF_TripSheet_ID());
