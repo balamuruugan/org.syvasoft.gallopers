@@ -32,6 +32,8 @@ public class MPMJob extends X_PM_Job {
 		if(MPMJob.DOCSTATUS_Completed.equals(docAction)) {
 			setDocStatus(DOCSTATUS_Completed);
 			setProcessed(true);
+			if(getPM_Schedule_ID() == 0)
+				return;
 			
 			MPMSchedule schedule = new MPMSchedule(getCtx(), getPM_Schedule_ID(), get_TrxName());
 			
@@ -95,6 +97,9 @@ public class MPMJob extends X_PM_Job {
 	}
 	
 	private void reverseSchedule()	{
+		if(getPM_Schedule_ID() == 0)
+			return;
+		
 		MPMSchedule schedule = new MPMSchedule(getCtx(), getPM_Schedule_ID(), get_TrxName());
 		
 		if(schedule.getScheduleType().equals(MPMSchedule.SCHEDULETYPE_Usage)) {				
