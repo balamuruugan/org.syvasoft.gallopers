@@ -610,7 +610,7 @@ public class MTripSheet extends X_TF_TripSheet {
 				"	 sum(we.netweightunit)netweight, we.C_UOM_ID, max(r.unitrent)unitrent\r\n" + 
 				"FROM \r\n" + 
 				"	 tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id \r\n" + 
-				"	 INNER JOIN TF_Machinery_RentConfig R ON r.WeighmentEntryType IS NULL AND we.m_product_id = r.JobWork_Product_ID \r\n" + 
+				"	 INNER JOIN TF_Machinery_RentConfig R ON we.AD_Org_ID = r.AD_Org_ID AND r.WeighmentEntryType IS NULL AND we.m_product_id = r.JobWork_Product_ID \r\n" + 
 				"WHERE \r\n" + 
 				"	 we.WeighmentEntryType IN ('3PR','4SR') AND TF_TripSheet_ID = ? \r\n" + 
 				"GROUP BY \r\n" + 
@@ -673,7 +673,7 @@ public class MTripSheet extends X_TF_TripSheet {
 				"	 R.DESCRIPTION, we.WeighmentEntryType \r\n" + 
 				"FROM\r\n" + 
 				"	tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id \r\n" + 
-				"	 INNER JOIN TF_Machinery_RentConfig R ON we.m_product_id = r.JobWork_Product_ID  AND \r\n" + 
+				"	 INNER JOIN TF_Machinery_RentConfig R ON we.AD_Org_ID = r.AD_Org_ID AND  we.m_product_id = r.JobWork_Product_ID  AND \r\n" + 
 				"	 	r.WeighmentEntryType = we.WeighmentEntryType\r\n" + 
 				"WHERE\r\n" + 
 				"	 we.WeighmentEntryType IN ('5KA', '9CA') AND TF_TripSheet_ID = ? \n" +
