@@ -52,7 +52,7 @@ public class MPMJob extends X_PM_Job {
 					else if(getDateEnd() == null) {
 						error = (error == "") ? "" : "\n ";
 						error = error + "End Date is mandatory.";
-					}						
+					}
 					throw new AdempiereUserError(error);
 				}
 			}
