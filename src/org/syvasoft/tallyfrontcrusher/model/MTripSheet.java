@@ -180,6 +180,7 @@ public class MTripSheet extends X_TF_TripSheet {
 				salary.setDescription("TripSheet No: " + getDocumentNo());
 				salary.setDocStatus(MEmployeeSalaryOld.DOCSTATUS_Drafted);		
 				salary.setTF_TripSheet_ID(getTF_TripSheet_ID());
+				salary.setUser1_ID(getUser1_ID());
 				salary.saveEx();
 				
 				setTF_Employee_Salary_ID(salary.getTF_Employee_Salary_ID());
@@ -199,7 +200,8 @@ public class MTripSheet extends X_TF_TripSheet {
 				st.setC_Activity_ID(getC_Activity_ID());
 				BigDecimal amount = getTotal_Wage();
 				st.setExpense(amount);
-				st.setTF_TripSheet_ID(getTF_TripSheet_ID());		
+				st.setTF_TripSheet_ID(getTF_TripSheet_ID());
+				st.setUser1_ID(getUser1_ID());
 				st.saveEx();
 				
 			}

@@ -16,6 +16,7 @@ public class CalloutTripsheet_Vehicle implements IColumnCallout {
 	public String start(Properties ctx, int WindowNo, GridTab mTab, GridField mField, Object value, Object oldValue) {
 		// TODO Auto-generated method stub
 		int Vehicle_ID = 0;
+		int User1_ID = 0;
 		int PM_Machinery_ID = 0;
 		if(mTab.getValue(MTripSheet.COLUMNNAME_PM_Machinery_ID) != null) 
 			PM_Machinery_ID = (int) mTab.getValue(MFuelIssue.COLUMNNAME_PM_Machinery_ID);
@@ -23,6 +24,7 @@ public class CalloutTripsheet_Vehicle implements IColumnCallout {
 		if(PM_Machinery_ID > 0) {
 			MMachinery m = new MMachinery(ctx, PM_Machinery_ID, null);
 			Vehicle_ID = m.getM_Product_ID();
+			User1_ID = m.getUser1_ID();
 		}
 		mTab.setValue(MFuelIssue.COLUMNNAME_Vehicle_ID, Vehicle_ID > 0 ? Vehicle_ID : null);
 		
@@ -36,6 +38,8 @@ public class CalloutTripsheet_Vehicle implements IColumnCallout {
 			mTab.setValue(MFuelIssue.COLUMNNAME_C_Project_ID, null);
 		}
 
+		mTab.setValue(MTripSheet.COLUMNNAME_User1_ID, User1_ID > 0 ? User1_ID : null);
+		
 		return null;
 	}
 

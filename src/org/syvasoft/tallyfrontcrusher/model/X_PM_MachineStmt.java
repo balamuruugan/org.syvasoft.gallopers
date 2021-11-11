@@ -33,7 +33,7 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20210724L;
+	private static final long serialVersionUID = 20211111L;
 
     /** Standard Constructor */
     public X_PM_MachineStmt (Properties ctx, int PM_MachineStmt_ID, String trxName)
@@ -389,8 +389,8 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
 
 	/** Jack Hammer = J */
 	public static final String QUARRYPRODUCTIONTYPE_JackHammer = "J";
-	/** GRAWELLER = G */
-	public static final String QUARRYPRODUCTIONTYPE_GRAWELLER = "G";
+	/** Graweller = G */
+	public static final String QUARRYPRODUCTIONTYPE_Graweller = "G";
 	/** Set Quarry Production Type.
 		@param QuarryProductionType Quarry Production Type	  */
 	public void setQuarryProductionType (String QuarryProductionType)
@@ -471,6 +471,34 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
 	public int getTF_TripSheet_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_TF_TripSheet_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_ElementValue getUser1() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_ElementValue)MTable.get(getCtx(), org.compiere.model.I_C_ElementValue.Table_Name)
+			.getPO(getUser1_ID(), get_TrxName());	}
+
+	/** Set Department.
+		@param User1_ID 
+		User defined list element #1
+	  */
+	public void setUser1_ID (int User1_ID)
+	{
+		if (User1_ID < 1) 
+			set_Value (COLUMNNAME_User1_ID, null);
+		else 
+			set_Value (COLUMNNAME_User1_ID, Integer.valueOf(User1_ID));
+	}
+
+	/** Get Department.
+		@return User defined list element #1
+	  */
+	public int getUser1_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_User1_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

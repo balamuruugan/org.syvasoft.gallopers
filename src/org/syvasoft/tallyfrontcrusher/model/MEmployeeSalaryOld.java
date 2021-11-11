@@ -98,6 +98,7 @@ public class MEmployeeSalaryOld extends X_TF_Employee_Salary {
 				jl.setUser1_ID(getC_ElementValue_ID()); // Quarry Profit Center
 				jl.setAmtSourceDr(getSalary_Amt());
 				jl.setAmtAcctDr(getSalary_Amt());
+				jl.setUser1_ID(getUser1_ID());
 				jl.setIsGenerated(true);
 				jl.saveEx();
 			}
@@ -113,6 +114,7 @@ public class MEmployeeSalaryOld extends X_TF_Employee_Salary {
 				jl.setUser1_ID(getC_ElementValue_ID()); // Quarry Profit Center
 				jl.setAmtSourceDr(getIncentive());
 				jl.setAmtAcctDr(getIncentive());
+				jl.setUser1_ID(getUser1_ID());
 				jl.setIsGenerated(true);
 				jl.saveEx();
 			}
@@ -130,6 +132,7 @@ public class MEmployeeSalaryOld extends X_TF_Employee_Salary {
 				jl.setUser1_ID(getC_ElementValue_ID()); // Quarry Profit Center
 				jl.setAmtSourceDr(getProductionBonus());
 				jl.setAmtAcctDr(getProductionBonus());
+				jl.setUser1_ID(getUser1_ID());
 				jl.setIsGenerated(true);
 				jl.saveEx();
 			}
@@ -145,6 +148,7 @@ public class MEmployeeSalaryOld extends X_TF_Employee_Salary {
 			BigDecimal totalEarnedSalary = getSalary_Amt().add(getIncentive()).add(getProductionBonus());
 			jl.setAmtSourceCr(totalEarnedSalary);
 			jl.setAmtAcctCr(totalEarnedSalary);
+			jl.setUser1_ID(getUser1_ID());
 			jl.setIsGenerated(true);
 			jl.saveEx();
 			

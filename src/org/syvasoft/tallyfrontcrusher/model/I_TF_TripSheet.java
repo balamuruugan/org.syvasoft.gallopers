@@ -631,10 +631,10 @@ public interface I_TF_TripSheet
     /** Column name TonnagePerLoad */
     public static final String COLUMNNAME_TonnagePerLoad = "TonnagePerLoad";
 
-	/** Set MT / Load	  */
+	/** Set Tonnage / Load	  */
 	public void setTonnagePerLoad (BigDecimal TonnagePerLoad);
 
-	/** Get MT / Load	  */
+	/** Get Tonnage / Load	  */
 	public BigDecimal getTonnagePerLoad();
 
     /** Column name Total_Wage */
@@ -688,6 +688,21 @@ public interface I_TF_TripSheet
 	  * User who updated this records
 	  */
 	public int getUpdatedBy();
+
+    /** Column name User1_ID */
+    public static final String COLUMNNAME_User1_ID = "User1_ID";
+
+	/** Set Department.
+	  * User defined list element #1
+	  */
+	public void setUser1_ID (int User1_ID);
+
+	/** Get Department.
+	  * User defined list element #1
+	  */
+	public int getUser1_ID();
+
+	public org.compiere.model.I_C_ElementValue getUser1() throws RuntimeException;
 
     /** Column name Vehicle_ID */
     public static final String COLUMNNAME_Vehicle_ID = "Vehicle_ID";

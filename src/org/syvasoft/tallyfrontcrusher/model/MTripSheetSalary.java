@@ -52,6 +52,7 @@ public class MTripSheetSalary extends X_TF_TripSheet_Salary {
 			salary.setIncentive(getIncentive());
 			salary.setDescription("TripSheet No: " + ts.getDocumentNo());
 			salary.setDocStatus(MEmployeeSalaryOld.DOCSTATUS_Drafted);
+			salary.setUser1_ID(ts.getUser1_ID());
 			salary.setTF_TripSheet_ID(getTF_TripSheet_ID());
 			salary.saveEx();
 						
@@ -70,6 +71,7 @@ public class MTripSheetSalary extends X_TF_TripSheet_Salary {
 			st.setDescription(getC_BPartner().getName());
 			st.setC_Activity_ID(ts.getC_Activity_ID());
 			st.setExpense(totalWage);
+			st.setUser1_ID(ts.getUser1_ID());
 			st.setTF_TripSheet_ID(getTF_TripSheet_ID());		
 			st.saveEx();
 			
