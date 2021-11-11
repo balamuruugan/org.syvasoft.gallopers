@@ -578,9 +578,6 @@ public class CrusherEventHandler extends AbstractEventHandler {
 		String invoiceNo="";
 		String WNo="";
 		String VehicleNo="";
-		if(inv!=null) {
-			invoiceNo=inv.getDocumentNo();
-		}
 		
 		int TF_Weighment_ID = ord.get_ValueAsInt("TF_WeighmentEntry_ID");
 		MWeighmentEntry we = new MWeighmentEntry(ord.getCtx(), TF_Weighment_ID, null);
@@ -592,13 +589,19 @@ public class CrusherEventHandler extends AbstractEventHandler {
 			MRentedVehicle rv=new MRentedVehicle(ord.getCtx(), we.getTF_RentedVehicle_ID(), null);
 			VehicleNo=rv.getVehicleNo();
 		}
+		if(inv!=null) {
+			invoiceNo=inv.getDocumentNo();
+		}
+		else {
+			invoiceNo=we.getInvoiceNo();
+		}
 		
 		//Posting Payment Document for Driver Tips
 		TF_MPayment payment = new TF_MPayment(ord.getCtx(), 0, ord.get_TrxName());
 		payment.setAD_Org_ID(ord.getAD_Org_ID());
 		payment.setDateAcct(ord.getDateAcct());
 		payment.setDateTrx(ord.getDateAcct());
-		payment.setDescription("DRIVER BETA AMOUNT GIVEN FOR Sales Invoice "+invoiceNo  +", DC:# "+WNo +", VEHICLE "+VehicleNo);
+		payment.setDescription("DRIVER BETA FOR Sales Invoice:"+ invoiceNo  +", DC:# "+WNo +", VEHICLE:"+VehicleNo);
 		//* Commented for Laxmi Stone */
 		//payment.setCashType(TF_MPayment.CASHTYPE_GeneralExpense);
 		payment.setC_DocType_ID(false);		
