@@ -23,6 +23,7 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 		
 		int passID = CalloutUtil.getIntValue(mTab, MWeighmentEntry.COLUMNNAME_M_Product_Pass_ID);;
 		int freight_uom_id = CalloutUtil.getIntValue(mTab, MWeighmentEntry.COLUMNNAME_FreightRule_ID);
+		int C_UOM_ID = CalloutUtil.getIntValue(mTab, MWeighmentEntry.COLUMNNAME_C_UOM_ID);
 		
 		BigDecimal Amount = qty.multiply(price);
 		BigDecimal PassAmount = BigDecimal.ZERO;
@@ -47,7 +48,7 @@ public class CalloutWeighmentEntry_CalcAmount implements IColumnCallout {
 			if(freight_uom_id == LOAD_UOM_ID) {
 				RentAmount = freightprice;
 			}	
-			else if(freight_uom_id == MT_UOM_ID) {
+			else if(freight_uom_id == MT_UOM_ID || C_UOM_ID == freight_uom_id) {
 				RentAmount = freightprice.multiply(qty);
 			}
 		}
