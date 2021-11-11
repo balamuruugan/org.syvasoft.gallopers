@@ -58,6 +58,7 @@ import org.syvasoft.tallyfrontcrusher.model.MFuelIssue;
 import org.syvasoft.tallyfrontcrusher.model.MGLPostingConfig;
 import org.syvasoft.tallyfrontcrusher.model.MJobworkItemIssue;
 import org.syvasoft.tallyfrontcrusher.model.MMachinery;
+import org.syvasoft.tallyfrontcrusher.model.MRentedVehicle;
 import org.syvasoft.tallyfrontcrusher.model.MTyre;
 import org.syvasoft.tallyfrontcrusher.model.MVehicleType;
 import org.syvasoft.tallyfrontcrusher.model.MWeighmentEntry;
@@ -575,19 +576,29 @@ public class CrusherEventHandler extends AbstractEventHandler {
 				.first();
 		
 		String invoiceNo="";
+		String WNo="";
+		String VehicleNo="";
 		if(inv!=null) {
 			invoiceNo=inv.getDocumentNo();
 		}
 		
 		int TF_Weighment_ID = ord.get_ValueAsInt("TF_WeighmentEntry_ID");
 		MWeighmentEntry we = new MWeighmentEntry(ord.getCtx(), TF_Weighment_ID, null);
-		invoiceNo = we.getDocumentNo();
+		WNo = we.getDocumentNo();
+		if(we.getVehicleNo()!="") {
+			VehicleNo=we.getVehicleNo();	
+		}
+		else {
+			MRentedVehicle rv=new MRentedVehicle(ord.getCtx(), we.getTF_RentedVehicle_ID(), null);
+			VehicleNo=rv.getVehicleNo();
+		}
+		
 		//Posting Payment Document for Driver Tips
 		TF_MPayment payment = new TF_MPayment(ord.getCtx(), 0, ord.get_TrxName());
 		payment.setAD_Org_ID(ord.getAD_Org_ID());
 		payment.setDateAcct(ord.getDateAcct());
 		payment.setDateTrx(ord.getDateAcct());
-		payment.setDescription("DRIVER BETA AMOUNT GIVEN FOR DC:# "+ invoiceNo);
+		payment.setDescription("DRIVER BETA AMOUNT GIVEN FOR Sales Invoice "+invoiceNo  +", DC:# "+WNo +", VEHICLE "+VehicleNo);
 		//* Commented for Laxmi Stone */
 		//payment.setCashType(TF_MPayment.CASHTYPE_GeneralExpense);
 		payment.setC_DocType_ID(false);		
