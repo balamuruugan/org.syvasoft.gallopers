@@ -24,6 +24,7 @@ import org.syvasoft.tallyfrontcrusher.model.MEmployeeSalaryIssue;
 import org.syvasoft.tallyfrontcrusher.model.MFuelIssue;
 import org.syvasoft.tallyfrontcrusher.model.MGenerateTaxInvoice;
 import org.syvasoft.tallyfrontcrusher.model.MGenerateTaxInvoiceLine;
+import org.syvasoft.tallyfrontcrusher.model.MInstantPettyCash;
 import org.syvasoft.tallyfrontcrusher.model.MInterOrgCashTransfer;
 import org.syvasoft.tallyfrontcrusher.model.MInvestmentReceipt;
 import org.syvasoft.tallyfrontcrusher.model.MJobworkResourceRentEntry;
@@ -803,6 +804,11 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 		if(tableName.equals(MInventoryLine.Table_Name)) {
 			if(columnName.equals("Barcode"))
 				list.add(new CalloutInventoryLine_Barcode());
+		}
+		
+		if(tableName.equals(MInstantPettyCash.Table_Name)) {
+			if(columnName.equals(MInstantPettyCash.COLUMNNAME_AD_Org_ID))
+				list.add(new CalloutInstantPettyCash_Org());
 		}
 		
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];

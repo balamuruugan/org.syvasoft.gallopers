@@ -329,6 +329,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return MEmployeeShift.class;
 		else if(MEmployeeAttendance.Table_Name.equals(tableName))			
 			return MEmployeeAttendance.class;
+		else if(MInstantPettyCash.Table_Name.equals(tableName))			
+			return MInstantPettyCash.class;
+		else if(MInstantPettyCashLine.Table_Name.equals(tableName))			
+			return MInstantPettyCashLine.class;
 		return null;
 	}
 
@@ -651,6 +655,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeShift(ctx, Record_ID, trxName);
 		else if(MEmployeeAttendance.Table_Name.equals(tableName))			
 			return new MEmployeeAttendance(ctx, Record_ID, trxName);
+		else if(MInstantPettyCash.Table_Name.equals(tableName))			
+			return new MInstantPettyCash(ctx, Record_ID, trxName);
+		else if(MInstantPettyCashLine.Table_Name.equals(tableName))			
+			return new MInstantPettyCashLine(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -975,6 +983,10 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MEmployeeShift(ctx, rs, trxName);
 		else if(MEmployeeAttendance.Table_Name.equals(tableName))			
 			return new MEmployeeAttendance(ctx, rs, trxName);
+		else if(MInstantPettyCash.Table_Name.equals(tableName))			
+			return new MInstantPettyCash(ctx, rs, trxName);
+		else if(MInstantPettyCashLine.Table_Name.equals(tableName))			
+			return new MInstantPettyCashLine(ctx, rs, trxName);
 		return null;
 	}
 }

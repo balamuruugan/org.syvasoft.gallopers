@@ -206,4 +206,31 @@ public class TF_MOrg extends MOrg {
 		return ii.intValue();
 	}
 
+	/** Column name InstantPettyCashAcct_ID */
+    public static final String COLUMNNAME_InstantPettyCashAcct_ID = "InstantPettyCashAcct_ID";
+    
+	public org.compiere.model.I_C_ElementValue getInstantPettyCashAcct() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_ElementValue)MTable.get(getCtx(), org.compiere.model.I_C_ElementValue.Table_Name)
+			.getPO(getInstantPettyCashAcct_ID(), get_TrxName());	}
+
+	/** Set Instant Petty Cash Account.
+		@param InstantPettyCashAcct_ID Instant Petty Cash Account	  */
+	public void setInstantPettyCashAcct_ID (int InstantPettyCashAcct_ID)
+	{
+		if (InstantPettyCashAcct_ID < 1) 
+			set_Value (COLUMNNAME_InstantPettyCashAcct_ID, null);
+		else 
+			set_Value (COLUMNNAME_InstantPettyCashAcct_ID, Integer.valueOf(InstantPettyCashAcct_ID));
+	}
+
+	/** Get Instant Petty Cash Account.
+		@return Instant Petty Cash Account	  */
+	public int getInstantPettyCashAcct_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_InstantPettyCashAcct_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
 }
