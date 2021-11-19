@@ -2,7 +2,7 @@ package org.syvasoft.tallyfrontcrusher.model;
 
 import java.sql.ResultSet;
 import java.util.Properties;
-
+import org.compiere.model.Query;
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.acct.Doc_BankStatement;
 
@@ -32,6 +32,17 @@ public class MLoadingSlip extends X_TF_LoadingSlip {
 			if(getStatus().equals(STATUS_Unbilled))
 				setProcessed(true);
 		}
+		
+		if(getStatus().equals(STATUS_Unbilled)) {
+			MWeighmentEntry weighment = new Query(getCtx(),MWeighmentEntry.Table_Name,"DocumentNo = '" + getDocumentNo() + "'",get_TrxName()).first();
+		
+			if(weighment != null) {
+				weighment.setLoadedTime(getLoadedTime());
+				weighment.setLoader_User_ID(getAD_User_ID());
+				weighment.saveEx();
+			}
+		}
+		
 		return super.beforeSave(newRecord);
 	}
 }

@@ -169,6 +169,14 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 		//set AD_User_ID
 		if(newRecord) {
 			
+			MLoadingSlip loadingslip = new Query(getCtx(), MLoadingSlip.Table_Name, "DocumentNo = '"+ getDocumentNo() + "' AND Status = 'CO'", get_TrxName())
+					.setClient_ID().first();
+			
+			if(loadingslip != null) {
+				setLoadedTime(loadingslip.getLoadedTime());
+				setLoader_User_ID(loadingslip.getAD_User_ID());
+			}
+			
 			if(getCompletedBy() == null) {
 				MUser user = TF_MUser.get(getCtx(), getUserName(), get_TrxName());
 				if(user != null) {

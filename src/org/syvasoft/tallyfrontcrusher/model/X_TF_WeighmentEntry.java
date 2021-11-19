@@ -1024,6 +1024,46 @@ public class X_TF_WeighmentEntry extends PO implements I_TF_WeighmentEntry, I_Pe
 		}
 		return false;
 	}
+	
+	/** Set Loaded Time.
+	@param LoadedTime Loaded Time	  */
+	public void setLoadedTime (Timestamp LoadedTime)
+	{
+		set_Value (COLUMNNAME_LoadedTime, LoadedTime);
+	}
+	
+	/** Get Loaded Time.
+		@return Loaded Time	  */
+	public Timestamp getLoadedTime () 
+	{
+		return (Timestamp)get_Value(COLUMNNAME_LoadedTime);
+	}
+	
+	public org.compiere.model.I_AD_User getLoader_User() throws RuntimeException
+	{
+		return (org.compiere.model.I_AD_User)MTable.get(getCtx(), org.compiere.model.I_AD_User.Table_Name)
+			.getPO(getLoader_User_ID(), get_TrxName());	}
+	
+	/** Set Loader Operator.
+		@param Loader_User_ID Loader Operator	  */
+	public void setLoader_User_ID (int Loader_User_ID)
+	{
+		if (Loader_User_ID < 1) 
+			set_Value (COLUMNNAME_Loader_User_ID, null);
+		else 
+			set_Value (COLUMNNAME_Loader_User_ID, Integer.valueOf(Loader_User_ID));
+	}
+	
+	/** Get Loader Operator.
+		@return Loader Operator	  */
+	public int getLoader_User_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_Loader_User_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
 
 	public org.compiere.model.I_M_Product getM_Product() throws RuntimeException
     {

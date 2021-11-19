@@ -604,6 +604,26 @@ public interface I_TF_WeighmentEntry
 	  */
 	public boolean isTaxIncluded();
 
+	/** Column name LoadedTime */
+    public static final String COLUMNNAME_LoadedTime = "LoadedTime";
+
+	/** Set Loaded Time	  */
+	public void setLoadedTime (Timestamp LoadedTime);
+
+	/** Get Loaded Time	  */
+	public Timestamp getLoadedTime();
+
+    /** Column name Loader_User_ID */
+    public static final String COLUMNNAME_Loader_User_ID = "Loader_User_ID";
+
+	/** Set Loader Operator	  */
+	public void setLoader_User_ID (int Loader_User_ID);
+
+	/** Get Loader Operator	  */
+	public int getLoader_User_ID();
+
+	public org.compiere.model.I_AD_User getLoader_User() throws RuntimeException;
+	
     /** Column name M_Product_ID */
     public static final String COLUMNNAME_M_Product_ID = "M_Product_ID";
 
