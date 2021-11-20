@@ -1,4 +1,4 @@
-﻿SET SEARCH_PATH TO adempiere;
+SET SEARCH_PATH TO adempiere;
 
 --SELECT * FROM C_Order WHERE ad_client_id=1000000;
 
@@ -314,7 +314,7 @@ delete FROM fact_acct WHERE ad_client_id=1000000;
 
 delete from c_invoiceline WHERE ad_client_id=1000000;
 
---DELETE FROM M_Product WHERE ad_client_id=1000000 AND m_product_id>1000032 ;;
+
 --SELECT * FROM M_Product where ad_client_id=1000000 AND m_product_id>1000032 ;;
 
 DELETE FROM tf_countertrans;
@@ -329,13 +329,20 @@ DELETE FROM ad_password_history WHERE AD_CLIENT_ID= 1000000 ;
 DELETE FROM ad_user_orgaccess WHERE AD_CLIENT_ID= 1000000;
 DELETE FROM ad_userpreference WHERE ad_user_id=1000275 OR AD_CLIENT_ID= 1000000 ;
 DELETE FROM pa_dashboardpreference WHERE ad_user_id=1000275 OR AD_CLIENT_ID= 1000000 ;
-DELETE FROM ad_pinstance WHERE ad_user_id=1000275 OR AD_CLIENT_ID= 1000000 ;
+DELETE FROM ad_pinstance WHERE AD_USER_ID NOT IN (100,101,1000004, 1000019, 1000005, 1000008, 1000279);
 DELETE FROM ad_note WHERE AD_CLIENT_ID= 1000000;
 DELETE FROM m_pricelist_trl WHERE AD_CLIENT_ID= 1000000;
 DELETE FROM m_pricelist_version_trl WHERE AD_CLIENT_ID= 1000000;
 UPDATE ad_preference SET ad_user_id=null WHERE AD_Client_ID=1000000;
 DELETE FROM ad_preference WHERE AD_USER_ID NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
-
+DELETE FROM m_product_category_trl;
+UPDATE m_product SET salesrep_id=NULL;
+DELETE FROM m_locatortype WHERE AD_CLIENT_ID= 1000000 ;
+DELETE FROM tf_cb_role;
+DELETE FROM ad_postit WHERE AD_CLIENT_ID= 1000000 ;
+DELETE FROM ad_userdef_field WHERE AD_CLIENT_ID= 1000000 ;
+DELETE FROM ad_userdef_tab WHERE AD_CLIENT_ID= 1000000 ;
+DELETE FROM ad_userdef_win WHERE AD_CLIENT_ID= 1000000 ;
 --select * from ad_preference WHERE AD_USER_ID=1000492;
 DELETE FROM AD_USER WHERE AD_CLIENT_ID= 1000000 AND AD_USER_ID NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
 DELETE FROM tf_jobwork_assignedemployee;
@@ -359,9 +366,16 @@ DELETE FROM tf_trtaxinvoiceLINE;
 DELETE FROM tf_trtaxinvoice;
 DELETE FROM tf_generate_taxinvoiceLINE;
 DELETE FROM tf_generate_taxinvoice;
-DELETE FROM c_bPARTNER WHERE ad_client_id=1000000 AND C_BPARTNER_ID NOT IN (1000010,1000005, 1000007, 1000006, 1000020, 1000034);
+DELETE FROM tf_acctperiod;
+DELETE FROM tf_bpacctperiod;
+DELETE FROM tf_bpartner_link;
+DELETE FROM tf_incentiveconfig_applicable;
+DELETE FROM tf_incentiveconfig;
+DELETE FROM tf_torderline;
+DELETE FROM tf_torder;
+DELETE FROM c_bPARTNER WHERE ad_client_id=1000000 AND C_BPARTNER_ID NOT IN (1000010,1000005, 1000007, 1000006, 1000020, 1000034,1000028);
 
-
+UPDATE m_product SET logo_id = NULL;
 DELETE FROM adempiere.AD_Image WHERE AD_Client_ID = 1000000 AND ad_image_id not in (1000003, 1000002);
 
 DELETE FROM ADEMPIERE.ad_attachment WHERE AD_Client_ID = 1000000;
@@ -430,11 +444,14 @@ DELETE FROM m_product_po WHERE AD_CLIENT_ID= 1000000 ;
 DELETE FROM tf_yardloadentry;
 DELETE FROM tf_yardpermitissue_entry;
 DELETE FROM tf_yardcustomervehicle;
+DELETE FROM tf_incentiveconfig;
 DELETE FROM c_bPARTNER WHERE ad_client_id=1000000 AND C_BPARTNER_ID NOT IN (1000028, 1000010,1000005, 1000007, 1000006, 1000020);
 
 UPDATE M_Warehouse SET M_ReserveLocator_ID = NULL WHERE AD_Client_ID = 1000000 ;
+DELETE FROM m_replenish WHERE AD_Client_ID = 1000000;
 DELETE FROM M_Locator WHERE AD_Client_ID = 1000000 AND M_Locator_ID != 1000001 ;
 UPDATE ad_orginfo SET M_Warehouse_ID = null WHERE AD_Client_ID = 1000000 AND M_Warehouse_ID != 1000001 ;
+DELETE FROM tf_prodcategorysetup;
 DELETE FROM M_Warehouse WHERE AD_Client_ID = 1000000 AND M_Warehouse_ID != 1000001 ;
 
 DELETE FROM TF_ElementValue_OrgAccess WHERE AD_Client_ID = 1000000 ;
@@ -447,6 +464,8 @@ DELETE FROM ad_preference WHERE AD_Client_ID = 1000000  AND AD_Org_ID!=1000000;
 
 --DELETE FROM AD_Role_OrgAccess WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0,)1000000);
 --UPDATE c_bankaccount_acct set c_validcombination_id=null where AD_Client_ID = 1000000;
+DELETE FROM c_bankaccount_acct WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0, 1000000);
+DELETE FROM c_bankaccount_acct WHERE AD_Client_ID = 1000000  ;
 DELETE FROM c_validcombination WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0, 1000000);
 UPDATE C_ElementValue SET DefaultOrg_ID  = 0 WHERE DefaultOrg_ID != 0 AND AD_Client_ID = 1000000  ;
 DELETE FROM ad_sequence_no WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0,1000000);
@@ -482,7 +501,17 @@ DELETE FROM tf_yardload_config;
 UPDATE PM_Machinery SET tf_vehicletype_id=null WHERE AD_Client_ID = 1000000;
 DELETE FROM tf_vehicletype;
 DELETE FROM tf_countertransline;
+DELETE FROM tf_glposting_config;
+DELETE FROM pm_sparesetup;
+DELETE FROM m_bp_price WHERE ad_client_id  = 1000000;
 --update c_validcombination set ad_org_id=null where AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
+DELETE FROM M_Product WHERE ad_client_id=1000000 AND m_product_id>1000032 ;;
+DELETE FROM ad_window_access WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
+DELETE FROM ad_user_roles WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
+DELETE FROM ad_process_access WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
+DELETE FROM ad_workflow_access WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
+DELETE FROM c_uom WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
+DELETE FROM tf_productionplant WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
 DELETE FROM AD_Org WHERE AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
 
 DELETE FROM ad_changelog WHERE AD_Session_ID IN (SELECT AD_Session_ID FROM AD_Session WHERE AD_Role_ID in ( 1000026, 1000027, 1000028 ));
@@ -511,5 +540,9 @@ DELETE FROM pm_machinestmt WHERE AD_Client_ID = 1000000;
 
 
 --DELETE FROM PM_MachineryType WHERE AD_CLIENT_ID= 1000000;
+DELETE FROM tf_machinery_rentconfig;
+DELETE FROM plc_reading_log;
+DELETE FROM plc_modbus_config;
 DELETE FROM pm_machinery WHERE AD_Client_ID = 1000000;
+
 

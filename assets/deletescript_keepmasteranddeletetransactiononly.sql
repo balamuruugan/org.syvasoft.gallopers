@@ -70,6 +70,20 @@ DELETE FROM TF_Boulder_Receipt_Line;
 delete from m_costhistory WHERE ad_client_id=1000000;;
 delete from m_costdetail WHERE ad_client_id=1000000;;
 DELETE FROM TF_Boulder_Receipt;
+DELETE FROM pm_meter_log;
+DELETE FROM pm_spare;
+DELETE FROM tf_tripsheet_am;
+DELETE FROM tf_tripsheet_salary;
+UPDATE tf_employee_salary SET tf_tripsheet_id = NULL;
+UPDATE tf_tripsheet SET tf_employee_salary_id = NULL;
+UPDATE tf_weighmententry SET tf_tripsheetproduct_id=NULL,tf_tripsheet_id=NULL;
+DELETE FROM tf_tripsheetproduct;
+DELETE FROM tf_drillingentry;
+DELETE FROM pm_machinestmt;
+DELETE FROM tf_tripsheet;
+
+
+
 DELETE FROM TF_Employee_Salary;
 DELETE FROM TF_Vehicle_Rent;
 DELETE FROM TF_Quarry_Rent;
@@ -81,6 +95,8 @@ UPDATE TF_Crusher_Production SET TF_WeighmentEntry_id = NULL, Subcon_Invoice_ID 
 --SubContract Tables
 UPDATE M_InOut SET TF_WeighmentEntry_ID = NULL;
 UPDATE C_Invoice SET TF_WeighmentEntry_ID = NULL;
+UPDATE c_invoiceline SET TF_WeighmentEntry_ID = NULL;
+UPDATE c_orderline SET TF_WeighmentEntry_ID = NULL;
 UPDATE tf_crusherkatingentry SET TF_WeighmentEntry_ID = NULL;
 DELETE FROM TF_Jobwork_Expense;
 DELETE FROM TF_Jobwork_Charges;
@@ -113,8 +129,17 @@ DELETE FROM TF_TripSheet WHERE ad_client_id=1000000;
 UPDATE C_Order SET tf_weighmententry_id = null, C_PROJECT_id = NULL, IssueToSubcontract_ID= null, SUBCON_invoice_id = null,
 TransporterInvoice_ID = null
  WHERE AD_client_ID = 1000000;
+ UPDATE tf_weighmententry SET tf_weighmententryprimary_id = NULL;
+ DELETE FROM TF_CrusherKatingEntry;
+DELETE FROM TF_Crusher_Production;
+DELETE FROM TF_ImportSales;
+DELETE FROM TF_Boulder_Movement;
 DELETE FROM tf_rmsubcon_movement WHERE AD_client_ID = 1000000;
-DELETE FROM tf_weighmententry WHERE ad_client_id=1000000;
+DELETE FROM tf_whatsapplog;
+DELETE FROM TF_RMSubcon_Movement;
+DELETE FROM TF_Boulder_Receipt;
+DELETE FROM TF_Weighment_Permit;
+
 --DELETE FROM  C_Project WHERE C_Project_id !=1000000 AND ad_client_id=1000000;;
 
 
@@ -138,6 +163,8 @@ delete from m_matchpo WHERE ad_client_id=1000000;;
 delete from c_payselectionline WHERE ad_client_id=1000000;;
 delete from c_payselectioncheck WHERE ad_client_id=1000000;;
 delete from c_payselection WHERE ad_client_id=1000000;;
+
+
 Update C_Invoice set C_Cashline_ID = null WHERE ad_client_id=1000000;;
 Update C_Order set C_Cashline_ID = null WHERE ad_client_id=1000000;;
 delete from C_Cashline WHERE ad_client_id=1000000;;
@@ -169,8 +196,10 @@ delete from c_depositbatch WHERE ad_client_id=1000000;;
 delete from c_orderpayschedule WHERE ad_client_id=1000000;
 delete from c_paymenttransaction WHERE ad_client_id=1000000;;
 UPDATE c_bankaccount SET C_Payment_ID = null WHERE ad_client_id=1000000;;
+
+
 DELETE FROM tf_investmentreceipt WHERE ad_client_id=1000000;;
-delete from c_payment WHERE ad_client_id=1000000;;
+
 delete from c_paymentbatch  WHERE ad_client_id=1000000;;
 Update M_INOUTLINE Set C_Orderline_ID = null, M_RMALine_ID=null WHERE ad_client_id=1000000;;
 Update M_INOUT Set C_Order_ID = null, C_Invoice_ID=null, M_RMA_ID=null WHERE ad_client_id=1000000;;
@@ -180,12 +209,13 @@ update R_Request set m_rma_id = null WHERE ad_client_id=1000000;;
 delete from m_rmatax WHERE ad_client_id=1000000;;
 delete from M_RMAline WHERE ad_client_id=1000000;;
 delete from M_RMA WHERE ad_client_id=1000000;;
+
 UPDATE C_BPartner SET C_Invoice_ID = null WHERE ad_Client_ID = 1000000;
 UPDATE tf_jobwork_expense_entry set SubCon_Invoice_id = null;
 UPDATE TF_TripSheet SET SubCon_invoice_ID = null;
 delete from tf_bpopeningbalance WHERE ad_client_id=1000000;
 UPDATE  C_Order SET TransporterInvoice_ID = NULL;
-delete from c_Invoice WHERE ad_client_id=1000000;
+
 delete from PP_MRP WHERE ad_client_id=1000000;;
 delete from m_requisitionline  WHERE ad_client_id=1000000;;
 delete from m_requisition WHERE ad_client_id=1000000;;
@@ -196,7 +226,7 @@ delete from c_ordertax  WHERE ad_client_id=1000000;;
 update r_request set c_order_id = null, M_inout_id = null WHERE ad_client_id=1000000;;
 update r_requestaction set c_order_id = null, M_inout_id = null WHERE ad_client_id=1000000;;
 DELETE FROM tf_rmsubcon_movement;
-delete from c_order WHERE ad_client_id=1000000;;
+
 UPDATE tf_jobwork_expense_entry SET GL_Journal_ID = null;
 delete from fact_acct WHERE ad_client_id=1000000;;
 delete from fact_acct_summary WHERE ad_client_id=1000000;;
@@ -213,13 +243,11 @@ delete from m_transaction WHERE ad_client_id=1000000;;
 delete from m_packageline WHERE ad_client_id=1000000;;
 delete from m_package WHERE ad_client_id=1000000;;
 delete from m_inoutline WHERE ad_client_id=1000000;; 
-delete from m_inout WHERE ad_client_id=1000000;;
 delete from m_inoutconfirm WHERE ad_client_id=1000000;; 
 delete from m_inoutlineconfirm WHERE ad_client_id=1000000;; 
 delete from m_inoutlinema WHERE ad_client_id=1000000;; 
 update m_product set m_inventory_id = NULL;
 delete from m_inventoryline WHERE ad_client_id=1000000;; 
-delete from m_inventory WHERE ad_client_id=1000000;;
 delete from m_inventorylinema  WHERE ad_client_id=1000000;; 
 delete from m_Movementline WHERE ad_client_id=1000000;; 
 delete from m_Movement WHERE ad_client_id=1000000;; 
@@ -448,4 +476,18 @@ DELETE FROM tf_vehiclerent_tajconfig;
 DELETE FROM AD_Preference WHERE AD_uSER_id in (1000705);
 DELETE FROM ad_password_history WHERE AD_uSER_id in (1000705);
 DELETE FROM ad_userpreference WHERE AD_uSER_id in (1000705);pa_dashboardpreference
-DELETE FROM pa_dashboardpreference WHERE AD_uSER_id in (1000705);
+DELETE FROM pa_dashboardpreference WHERE AD_uSER_id in (1000705);*/
+DELETE FROM c_allocationline;
+DELETE FROM c_allocationhdr;
+DELETE FROM c_bankstatementline;
+DELETE FROM c_bankstatement;
+UPDATE c_invoice SET c_payment_id = NULL;
+UPDATE c_order SET c_payment_id = NULL;
+
+
+DELETE FROM tf_weighmententry;
+DELETE FROM c_payment WHERE ad_client_id=1000000;
+DELETE FROM c_Invoice WHERE ad_client_id=1000000;
+DELETE FROM m_inout WHERE ad_client_id=1000000;
+DELETE FROM c_order WHERE ad_client_id=1000000;
+DELETE FROM m_inventory WHERE ad_client_id=1000000;
