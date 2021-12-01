@@ -65,8 +65,8 @@ UPDATE C_Invoice SET TF_Vehicle_Rental_Contract_ID = NULL;
 UPDATE M_Transaction SET TF_Boulder_Receipt_ID = NULL;
 
 DELETE FROM TF_Boulder_Receipt_Line;
-delete from m_costhistory WHERE ad_client_id=1000000;;
-delete from m_costdetail WHERE ad_client_id=1000000;;
+--delete from m_costhistory WHERE ad_client_id=1000000;;
+--delete from m_costdetail WHERE ad_client_id=1000000;;
 DELETE FROM TF_Boulder_Receipt;
 DELETE FROM TF_Employee_Salary;
 DELETE FROM TF_Vehicle_Rent;
@@ -82,6 +82,7 @@ UPDATE C_Order SET tf_discountrequest_ID = null;
 
 DELETE FROM tf_discountrequest;
 
+
 --SubContract Tables
 DELETE FROM TF_Jobwork_Expense;
 DELETE FROM TF_Jobwork_Charges;
@@ -91,9 +92,7 @@ DELETE FROM TF_Jobwork_IssuedItems;
 DELETE FROM TF_Jobwork_ReceivedItems;
 DELETE FROM TF_Jobwork_ProductPrice;
 DELETE FROM TF_Jobwork_ItemIssue;
-delete from fact_acct WHERE ad_client_id=1000000;--  AND AD_Org_ID IN (1000027, 1000043, 1000022);
-delete from fact_acct_summary WHERE ad_client_id=1000000; -- AND AD_Org_ID IN (1000027, 1000043, 1000022);;
-DELETE FROM c_recurring WHERE ad_client_id=1000000;;
+
 UPDATE tf_jobwork_expense_entry set SubCon_Invoice_id = null, GL_Journal_ID = null;
 DELETE FROM tf_jobwork_expense_entry WHERE AD_client_ID = 1000000;
 UPDATE C_Payment SET EmpAdv_Journal_ID = null, C_Project_ID = null WHERE AD_client_ID = 1000000;
@@ -103,9 +102,6 @@ UPDATE tf_coaopeningbalance SET GL_Journal_ID = null WHERE AD_client_ID = 100000
 UPDATE tf_investmentstructure SET GL_Journal_ID = null, gl_journalinvacct_id=null, 
 gl_journalsubpartneradj_id = null  WHERE AD_client_ID = 1000000 AND AD_Org_ID = 1000027;
 UPDATE TF_InvestmentReceipt SET GL_Journal_ID = null WHERE AD_client_ID = 1000000;;
-
-UPDATE GL_Journal SET TF_CreditLine_ID = NULL WHERE ad_client_id=1000000 ;
-UPDATE GL_Journal SET TF_DebitLine_ID = NULL WHERE ad_client_id=1000000  ;
 DELETE FROM TF_INVESTMENTSTRUCTURE WHERE ad_client_id=1000000 ;  
 DELETE FROM  TF_PermitLedgerLine;
 DELETE FROM TF_PermitLedger;
@@ -116,7 +112,6 @@ delete from gl_journalbatch WHERE ad_client_id=1000000 ;
 delete from gl_journalline WHERE ad_client_id=1000000 ; 
 delete from gl_journal WHERE ad_client_id=1000000 ;  
 
-DELETE from c_validcombination WHERE C_Project_ID IN (SELECT C_Project_ID FROM C_Project WHERE C_Project_id !=1000000 AND ad_client_id=1000000);
 UPDATE C_Invoice SET C_Project_ID = null WHERE AD_client_ID = 1000000;
 UPDATE m_inventory SET C_Project_ID = null WHERE AD_Client_ID = 1000000;
 UPDATE pm_meter_log SET TF_tripsheet_id=null WHERE ad_client_id=1000000;
@@ -132,6 +127,8 @@ DELETE FROM tf_weighment_permit WHERE ad_client_id=1000000;
 UPDATE TF_Crusher_Production SET TF_WeighmentEntry_ID=NULL WHERE AD_Client_ID=1000000;
 UPDATE M_inout SET TF_WeighmentEntry_ID=NULL WHERE ad_client_id=1000000;
 DELETE FROM tf_weighmententry WHERE ad_client_id=1000000;
+
+
 --DELETE FROM  C_Project WHERE C_Project_id !=1000000 AND ad_client_id=1000000;;
 
 
@@ -147,13 +144,6 @@ delete from ad_changelog WHERE ad_client_id=1000000;;
 delete from c_allocationline WHERE ad_client_id=1000000;;
 delete from c_allocationhdr WHERE ad_client_id=1000000;;
 Update C_BankAccount Set CurrentBalance = 0 WHERE ad_client_id=1000000;;
-delete from m_costhistory WHERE ad_client_id=1000000;;
-delete from m_costdetail WHERE ad_client_id=1000000;;
-delete from m_matchinv WHERE ad_client_id=1000000;;
-delete from m_matchpo WHERE ad_client_id=1000000;;
-delete from c_payselectionline WHERE ad_client_id=1000000;;
-delete from c_payselectioncheck WHERE ad_client_id=1000000;;
-delete from c_payselection WHERE ad_client_id=1000000;;
 Update C_Invoice set C_Cashline_ID = null WHERE ad_client_id=1000000;;
 Update C_Order set C_Cashline_ID = null WHERE ad_client_id=1000000;;
 delete from C_Cashline WHERE ad_client_id=1000000;;
@@ -261,7 +251,6 @@ delete from c_dunningrunline WHERE ad_client_id=1000000;;
 delete from c_dunningrunentry WHERE ad_client_id=1000000;; 
 delete from AD_WF_EventAudit  WHERE ad_client_id=1000000;;
 delete from AD_WF_Process WHERE ad_client_id=1000000; ;
-Update M_Cost SET CurrentQty=0, CumulatedAMT=0, CumulatedQty=0  WHERE ad_client_id=1000000;
 Update C_BPartner SET ActualLifetimeValue=0, SO_CreditUsed=0, TotalOpenBalance=0, C_Invoice_ID=NULL  WHERE ad_client_id=1000000;;
 delete from R_RequestUpdates WHERE ad_client_id=1000000;;
 delete from R_RequestUpdate WHERE ad_client_id=1000000;;
@@ -303,14 +292,6 @@ delete from c_project where c_project_id not in (select c_project_id from c_acct
 --delete from ChuBoe_Replenish_Storage;
 --delete from ChuBoe_Replenish_Run;
 DELETE FROM tf_pricelistuom;
-DELETE FROM M_Cost WHERE ad_client_id=1000000 ;
---DELETE FROM m_bp_price WHERE ad_client_id=1000000 ;
-
-DELETE FROM I_Tally_Ledger WHERE ad_client_id=1000000 ;
-
-delete FROM m_cost WHERE ad_client_id=1000000;
-
-delete FROM fact_acct WHERE ad_client_id=1000000;
 
 delete from c_invoiceline WHERE ad_client_id=1000000;
 
@@ -324,18 +305,14 @@ DELETE FROM AD_ARCHIVE WHERE ad_client_id=1000000;;
 DELETE FROM HR_EMPLOYEE WHERE ad_client_id=1000000;;
 
 UPDATE C_BPartner SET AD_User_ID = NULL WHERE ad_client_id=1000000;;
-DELETE FROM ad_preference WHERE ad_user_id=1000275 OR AD_CLIENT_ID= 1000000 ;
-DELETE FROM ad_password_history WHERE AD_CLIENT_ID= 1000000 ;
-DELETE FROM ad_user_orgaccess WHERE AD_CLIENT_ID= 1000000;
-DELETE FROM ad_userpreference WHERE ad_user_id=1000275 OR AD_CLIENT_ID= 1000000 ;
-DELETE FROM pa_dashboardpreference WHERE ad_user_id=1000275 OR AD_CLIENT_ID= 1000000 ;
+
 DELETE FROM ad_pinstance WHERE AD_USER_ID NOT IN (100,101,1000004, 1000019, 1000005, 1000008, 1000279);
 DELETE FROM ad_note WHERE AD_CLIENT_ID= 1000000;
 DELETE FROM m_pricelist_trl WHERE AD_CLIENT_ID= 1000000;
 DELETE FROM m_pricelist_version_trl WHERE AD_CLIENT_ID= 1000000;
 UPDATE ad_preference SET ad_user_id=null WHERE AD_Client_ID=1000000;
 DELETE FROM ad_preference WHERE AD_USER_ID NOT IN (1000004, 1000019, 1000005, 1000008, 1000279);
-DELETE FROM m_product_category_trl;
+
 UPDATE m_product SET salesrep_id=NULL;
 DELETE FROM m_locatortype WHERE AD_CLIENT_ID= 1000000 ;
 DELETE FROM tf_cb_role;
@@ -360,8 +337,7 @@ DELETE FROM tf_yardentry_config;
 DELETE FROM tf_yardentryapproveline;
 DELETE FROM tf_yardentry;
 DELETE FROM tf_orgcashtransfer_configx;
-DELETE FROM M_Product_PO WHERE ad_client_id=1000000;
-DELETE FROM gl_distribution WHERE ad_client_id=1000000;
+-DELETE FROM gl_distribution WHERE ad_client_id=1000000;
 DELETE FROM tf_trtaxinvoiceLINE;
 DELETE FROM tf_trtaxinvoice;
 DELETE FROM tf_generate_taxinvoiceLINE;
@@ -373,7 +349,14 @@ DELETE FROM tf_incentiveconfig_applicable;
 DELETE FROM tf_incentiveconfig;
 DELETE FROM tf_torderline;
 DELETE FROM tf_torder;
-DELETE FROM c_bPARTNER WHERE ad_client_id=1000000 AND C_BPARTNER_ID NOT IN (1000010,1000005, 1000007, 1000006, 1000020, 1000034,1000028);
+
+
+DELETE FROM ad_userpreference WHERE AD_Client_ID = 1000000  AND AD_Org_ID!=1000000;
+DELETE FROM ad_tab_customization WHERE AD_Client_ID = 1000000  AND createdby <> 1000004;
+DELETE FROM pa_dashboardpreference WHERE AD_Client_ID = 1000000  AND createdby <> 1000004;
+DELETE FROM ad_password_history;
+DELETE FROM tf_bpacctperiod;
+DELETE FROM c_bPARTNER WHERE ad_client_id=1000000 AND C_BPARTNER_ID NOT IN (1000010,1000899,1000005, 1000007, 1000006, 1000020, 1000034,1000028);
 
 UPDATE m_product SET logo_id = NULL;
 DELETE FROM adempiere.AD_Image WHERE AD_Client_ID = 1000000 AND ad_image_id not in (1000003, 1000002);
@@ -419,7 +402,7 @@ delete FROM tf_rentedvehicle where ad_client_id = 1000000;
 DELETE FROM tf_vehiclerent_tajconfig where ad_client_id = 1000000;
 DELETE FROM tf_sandblockbucket_config;
 DELETE FROM tf_weighment_permit;
-DELETE FROM c_validcombination WHERE M_Product_ID = 1000223;
+--DELETE FROM c_validcombination WHERE M_Product_ID = 1000223;
 DELETE FROM tf_weighmententryprice;
 --DELETE FROM M_Product WHERE ad_client_id=1000000 AND m_product_id > 1000032  AND  m_product_id NOT IN 
 --(SELECT m_pRODUCT_id from gl_distributionline where M_product_id IS NOT NULL) 
@@ -459,7 +442,6 @@ UPDATE C_ElementValue SET DefaultOrg_ID = 0 WHERE AD_Client_ID = 1000000 ;
 DELETE FROM tf_coaopeningbalance WHERE AD_Client_ID = 1000000 ;
 DELETE FROM C_Charge_TRL  WHERE AD_Client_ID = 1000000 ;
 UPDATE tf_glposting_config SET FuelExpense_Charge_ID = NULL, ItemIssue_Charge_ID=NULL,OwnMining_Charge_ID=NULL WHERE AD_Client_ID = 1000000 ;
-DELETE FROM C_Charge WHERE AD_Client_ID = 1000000 AND C_CHarge_ID NOT IN (1000008, 1000041, 1000015 );
 DELETE FROM ad_preference WHERE AD_Client_ID = 1000000  AND AD_Org_ID!=1000000;
 
 --DELETE FROM AD_Role_OrgAccess WHERE AD_Client_ID = 1000000  AND AD_Org_ID NOT IN (0,)1000000);
@@ -501,7 +483,7 @@ DELETE FROM tf_yardload_config;
 UPDATE PM_Machinery SET tf_vehicletype_id=null WHERE AD_Client_ID = 1000000;
 DELETE FROM tf_vehicletype;
 DELETE FROM tf_countertransline;
-DELETE FROM tf_glposting_config;
+
 DELETE FROM pm_sparesetup;
 DELETE FROM m_bp_price WHERE ad_client_id  = 1000000;
 --update c_validcombination set ad_org_id=null where AD_Client_ID = 1000000 AND AD_Org_ID NOT IN (0, 1000000);
@@ -546,3 +528,26 @@ DELETE FROM plc_modbus_config;
 DELETE FROM pm_machinery WHERE AD_Client_ID = 1000000;
 
 
+DELETE FROM ad_role_orgaccess WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM ad_user_roles WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM TF_HomePageShortcuts WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM TF_CB_Role WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM AD_Window_Access WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM AD_Process_Access WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM AD_Form_Access WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM AD_InfoWindow_Access WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM AD_Workflow_Access WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM AD_Task_Access WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM AD_Document_Action_Access WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM PM_Role_Action WHERE ad_role_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM ad_changelog WHERE ad_session_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM ad_session WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
+DELETE FROM pa_dashboardpreference WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
+DELETE FROM ws_webservicetypeaccess WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
+DELETE FROM ad_column_access WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
+DELETE FROM ad_toolbarbuttonrestrict WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
+DELETE FROM ad_package_exp_detail WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
+DELETE FROM r_requestaction WHERE r_request_id in (SELECT  ad_role_id FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001));
+DELETE FROM r_request WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
+DELETE FROM u_rolemenu WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
+DELETE FROM ad_role WHERE ad_role_id NOT IN (0,1000015,1000036,1000025,1000030,1000031,1000000,1000034,1000023,1000001);
