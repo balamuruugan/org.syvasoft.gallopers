@@ -169,6 +169,9 @@ public class TF_MInOut extends MInOut {
 		
 		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
 				
+		if(we.getWeighmentEntryType() == MWeighmentEntry.WEIGHMENTENTRYTYPE_OwnProductionReceipt || we.getWeighmentEntryType() == MWeighmentEntry.WEIGHMENTENTRYTYPE_SubcontractProductionReceipt)
+			return;
+		
 		if(we.getTF_RentedVehicle_ID() == 0)
 			return;
 		
