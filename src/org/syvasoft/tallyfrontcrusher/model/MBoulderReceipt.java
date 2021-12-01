@@ -701,14 +701,16 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), proj.getC_BPartner_ID(), get_TrxName());
 		
-		MDocType dt = new MDocType(getCtx(), TF_MOrder.getC_ServiceInvoiceDocType_ID(), get_TrxName());
+		int ServiceReceiptId = MSysConfig.getIntValue("SERVICE_RECEIPT_ID", 1000068, Env.getAD_Client_ID(Env.getCtx()));
+		
+		MDocType dt = new MDocType(getCtx(), ServiceReceiptId, get_TrxName());
 		
 		//Service Receipt Header		
 		TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
 		inout.materialReceipt = false;
 		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
 		inout.setIsSOTrx(false);
-		inout.setC_DocType_ID(dt.getC_DocTypeShipment_ID());
+		inout.setC_DocType_ID(ServiceReceiptId);
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
 		inout.setDateAcct(getDateAcct());
 		inout.setMovementDate(getDateAcct());		
@@ -766,13 +768,15 @@ public class MBoulderReceipt extends X_TF_Boulder_Receipt {
 		
 		TF_MBPartner bp = new TF_MBPartner(getCtx(), C_BPartnerSubcon2_ID, get_TrxName());
 		
+		int ServiceReceiptId = MSysConfig.getIntValue("SERVICE_RECEIPT_ID", 1000068, Env.getAD_Client_ID(Env.getCtx()));
+		
 		MDocType dt = new MDocType(getCtx(), TF_MOrder.getC_ServiceInvoiceDocType_ID(), get_TrxName());
 		//Service Receipt Header		
 		TF_MInOut inout = new TF_MInOut(getCtx(), 0, get_TrxName());
 		inout.materialReceipt = false;
 		inout.setTF_WeighmentEntry_ID(getTF_WeighmentEntry_ID());		
 		inout.setIsSOTrx(false);
-		inout.setC_DocType_ID(dt.getC_DocTypeShipment_ID());
+		inout.setC_DocType_ID(ServiceReceiptId);
 		inout.setMovementType(MInOut.MOVEMENTTYPE_VendorReceipts);		
 		inout.setDateAcct(getDateAcct());	
 		inout.setMovementDate(getDateAcct());		
