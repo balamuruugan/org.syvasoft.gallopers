@@ -27,6 +27,7 @@ import org.syvasoft.tallyfrontcrusher.model.TF_MOrderLine;
 public class CreateConsolidatedServiceInvoice extends SvrProcess {
 
 	int C_Tax_ID = 0;
+	int C_DocType_ID = 0;
 	boolean IsTaxIncluded = false;
 	int M_InoutLine_ID = 0;
 	Savepoint sp = null;
@@ -51,6 +52,8 @@ ProcessInfoParameter[] para = getParameter();
 				IsConsolidateInvoice = para[i].getParameterAsBoolean();
 			else if(name.equals("OverrideTaxConfig"))
 				OverrideTaxConfig = para[i].getParameterAsBoolean();
+			else if(name.equals("C_DocType_ID"))
+				C_DocType_ID = para[i].getParameterAsInt();
 		}
 		
 		M_InoutLine_ID = getRecord_ID();
@@ -113,8 +116,8 @@ ProcessInfoParameter[] para = getParameter();
 			TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
 			ord.setAD_Org_ID(bp.getAD_Org_ID());
 			ord.setIsSOTrx(false);
-			ord.setC_DocTypeTarget_ID(TF_MOrder.getC_ServiceInvoiceDocType_ID());
-			ord.setC_DocType_ID(TF_MOrder.getC_ServiceInvoiceDocType_ID());
+			ord.setC_DocTypeTarget_ID(C_DocType_ID);
+			ord.setC_DocType_ID(C_DocType_ID);
 			ord.setDateAcct(dateInvoiced);
 			ord.setDateOrdered(dateInvoiced);
 			ord.setC_BPartner_ID(bp.getC_BPartner_ID());
