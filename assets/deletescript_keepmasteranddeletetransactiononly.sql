@@ -121,6 +121,8 @@ delete from gl_journalline WHERE ad_client_id=1000000;
 UPDATE C_Order SET tf_trtaxinvoice_id = null ;
 DELETE FROM tf_trtaxinvoiceLINE;
 DELETE FROM tf_trtaxinvoice;
+DELETE FROM TF_InstantPettyCashLine WHERE ad_client_id=1000000;
+DELETE FROM TF_InstantPettyCash  WHERE ad_client_id=1000000;
 delete from gl_journal WHERE ad_client_id=1000000;; 
 DELETE from c_validcombination WHERE C_Project_ID IN (SELECT C_Project_ID FROM C_Project WHERE C_Project_id !=1000000 AND ad_client_id=1000000);
 UPDATE C_Invoice SET C_Project_ID = null WHERE AD_client_ID = 1000000;
@@ -475,8 +477,9 @@ DELETE FROM tf_vehiclerent_tajconfig;
 
 DELETE FROM AD_Preference WHERE AD_uSER_id in (1000705);
 DELETE FROM ad_password_history WHERE AD_uSER_id in (1000705);
-DELETE FROM ad_userpreference WHERE AD_uSER_id in (1000705);pa_dashboardpreference
-DELETE FROM pa_dashboardpreference WHERE AD_uSER_id in (1000705);*/
+DELETE FROM pa_dashboardpreference WHERE  AD_uSER_id in (1000705);
+DELETE FROM ad_userpreference WHERE AD_uSER_id in (1000705);
+DELETE FROM pa_dashboardpreference WHERE AD_uSER_id in (1000705);
 DELETE FROM c_allocationline;
 DELETE FROM c_allocationhdr;
 DELETE FROM c_bankstatementline;
@@ -491,3 +494,8 @@ DELETE FROM c_Invoice WHERE ad_client_id=1000000;
 DELETE FROM m_inout WHERE ad_client_id=1000000;
 DELETE FROM c_order WHERE ad_client_id=1000000;
 DELETE FROM m_inventory WHERE ad_client_id=1000000;
+
+DELETE FROM AD_PInstance_Para;
+DELETE FROM AD_PInstance_Log;
+DELETE FROM AD_PInstance;
+
