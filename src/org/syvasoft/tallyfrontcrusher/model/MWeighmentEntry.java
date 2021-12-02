@@ -873,6 +873,19 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 				br.setDocStatus(MBoulderReceipt.DOCSTATUS_Voided);
 				br.saveEx();
 			}
+			
+			
+			//Stock to Hopper
+			List<MCrusherKatingEntry> cartings = new Query(getCtx(), MCrusherKatingEntry.Table_Name, "TF_WeighmentEntry_ID = ? AND DocStatus ='CO'", get_TrxName())
+					.setClient_ID()
+					.setParameters(getTF_WeighmentEntry_ID())
+					.list();
+			for(MCrusherKatingEntry ka : cartings) {
+				ka.reverseIt();
+				ka.setDocStatus(MCrusherKatingEntry.DOCSTATUS_Voided);
+				ka.saveEx();
+			}
+			
 		}
 		catch (Exception ex) {
 			throw new AdempiereException(ex.getMessage());

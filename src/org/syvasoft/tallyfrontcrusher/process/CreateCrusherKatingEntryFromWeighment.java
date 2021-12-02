@@ -24,13 +24,14 @@ public class CreateCrusherKatingEntryFromWeighment extends SvrProcess {
 	@Override
 	protected String doIt() throws Exception {
 		
-		String whereClause = " (WeighmentEntryType = '5KA') AND Status = 'CO' "
+		String whereClause = " (WeighmentEntryType = '5KA') AND ((Status = 'CO' "
 				+ " AND NOT EXISTS(SELECT k.TF_WeighmentEntry_ID FROM TF_CrusherKatingEntry k WHERE "
-				+ "k.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID)";
+				+ "k.TF_WeighmentEntry_ID =  TF_WeighmentEntry.TF_WeighmentEntry_ID))  OR (TF_WeighmentEntry_ID = ? AND TF_WeighmentEntry.Status IN ('UR','CO')))";
 		int i = 0;
 		
 		List<MWeighmentEntry> wEntries = new Query(getCtx(), MWeighmentEntry.Table_Name, whereClause, get_TrxName())
 				.setClient_ID()
+				.setParameters(getRecord_ID())
 				.list();
 		for(MWeighmentEntry wEntry : wEntries) {
 			Trx trx = Trx.get(get_TrxName(), false);
