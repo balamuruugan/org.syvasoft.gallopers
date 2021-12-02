@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import org.adempiere.exceptions.AdempiereException;
+import org.compiere.model.MDocType;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MTax;
@@ -31,6 +32,7 @@ public class CreateTransporterInvoice extends SvrProcess {
 	Timestamp dateInvoiced = null;
 	boolean IsConsolidateInvoice = false;
 	boolean OverrideTaxConfig = false;
+	boolean OnAccount = false;
 	@Override
 	protected void prepare() {
 		ProcessInfoParameter[] para = getParameter();	
@@ -48,6 +50,8 @@ public class CreateTransporterInvoice extends SvrProcess {
 				IsConsolidateInvoice = para[i].getParameterAsBoolean();
 			else if(name.equals("OverrideTaxConfig"))
 				OverrideTaxConfig = para[i].getParameterAsBoolean();
+			else if(name.endsWith("OnAccount"))
+				OnAccount = para[i].getParameterAsBoolean();
 		}
 		
 		M_InoutLine_ID = getRecord_ID();
@@ -67,6 +71,8 @@ public class CreateTransporterInvoice extends SvrProcess {
 					.setOrderBy("(SELECT C_BPartner_ID FROM M_InOut WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID), "
 							+ "(SELECT MovementDate FROM M_InOut WHERE M_InOut.M_InOut_ID = M_InOutLine.M_InOut_ID)")
 					.list();
+			
+			OnAccount = false;
 		}
 		else {
 			whereClause = " DocStatus = 'CO' AND (EXISTS (SELECT T_Selection_ID FROM T_Selection WHERE " +
@@ -135,13 +141,15 @@ public class CreateTransporterInvoice extends SvrProcess {
 			}
 			
 			try {
+				String OnAccountValue = (OnAccount == true)?"Y":"N";
 				sp = trx.setSavepoint(io.getDocumentNo());
 				TF_MOrder ord = new TF_MOrder(getCtx(), 0, get_TrxName());
 				
+				MDocType dt = new Query(getCtx(),MDocType.Table_Name,"OnAccount = '" + OnAccountValue + "' AND C_DocTypeShipment_ID = " + io.getC_DocType_ID() ,get_TrxName()).first();
 				ord.setAD_Org_ID(io.getAD_Org_ID());
 				ord.setIsSOTrx(false);
-				ord.setC_DocTypeTarget_ID(TF_MOrder.getC_TransporterInvoiceDocType_ID());
-				ord.setC_DocType_ID(TF_MOrder.getC_TransporterInvoiceDocType_ID());
+				ord.setC_DocTypeTarget_ID(dt.getC_DocType_ID());
+				ord.setC_DocType_ID(dt.getC_DocType_ID());
 				ord.setDateAcct(io.getDateAcct());
 				ord.setDateOrdered(io.getDateAcct());
 				ord.setC_BPartner_ID(io.getC_BPartner_ID());

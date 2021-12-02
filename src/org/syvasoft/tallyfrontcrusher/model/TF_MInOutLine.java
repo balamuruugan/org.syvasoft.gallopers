@@ -13,6 +13,7 @@ import org.compiere.model.MInOutLine;
 import org.compiere.model.MLocator;
 import org.compiere.model.MLocatorType;
 import org.compiere.model.MProduct;
+import org.compiere.model.MSysConfig;
 import org.compiere.model.MTable;
 import org.compiere.model.MUOM;
 import org.compiere.model.MWarehouse;
@@ -148,7 +149,7 @@ public class TF_MInOutLine extends MInOutLine {
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_Tax_ID);
 		if (ii == null)
-			 return 0;
+			 return MSysConfig.getIntValue("NO_TAX_ID",1000033);
 		return ii.intValue();
 	}
 	
