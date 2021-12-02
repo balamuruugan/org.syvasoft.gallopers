@@ -876,7 +876,7 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 			
 			
 			//Stock to Hopper
-			List<MCrusherKatingEntry> cartings = new Query(getCtx(), MCrusherKatingEntry.Table_Name, "TF_WeighmentEntry_ID = ? AND DocStatus ='CO'", get_TrxName())
+			List<MCrusherKatingEntry> cartings = new Query(getCtx(), MCrusherKatingEntry.Table_Name, "TF_WeighmentEntry_ID = ? AND DocStatus ='CL'", get_TrxName())
 					.setClient_ID()
 					.setParameters(getTF_WeighmentEntry_ID())
 					.list();
