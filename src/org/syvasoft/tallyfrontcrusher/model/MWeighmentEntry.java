@@ -440,7 +440,11 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 					}
 					
 					rentedVehiclenew.setTareWeight(getTareWeight());
-					rentedVehiclenew.setVehicleSOPOType(MRentedVehicle.VEHICLESOPOTYPE_Sales);
+					
+					if(bp.isVendor())
+						rentedVehiclenew.setVehicleSOPOType(MRentedVehicle.VEHICLESOPOTYPE_Both);
+					else
+						rentedVehiclenew.setVehicleSOPOType(MRentedVehicle.VEHICLESOPOTYPE_Sales);
 					rentedVehiclenew.setTF_VehicleType_ID(getTF_VehicleType_ID());
 					rentedVehiclenew.setM_Product_Category_ID(Product_Category_ID);
 					rentedVehiclenew.setC_UOM_ID(C_UOM_ID);
