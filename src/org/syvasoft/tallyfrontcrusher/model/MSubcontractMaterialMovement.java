@@ -81,7 +81,7 @@ public class MSubcontractMaterialMovement extends X_TF_RMSubcon_Movement {
 		
 		
 		//Subcontract Purchase Price		
-		BigDecimal purchasePrice = MJobworkProductPrice.getPrice(getCtx(), getC_Project_ID(), priceItem_id, getMovementDate()) ;
+		BigDecimal purchasePrice = MJobworkProductPrice.getPrice(getCtx(), proj.getC_Project_ID(), priceItem_id, getMovementDate()) ;
 		if(purchasePrice == null) 
 			throw new AdempiereException("Please setup Contract Price for " + priceItemName + "!");
 		
