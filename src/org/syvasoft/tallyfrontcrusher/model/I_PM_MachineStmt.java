@@ -298,6 +298,17 @@ public interface I_PM_MachineStmt
 
 	public I_TF_Fuel_Issue getTF_Fuel_Issue() throws RuntimeException;
 
+    /** Column name TF_InstantPettyCash_ID */
+    public static final String COLUMNNAME_TF_InstantPettyCash_ID = "TF_InstantPettyCash_ID";
+
+	/** Set Instant Petty Cash Book Entry	  */
+	public void setTF_InstantPettyCash_ID (int TF_InstantPettyCash_ID);
+
+	/** Get Instant Petty Cash Book Entry	  */
+	public int getTF_InstantPettyCash_ID();
+
+	public I_TF_InstantPettyCash getTF_InstantPettyCash() throws RuntimeException;
+
     /** Column name TF_TripSheet_ID */
     public static final String COLUMNNAME_TF_TripSheet_ID = "TF_TripSheet_ID";
 

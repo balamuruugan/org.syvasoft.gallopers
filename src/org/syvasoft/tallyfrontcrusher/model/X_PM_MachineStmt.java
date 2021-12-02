@@ -33,7 +33,7 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211111L;
+	private static final long serialVersionUID = 20211117L;
 
     /** Standard Constructor */
     public X_PM_MachineStmt (Properties ctx, int PM_MachineStmt_ID, String trxName)
@@ -446,6 +446,31 @@ public class X_PM_MachineStmt extends PO implements I_PM_MachineStmt, I_Persiste
 	public int getTF_Fuel_Issue_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_TF_Fuel_Issue_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public I_TF_InstantPettyCash getTF_InstantPettyCash() throws RuntimeException
+    {
+		return (I_TF_InstantPettyCash)MTable.get(getCtx(), I_TF_InstantPettyCash.Table_Name)
+			.getPO(getTF_InstantPettyCash_ID(), get_TrxName());	}
+
+	/** Set Instant Petty Cash Book Entry.
+		@param TF_InstantPettyCash_ID Instant Petty Cash Book Entry	  */
+	public void setTF_InstantPettyCash_ID (int TF_InstantPettyCash_ID)
+	{
+		if (TF_InstantPettyCash_ID < 1) 
+			set_ValueNoCheck (COLUMNNAME_TF_InstantPettyCash_ID, null);
+		else 
+			set_ValueNoCheck (COLUMNNAME_TF_InstantPettyCash_ID, Integer.valueOf(TF_InstantPettyCash_ID));
+	}
+
+	/** Get Instant Petty Cash Book Entry.
+		@return Instant Petty Cash Book Entry	  */
+	public int getTF_InstantPettyCash_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_TF_InstantPettyCash_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

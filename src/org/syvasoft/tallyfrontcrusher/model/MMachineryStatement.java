@@ -46,4 +46,14 @@ public class MMachineryStatement extends X_PM_MachineStmt {
 		
 	}
 	
+	public static void deleteInstantPettyCash(Properties ctx, int TF_InstantPettyCash_ID, String trxName) {
+		String whereClause = "TF_InstantPettyCash_ID = ?";
+		List<MMachineryStatement> list =new Query(ctx, MMachineryStatement.Table_Name, whereClause, trxName)
+				.setClient_ID()
+				.setParameters(TF_InstantPettyCash_ID)
+				.list();
+		for(MMachineryStatement mStatement : list)
+			mStatement.delete(true);
+		
+	}
 }

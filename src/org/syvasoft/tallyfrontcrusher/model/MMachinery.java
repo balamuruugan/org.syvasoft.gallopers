@@ -17,6 +17,8 @@ public class MMachinery extends X_PM_Machinery {
 	 */
 	private static final long serialVersionUID = -8111796787587809642L;
 
+	public boolean isLoader = false;
+	
 	public MMachinery(Properties ctx, int PM_Machinery_ID, String trxName) {
 		super(ctx, PM_Machinery_ID, trxName);
 		// TODO Auto-generated constructor stub
