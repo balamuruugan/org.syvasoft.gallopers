@@ -335,7 +335,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MInstantPettyCashLine.class;
 		else if(MLoadingSlip.Table_Name.equals(tableName))			
 			return MLoadingSlip.class;
-		
+		else if(MCrusherKatingEntry.Table_Name.equals(tableName))
+			return MCrusherKatingEntry.class;
 		return null;
 	}
 
@@ -664,6 +665,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MInstantPettyCashLine(ctx, Record_ID, trxName);
 		else if(MLoadingSlip.Table_Name.equals(tableName))			
 			return new MLoadingSlip(ctx, Record_ID, trxName);
+		else if(MCrusherKatingEntry.Table_Name.equals(tableName))
+			return new MCrusherKatingEntry(ctx, Record_ID, trxName);
 		
 		return null;
 	}
@@ -995,6 +998,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MInstantPettyCashLine(ctx, rs, trxName);
 		else if(MLoadingSlip.Table_Name.equals(tableName))			
 			return new MLoadingSlip(ctx, rs, trxName);
+		else if(MCrusherKatingEntry.Table_Name.equals(tableName))
+			return new MCrusherKatingEntry(ctx, rs, trxName);
 		return null;
 	}
 }

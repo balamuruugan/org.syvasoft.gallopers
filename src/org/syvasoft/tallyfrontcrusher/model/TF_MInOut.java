@@ -381,7 +381,7 @@ public class TF_MInOut extends MInOut {
 		
 		for(TF_MInOut io : list) {			
 			{				
-				String OnAccountValue = (we.isPermitSales()) ? "Y" : "N";
+				String OnAccountValue = "N"; //(we.isPermitSales()) ? "Y" : "N";
 				
 				MDocType dt = new Query(getCtx(),MDocType.Table_Name,"OnAccount = '" + OnAccountValue + "' AND C_DocTypeShipment_ID = " + io.getC_DocType_ID() ,get_TrxName()).first();
 				
