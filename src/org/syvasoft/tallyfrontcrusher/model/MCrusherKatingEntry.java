@@ -2,14 +2,17 @@ package org.syvasoft.tallyfrontcrusher.model;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Properties;
 
 import org.adempiere.exceptions.AdempiereException;
 import org.compiere.model.MBPartner;
+import org.compiere.model.MInOut;
 import org.compiere.model.MInvoiceLine;
 import org.compiere.model.MPriceList;
 import org.compiere.model.MSysConfig;
 import org.compiere.model.MWarehouse;
+import org.compiere.model.Query;
 import org.compiere.process.DocAction;
 import org.compiere.util.Env;
 
@@ -224,8 +227,24 @@ public class MCrusherKatingEntry extends X_TF_CrusherKatingEntry {
 		MSubcontractMaterialMovement.deleteWeighmentMovement(getTF_WeighmentEntry_ID(), get_TrxName());
 		MBoulderMovement.deleteBoulderMovement(getTF_WeighmentEntry_ID(), get_TrxName());
 		reverseCrusherProduction();
+		reverseServiceReceipts();
+		
 	}
-
+	
+	public void reverseServiceReceipts() {
+		
+		String whereClause = "TF_WeighmentEntry_ID = ? AND MovementType = ? AND DocStatus = 'CO'";
+		List<TF_MInOut> list = new Query(getCtx(), TF_MInOut.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_WeighmentEntry_ID(), MInOut.MOVEMENTTYPE_VendorReceipts)
+				.list();
+		for(TF_MInOut io : list) {
+			if(io.getDocStatus().equals(DOCSTATUS_Completed))
+				io.reverseCorrectIt();
+			io.saveEx();
+		}
+		
+	}
 	public void postCrusherProduction() {
 		String m_processMsg = null;
 		//Create Crusher Production
@@ -269,7 +288,7 @@ public class MCrusherKatingEntry extends X_TF_CrusherKatingEntry {
 			crProd.reverseIt();
 			crProd.saveEx();
 			setTF_Crusher_Production_ID(0);
-		}		
+		}
 	}
 	
 }
