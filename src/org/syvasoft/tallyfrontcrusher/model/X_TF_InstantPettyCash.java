@@ -17,10 +17,12 @@
 /** Generated Model - DO NOT CHANGE */
 package org.syvasoft.tallyfrontcrusher.model;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Properties;
 import org.compiere.model.*;
+import org.compiere.util.Env;
 
 /** Generated Model for TF_InstantPettyCash
  *  @author iDempiere (generated) 
@@ -31,7 +33,7 @@ public class X_TF_InstantPettyCash extends PO implements I_TF_InstantPettyCash, 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211116L;
+	private static final long serialVersionUID = 20211117L;
 
     /** Standard Constructor */
     public X_TF_InstantPettyCash (Properties ctx, int TF_InstantPettyCash_ID, String trxName)
@@ -44,8 +46,13 @@ public class X_TF_InstantPettyCash extends PO implements I_TF_InstantPettyCash, 
 			setC_DocType_ID (0);
 			setC_ElementValue_ID (0);
 			setDateAcct (new Timestamp( System.currentTimeMillis() ));
+			setIsReceipt (false);
+// N
+			setPayAmt (Env.ZERO);
 			setProcessed (false);
 // N
+			setTenderType (null);
+// X
 			setTF_InstantPettyCash_ID (0);
         } */
     }
@@ -325,6 +332,78 @@ public class X_TF_InstantPettyCash extends PO implements I_TF_InstantPettyCash, 
 		return (String)get_Value(COLUMNNAME_DocumentNo);
 	}
 
+	public org.compiere.model.I_GL_Journal getGL_Journal() throws RuntimeException
+    {
+		return (org.compiere.model.I_GL_Journal)MTable.get(getCtx(), org.compiere.model.I_GL_Journal.Table_Name)
+			.getPO(getGL_Journal_ID(), get_TrxName());	}
+
+	/** Set Journal.
+		@param GL_Journal_ID 
+		General Ledger Journal
+	  */
+	public void setGL_Journal_ID (int GL_Journal_ID)
+	{
+		if (GL_Journal_ID < 1) 
+			set_Value (COLUMNNAME_GL_Journal_ID, null);
+		else 
+			set_Value (COLUMNNAME_GL_Journal_ID, Integer.valueOf(GL_Journal_ID));
+	}
+
+	/** Get Journal.
+		@return General Ledger Journal
+	  */
+	public int getGL_Journal_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_GL_Journal_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	/** Set Receipt.
+		@param IsReceipt 
+		This is a sales transaction (receipt)
+	  */
+	public void setIsReceipt (boolean IsReceipt)
+	{
+		set_Value (COLUMNNAME_IsReceipt, Boolean.valueOf(IsReceipt));
+	}
+
+	/** Get Receipt.
+		@return This is a sales transaction (receipt)
+	  */
+	public boolean isReceipt () 
+	{
+		Object oo = get_Value(COLUMNNAME_IsReceipt);
+		if (oo != null) 
+		{
+			 if (oo instanceof Boolean) 
+				 return ((Boolean)oo).booleanValue(); 
+			return "Y".equals(oo);
+		}
+		return false;
+	}
+
+	/** Set Payment amount.
+		@param PayAmt 
+		Amount being paid
+	  */
+	public void setPayAmt (BigDecimal PayAmt)
+	{
+		set_Value (COLUMNNAME_PayAmt, PayAmt);
+	}
+
+	/** Get Payment amount.
+		@return Amount being paid
+	  */
+	public BigDecimal getPayAmt () 
+	{
+		BigDecimal bd = (BigDecimal)get_Value(COLUMNNAME_PayAmt);
+		if (bd == null)
+			 return Env.ZERO;
+		return bd;
+	}
+
 	/** Set Processed.
 		@param Processed 
 		The document has been processed
@@ -368,6 +447,44 @@ public class X_TF_InstantPettyCash extends PO implements I_TF_InstantPettyCash, 
 			return "Y".equals(oo);
 		}
 		return false;
+	}
+
+	/** TenderType AD_Reference_ID=214 */
+	public static final int TENDERTYPE_AD_Reference_ID=214;
+	/** Credit Card = C */
+	public static final String TENDERTYPE_CreditCard = "C";
+	/** Check = K */
+	public static final String TENDERTYPE_Check = "K";
+	/** Direct Deposit = A */
+	public static final String TENDERTYPE_DirectDeposit = "A";
+	/** Direct Debit = D */
+	public static final String TENDERTYPE_DirectDebit = "D";
+	/** Account = T */
+	public static final String TENDERTYPE_Account = "T";
+	/** Cash = X */
+	public static final String TENDERTYPE_Cash = "X";
+	/** RTGS = R */
+	public static final String TENDERTYPE_RTGS = "R";
+	/** NEFT = N */
+	public static final String TENDERTYPE_NEFT = "N";
+	/** UPI = U */
+	public static final String TENDERTYPE_UPI = "U";
+	/** Set Tender type.
+		@param TenderType 
+		Method of Payment
+	  */
+	public void setTenderType (String TenderType)
+	{
+
+		set_Value (COLUMNNAME_TenderType, TenderType);
+	}
+
+	/** Get Tender type.
+		@return Method of Payment
+	  */
+	public String getTenderType () 
+	{
+		return (String)get_Value(COLUMNNAME_TenderType);
 	}
 
 	/** Set Instant Petty Cash Book Entry.

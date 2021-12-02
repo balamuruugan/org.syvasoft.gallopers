@@ -32,7 +32,7 @@ public class X_TF_InstantPettyCashLine extends PO implements I_TF_InstantPettyCa
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20211116L;
+	private static final long serialVersionUID = 20211117L;
 
     /** Standard Constructor */
     public X_TF_InstantPettyCashLine (Properties ctx, int TF_InstantPettyCashLine_ID, String trxName)

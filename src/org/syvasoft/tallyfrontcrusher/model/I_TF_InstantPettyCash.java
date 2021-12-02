@@ -207,6 +207,21 @@ public interface I_TF_InstantPettyCash
 	  */
 	public String getDocumentNo();
 
+    /** Column name GL_Journal_ID */
+    public static final String COLUMNNAME_GL_Journal_ID = "GL_Journal_ID";
+
+	/** Set Journal.
+	  * General Ledger Journal
+	  */
+	public void setGL_Journal_ID (int GL_Journal_ID);
+
+	/** Get Journal.
+	  * General Ledger Journal
+	  */
+	public int getGL_Journal_ID();
+
+	public org.compiere.model.I_GL_Journal getGL_Journal() throws RuntimeException;
+
     /** Column name IsActive */
     public static final String COLUMNNAME_IsActive = "IsActive";
 
@@ -219,6 +234,32 @@ public interface I_TF_InstantPettyCash
 	  * The record is active in the system
 	  */
 	public boolean isActive();
+
+    /** Column name IsReceipt */
+    public static final String COLUMNNAME_IsReceipt = "IsReceipt";
+
+	/** Set Receipt.
+	  * This is a sales transaction (receipt)
+	  */
+	public void setIsReceipt (boolean IsReceipt);
+
+	/** Get Receipt.
+	  * This is a sales transaction (receipt)
+	  */
+	public boolean isReceipt();
+
+    /** Column name PayAmt */
+    public static final String COLUMNNAME_PayAmt = "PayAmt";
+
+	/** Set Payment amount.
+	  * Amount being paid
+	  */
+	public void setPayAmt (BigDecimal PayAmt);
+
+	/** Get Payment amount.
+	  * Amount being paid
+	  */
+	public BigDecimal getPayAmt();
 
     /** Column name Processed */
     public static final String COLUMNNAME_Processed = "Processed";
@@ -241,6 +282,19 @@ public interface I_TF_InstantPettyCash
 
 	/** Get Process Now	  */
 	public boolean isProcessing();
+
+    /** Column name TenderType */
+    public static final String COLUMNNAME_TenderType = "TenderType";
+
+	/** Set Tender type.
+	  * Method of Payment
+	  */
+	public void setTenderType (String TenderType);
+
+	/** Get Tender type.
+	  * Method of Payment
+	  */
+	public String getTenderType();
 
     /** Column name TF_InstantPettyCash_ID */
     public static final String COLUMNNAME_TF_InstantPettyCash_ID = "TF_InstantPettyCash_ID";
