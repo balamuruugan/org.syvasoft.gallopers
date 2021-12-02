@@ -51,4 +51,14 @@ public class MMeterLog extends X_PM_Meter_Log {
 		for(MMeterLog ml : list)
 			ml.deleteEx(true, trxName);
 	}
+	
+	public static void deleteFuelIssueMeterLog(Properties ctx, int TF_FuelIssue_ID, String trxName) {
+		String whereClause = "TF_FuelIssue_ID = ?";
+		List<MMeterLog> list = new Query(ctx, Table_Name, whereClause, trxName)
+				.setClient_ID()
+				.setParameters(TF_FuelIssue_ID)
+				.list();
+		for(MMeterLog ml : list)
+			ml.deleteEx(true, trxName);
+	}
 }

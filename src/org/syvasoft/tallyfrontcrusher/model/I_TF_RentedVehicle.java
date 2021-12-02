@@ -79,6 +79,17 @@ public interface I_TF_RentedVehicle
 
 	public org.compiere.model.I_C_BPartner getC_BPartner() throws RuntimeException;
 
+    /** Column name C_BPartnerDriver_ID */
+    public static final String COLUMNNAME_C_BPartnerDriver_ID = "C_BPartnerDriver_ID";
+
+	/** Set Driver	  */
+	public void setC_BPartnerDriver_ID (int C_BPartnerDriver_ID);
+
+	/** Get Driver	  */
+	public int getC_BPartnerDriver_ID();
+
+	public org.compiere.model.I_C_BPartner getC_BPartnerDriver() throws RuntimeException;
+
     /** Column name C_UOM_ID */
     public static final String COLUMNNAME_C_UOM_ID = "C_UOM_ID";
 

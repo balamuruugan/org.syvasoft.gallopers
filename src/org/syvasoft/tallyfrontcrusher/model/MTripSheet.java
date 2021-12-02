@@ -56,7 +56,7 @@ public class MTripSheet extends X_TF_TripSheet {
 
 	public static BigDecimal getOpeningMeter(int vehicle_ID, Timestamp dateReport) {
 		String sql = " SELECT Closing_Meter FROM TF_TripSheet WHERE Vehicle_ID=? AND DateReport <= ? AND " +
-				" DocStatus = 'CO' ORDER BY DateReport DESC, Updated DESC ";		
+				" DocStatus = 'CO' ORDER BY DateReport DESC, DateEnd DESC ";		
 		BigDecimal openingMeter = DB.getSQLValueBD(null, sql, vehicle_ID, dateReport);
 		if(openingMeter == null)
 			openingMeter = BigDecimal.ZERO;
@@ -98,9 +98,102 @@ public class MTripSheet extends X_TF_TripSheet {
 			setTF_Jobwork_IssuedResource_ID(0);
 		}
 		
+		if(newRecord) {
+			//Tripsheet Automation			
+			setStartTime();			
+		}
+		
 		return super.beforeSave(newRecord);
 	}
 
+	private void setStartTime() {
+		String whereClause = "AD_Org_ID = ? AND PM_Machinery_ID = ? AND DocStatus = 'CO' AND DateReport BETWEEN ?::Timestamp - 1 AND ?::Timestamp "
+				+ "AND EXISTS(SELECT * FROM TF_RentedVehicle ov INNER JOIN PM_Machinery m ON m.PM_Machinery_ID = TF_TripSheet.PM_Machinery_ID AND ov.IsOwnVehicle = 'Y' AND "
+				+ " ov.TF_RentedVehicle_ID = m.TF_RentedVehicle_ID)";
+		MTripSheet ts = new Query(getCtx(), Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getAD_Org_ID(), getPM_Machinery_ID(), getDateReport(), getDateReport())
+				.setOrderBy("DateReport DESC, Shift DESC, DateEnd DESC")
+				.first();
+		if(ts != null)
+			setDateStart(ts.getDateEnd());
+	}
+	
+	public static void closeCurrentTripSheet(Properties ctx, int TF_RentedVehicle_ID, String trxName) {
+		String whereClause = "PM_Machinery_ID = (SELECT PM_Machinery_ID FROM PM_Machinery WHERE TF_RentedVehicle_ID = ?)"
+				+ " AND  (DocStatus IN ('DR','IP') OR DocStatus is null)";
+		MTripSheet ts = new Query(ctx, Table_Name, whereClause, trxName)
+				.setClient_ID()
+				.setParameters(TF_RentedVehicle_ID)
+				.setOrderBy("DateEnd DESC")
+				.first();
+		if(ts != null) {
+			try {
+				MRentedVehicle rv = new MRentedVehicle(ctx, TF_RentedVehicle_ID, trxName);
+				if(rv.getTareWeightTime() != null)
+					ts.setDateEnd(rv.getTareWeightTime());
+				if(ts.getC_BPartner_ID() > 0)  //without driver, tripsheet cannot be completed automatically!
+					ts.processIt(DocAction.ACTION_Complete);
+			}
+			catch (Exception ex) {
+				ts.setDescription(ex.getMessage());
+				ts.setDocStatus(DOCSTATUS_Invalid);
+				ts.setProcessed(false);
+			}
+			
+			ts.saveEx();
+		}
+	}
+	
+	public void setDefaults() {
+		MMachinery m = new MMachinery(getCtx(), getPM_Machinery_ID(), get_TrxName());
+				
+		//Set Driver		
+		if(m.getTF_RentedVehicle_ID() > 0) {
+			MRentedVehicle rv = new MRentedVehicle(getCtx(), m.getTF_RentedVehicle_ID(), get_TrxName());			
+			setC_BPartner_ID(rv.getC_BPartnerDriver_ID());						
+		}		
+		
+		if(m.getPM_Machinery_ID() > 0) // only grawaller, quarry will be set.
+			setTF_Quarry_ID(0);
+		
+		//Set Incentive Rules
+		MEmployeeIncentive inc = MEmployeeIncentive.get(getCtx(), getAD_Org_ID(), getC_BPartner_ID());
+		
+		if(inc == null)
+			inc = MEmployeeIncentive.get(getCtx(), getAD_Org_ID(), getC_BPartner_ID(), getC_UOM_ID());
+		
+		TF_MBPartner bp = new TF_MBPartner(getCtx(), getC_BPartner_ID(), null);
+		BigDecimal eligibleUnit = BigDecimal.ZERO;
+		BigDecimal unitIncentive = BigDecimal.ZERO;
+		BigDecimal dayIncentive = BigDecimal.ZERO;
+		String incentiveType = null;
+		
+		if(inc != null) {
+			eligibleUnit = inc.getEligibleUnit();
+			incentiveType = inc.getIncentiveType();
+			dayIncentive = inc.getDayIncentive();
+			unitIncentive = inc.getUnitIncentive();
+		}
+		setEarned_Wage(bp.getStd_Wage());
+		setIncentiveType(incentiveType);
+		setEligibleUnit(eligibleUnit);
+		setDayIncentive(dayIncentive);
+		setUnitIncentive(unitIncentive);
+		
+		//Set Meter Type
+		
+		//Set Opening Meter (Grawller and Loader)
+		setOpening_Meter(getOpeningMeter(getVehicle_ID(), getDateReport()));
+		
+		//Set Rent Information		
+		int rentUOM_ID = m.getPM_MachineryType().getC_UOM_ID();
+		setRent_UOM_ID(rentUOM_ID);
+		BigDecimal unitRent = MMachineryRentConfig.getRent(getCtx(), getPM_Machinery_ID(), 0, rentUOM_ID);
+		setRate(unitRent);
+		
+	}
+	
 	private void issueDiesel() {
 		String dieselIssue = MSysConfig.getValue("TF_DIESEL_ISSUE_FROM_TRIPSHEET", "N");
 		if(dieselIssue.equals("Y") && getReceived_Fuel().doubleValue() > 0) {
@@ -239,6 +332,8 @@ public class MTripSheet extends X_TF_TripSheet {
 			processRentEntries();
 			processAdditionalMeters();
 			processAdditionalLabourSalaries();
+			
+			
 		}
 	}
 	
@@ -315,14 +410,30 @@ public class MTripSheet extends X_TF_TripSheet {
 		return list;
 	}
 	
+	public List<MTripSheetProduct> getZERORentEntries() {
+		String whereClause = "TF_TripSheet_ID = ? AND COALESCE(Rent_Amt, 0) = 0";
+		List<MTripSheetProduct> list = new Query(getCtx(), MTripSheetProduct.Table_Name, whereClause, get_TrxName())
+				.setClient_ID()
+				.setParameters(getTF_TripSheet_ID())
+				.list();
+		return list;
+	}
+	
 	private void processRentEntries() {
 		List<MTripSheetProduct> list = getRentEntries();
+		
+		//for(MTripSheetProduct rent : getZERORentEntries()) {
+			//throw new AdempiereException("Rent is not defined for " + rent.getDescription() + ", Product : " 
+			//		+ rent.getM_Product().getName());
+		//}
+		
 		if(list.size() == 0)
 			return;
 		int rentAccount  = getPM_Machinery().getPM_MachineryType().getC_ElementValueRentIncome_ID();
 		if(rentAccount == 0)
 			throw new AdempiereException("Please set Machinery Rent Income Account!");
 		
+				
 		for(MTripSheetProduct rent : list) {
 			MMachineryStatement ms = new MMachineryStatement(getCtx(), 0, get_TrxName());						
 			ms.setAD_Org_ID(getAD_Org_ID());
@@ -338,6 +449,8 @@ public class MTripSheet extends X_TF_TripSheet {
 			ms.setTF_TripSheet_ID(getTF_TripSheet_ID());
 			ms.setC_Activity_ID(rent.getC_Activity_ID());
 			ms.saveEx();
+			
+			
 		}
 	}
 	
@@ -609,10 +722,10 @@ public class MTripSheet extends X_TF_TripSheet {
 		
 		sql ="SELECT\r\n" + 
 				"	 we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,\r\n" + 
-				"	 sum(we.netweightunit)netweight, we.C_UOM_ID, max(r.unitrent)unitrent\r\n" + 
+				"	 sum(we.netweightunit)netweight, we.C_UOM_ID, COALESCE(max(r.unitrent),0) unitrent\r\n" + 
 				"FROM \r\n" + 
 				"	 tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id \r\n" + 
-				"	 INNER JOIN TF_Machinery_RentConfig R ON we.AD_Org_ID = r.AD_Org_ID AND r.WeighmentEntryType IS NULL AND we.m_product_id = r.JobWork_Product_ID \r\n" + 
+				"	 LEFT JOIN TF_Machinery_RentConfig R ON we.AD_Org_ID = r.AD_Org_ID AND r.WeighmentEntryType IS NULL AND we.m_product_id = r.JobWork_Product_ID \r\n" + 
 				"WHERE \r\n" + 
 				"	 we.WeighmentEntryType IN ('3PR','4SR') AND TF_TripSheet_ID = ? \r\n" + 
 				"GROUP BY \r\n" + 
@@ -671,11 +784,11 @@ public class MTripSheet extends X_TF_TripSheet {
 		 */
 		sql = "SELECT \r\n" + 
 				"	we.m_product_id,p.m_product_category_id,we.quarryproductiontype,count(*) loads,\r\n" + 
-				"	 sum(we.netweightunit)netweight, we.C_UOM_ID, max(r.unitrent)unitrent, \r\n" + 
+				"	 sum(we.netweightunit)netweight, we.C_UOM_ID, COALESCE(max(r.unitrent), 0) unitrent, \r\n" + 
 				"	 R.DESCRIPTION, we.WeighmentEntryType \r\n" + 
 				"FROM\r\n" + 
 				"	tf_weighmententry we INNER JOIN m_product p ON we.m_product_id = p.m_product_id \r\n" + 
-				"	 INNER JOIN TF_Machinery_RentConfig R ON we.AD_Org_ID = r.AD_Org_ID AND  we.m_product_id = r.JobWork_Product_ID  AND \r\n" + 
+				"	 LEFT JOIN TF_Machinery_RentConfig R ON we.AD_Org_ID = r.AD_Org_ID AND  we.m_product_id = r.JobWork_Product_ID  AND \r\n" + 
 				"	 	r.WeighmentEntryType = we.WeighmentEntryType\r\n" + 
 				"WHERE\r\n" + 
 				"	 we.WeighmentEntryType IN ('5KA', '9CA') AND TF_TripSheet_ID = ? \n" +

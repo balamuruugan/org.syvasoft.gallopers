@@ -811,6 +811,13 @@ public class CrusherColumnCalloutFactory implements IColumnCalloutFactory {
 				list.add(new CalloutInstantPettyCash_Org());
 		}
 		
+		if(tableName.equals(MInstantPettyCash.Table_Name)) {
+			if(columnName.equals(MInstantPettyCash.COLUMNNAME_AD_Org_ID))
+				list.add(new CalloutInstantPettyCash_Org());
+			
+			if(columnName.equals(MInstantPettyCash.COLUMNNAME_C_DocType_ID))
+				list.add(new CalloutInstantPettyCash_DocType());
+		}
 		return list != null ? list.toArray(new IColumnCallout[0]) : new IColumnCallout[0];
 	}
 }

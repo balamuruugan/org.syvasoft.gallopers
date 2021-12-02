@@ -34,7 +34,7 @@ public class X_TF_RentedVehicle extends PO implements I_TF_RentedVehicle, I_Pers
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20200612L;
+	private static final long serialVersionUID = 20211125L;
 
     /** Standard Constructor */
     public X_TF_RentedVehicle (Properties ctx, int TF_RentedVehicle_ID, String trxName)
@@ -106,6 +106,31 @@ public class X_TF_RentedVehicle extends PO implements I_TF_RentedVehicle, I_Pers
 	public int getC_BPartner_ID () 
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartner_ID);
+		if (ii == null)
+			 return 0;
+		return ii.intValue();
+	}
+
+	public org.compiere.model.I_C_BPartner getC_BPartnerDriver() throws RuntimeException
+    {
+		return (org.compiere.model.I_C_BPartner)MTable.get(getCtx(), org.compiere.model.I_C_BPartner.Table_Name)
+			.getPO(getC_BPartnerDriver_ID(), get_TrxName());	}
+
+	/** Set Driver.
+		@param C_BPartnerDriver_ID Driver	  */
+	public void setC_BPartnerDriver_ID (int C_BPartnerDriver_ID)
+	{
+		if (C_BPartnerDriver_ID < 1) 
+			set_Value (COLUMNNAME_C_BPartnerDriver_ID, null);
+		else 
+			set_Value (COLUMNNAME_C_BPartnerDriver_ID, Integer.valueOf(C_BPartnerDriver_ID));
+	}
+
+	/** Get Driver.
+		@return Driver	  */
+	public int getC_BPartnerDriver_ID () 
+	{
+		Integer ii = (Integer)get_Value(COLUMNNAME_C_BPartnerDriver_ID);
 		if (ii == null)
 			 return 0;
 		return ii.intValue();

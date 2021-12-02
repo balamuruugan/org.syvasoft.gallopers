@@ -107,7 +107,7 @@ public class MEmployeeAttendance extends X_TF_EmployeeAttendance {
 				"FROM\r\n" + 
 				"	TF_BiometricAttendence \r\n" + 
 				"WHERE\r\n" + 
-				"	Processed='N'\r\n" + 
+				"	Processed='N'\r\n AND DateAcct IS NOT NULL " + 
 				"GROUP BY\r\n" + 
 				"	 AD_Org_ID, C_BPartner_ID,DateAcct, TF_EmpShift_ID";
 		
@@ -126,6 +126,9 @@ public class MEmployeeAttendance extends X_TF_EmployeeAttendance {
 				Timestamp inTime = rs.getTimestamp("InTime");
 				Timestamp outTime = rs.getTimestamp("OutTime");
 				String duration = rs.getString("tt");
+				
+				//if(dateAcct == null || TF_EmpShift_ID == 0)
+				//	continue;
 				
 				MEmployeeAttendance att = MEmployeeAttendance.get(ctx, AD_Org_ID, C_BPartner_ID, dateAcct, TF_EmpShift_ID, trxName);
 				att.setDateInTime(inTime);
