@@ -145,6 +145,7 @@ public class TF_MInOut extends MInOut {
 				updateDispenseQty(we, true);
 			
 			reverseTransportMaterialReceipt();
+			reverseServiceInvoiceOrder();
 		}
 		
 		MSubcontractMaterialMovement.deleteWeighmentMovement(getTF_WeighmentEntry_ID(), get_TrxName());
@@ -377,17 +378,46 @@ public class TF_MInOut extends MInOut {
 				.setClient_ID()
 				.setParameters(getTF_WeighmentEntry_ID(), MInOut.MOVEMENTTYPE_VendorReceipts, getM_InOut_ID())
 				.list();
-		for(TF_MInOut io : list) {
+		
+		for(TF_MInOut io : list) {			
+			{				
+				String OnAccountValue = (we.isPermitSales()) ? "Y" : "N";
+				
+				MDocType dt = new Query(getCtx(),MDocType.Table_Name,"OnAccount = '" + OnAccountValue + "' AND C_DocTypeShipment_ID = " + io.getC_DocType_ID() ,get_TrxName()).first();
+				
+				String where = " C_Order_ID = " + io.getC_Order_ID() + " AND DocStatus IN ('CL','CO') AND C_DocTypeTarget_ID = " + dt.getC_DocType_ID();
+				List<TF_MOrder> porders = new Query(getCtx(), TF_MOrder.Table_Name, where, get_TrxName())
+						.setClient_ID()
+						.list();
+				
+				
+				if(io.getDocStatus().equals(DOCSTATUS_Completed))
+					io.reverseCorrectIt();
+				io.saveEx();
+				
+				for(TF_MOrder purchase : porders) {				
+					purchase.setDocAction(DocAction.ACTION_Void);
+					purchase.voidIt();
+					purchase.setDocStatus(TF_MOrder.DOCSTATUS_Voided);
+					purchase.saveEx();
+				}
+			}
+		}
+	}
+	
+	public void reverseServiceInvoiceOrder() {					
+		MWeighmentEntry we = new MWeighmentEntry(getCtx(), getTF_WeighmentEntry_ID(), get_TrxName());
+		if(getC_DocType_ID() == MSysConfig.getIntValue("TRANSPORTER_RECEIPT_ID",1000077) ||
+				getC_DocType_ID() == MSysConfig.getIntValue("SERVICE_RECEIPT_ID",1000078)) {
 			
-			String where = " C_Order_ID = " + io.getC_Order_ID() + " AND DocStatus IN ('CL','CO') AND C_DocTypeTarget_ID = " + TF_MOrder.getC_TransporterInvoiceDocType_ID();
+			String OnAccountValue = (we.isPermitSales()) ? "Y" : "N";
+			
+			MDocType dt = new Query(getCtx(),MDocType.Table_Name,"OnAccount = '" + OnAccountValue + "' AND C_DocTypeShipment_ID = " + getC_DocType_ID() ,get_TrxName()).first();
+			
+			String where = " C_Order_ID = " + getC_Order_ID() + " AND DocStatus IN ('CL','CO') AND C_DocTypeTarget_ID = " + dt.getC_DocType_ID();
 			List<TF_MOrder> porders = new Query(getCtx(), TF_MOrder.Table_Name, where, get_TrxName())
 					.setClient_ID()
 					.list();
-			
-			
-			if(io.getDocStatus().equals(DOCSTATUS_Completed))
-				io.reverseCorrectIt();
-			io.saveEx();
 			
 			for(TF_MOrder purchase : porders) {				
 				purchase.setDocAction(DocAction.ACTION_Void);
@@ -395,7 +425,6 @@ public class TF_MInOut extends MInOut {
 				purchase.setDocStatus(TF_MOrder.DOCSTATUS_Voided);
 				purchase.saveEx();
 			}
-			
 		}
 	}
 	
