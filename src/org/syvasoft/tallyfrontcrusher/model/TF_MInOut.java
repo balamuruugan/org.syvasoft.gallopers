@@ -410,7 +410,7 @@ public class TF_MInOut extends MInOut {
 		if(getC_DocType_ID() == MSysConfig.getIntValue("TRANSPORTER_RECEIPT_ID",1000077) ||
 				getC_DocType_ID() == MSysConfig.getIntValue("SERVICE_RECEIPT_ID",1000078)) {
 			
-			String OnAccountValue = (we.isPermitSales()) ? "Y" : "N";
+			String OnAccountValue = "N"; //(we.isPermitSales()) ? "Y" : "N";
 			
 			MDocType dt = new Query(getCtx(),MDocType.Table_Name,"OnAccount = '" + OnAccountValue + "' AND C_DocTypeShipment_ID = " + getC_DocType_ID() ,get_TrxName()).first();
 			
