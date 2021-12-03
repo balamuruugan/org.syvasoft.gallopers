@@ -171,7 +171,7 @@ public class CreateTransporterInvoice extends SvrProcess {
 				BigDecimal price = ioLine.getPrice();
 				BigDecimal distance = ioLine.getDistance();
 				MWeighmentEntry wEntry = new MWeighmentEntry(getCtx(), io.getTF_WeighmentEntry_ID(), get_TrxName());
-				ordLine.setDescription("Customer DC#: " + wEntry.getDocumentNo());
+				ordLine.setDescription("DC#: " + wEntry.getDocumentNo());
 				if(wEntry.getMTKM_UOM_ID() == ioLine.getC_UOM_ID()) {
 					price = price.multiply(ioLine.getDistance());
 					ordLine.addDescription("Rate MT/km : " + rateMTKM.doubleValue() + ", Distance (km): " + distance);
@@ -285,7 +285,7 @@ public class CreateTransporterInvoice extends SvrProcess {
 			BigDecimal price = ioLine.getPrice();
 			BigDecimal distance = ioLine.getDistance();
 			MWeighmentEntry wEntry = new MWeighmentEntry(getCtx(), io.getTF_WeighmentEntry_ID(), get_TrxName());
-			ordLine.setDescription("Customer DC#: " + wEntry.getDocumentNo());
+			ordLine.setDescription("DC#: " + wEntry.getDocumentNo());
 			if(wEntry.getMTKM_UOM_ID() == ioLine.getC_UOM_ID()) {
 				price = price.multiply(ioLine.getDistance());
 				ordLine.addDescription("Rate MT/km : " + rateMTKM.doubleValue() + ", Distance (km): " + distance);
