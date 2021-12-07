@@ -220,6 +220,7 @@ public class MWeighmentEntry extends X_TF_WeighmentEntry {
 				getWeighmentEntryType().equals(WEIGHMENTENTRYTYPE_SubcontractProductionReceipt) ||
 				getWeighmentEntryType().equals(WEIGHMENTENTRYTYPE_Input)) {
 			UpdateQuarryQty();
+			MQuarryToken.completeToken(this);
 		}
 		
 		return super.afterSave(newRecord, success);

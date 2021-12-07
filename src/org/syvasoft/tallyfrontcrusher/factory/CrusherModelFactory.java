@@ -337,6 +337,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return MLoadingSlip.class;
 		else if(MCrusherKatingEntry.Table_Name.equals(tableName))
 			return MCrusherKatingEntry.class;
+		else if(MQuarryToken.Table_Name.equals(tableName))
+			return MQuarryToken.class;
 		return null;
 	}
 
@@ -667,7 +669,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MLoadingSlip(ctx, Record_ID, trxName);
 		else if(MCrusherKatingEntry.Table_Name.equals(tableName))
 			return new MCrusherKatingEntry(ctx, Record_ID, trxName);
-		
+		else if(MQuarryToken.Table_Name.equals(tableName))
+			return new MQuarryToken(ctx, Record_ID, trxName);
 		return null;
 	}
 
@@ -1000,6 +1003,8 @@ public class CrusherModelFactory implements IModelFactory {
 			return new MLoadingSlip(ctx, rs, trxName);
 		else if(MCrusherKatingEntry.Table_Name.equals(tableName))
 			return new MCrusherKatingEntry(ctx, rs, trxName);
+		else if(MQuarryToken.Table_Name.equals(tableName))
+			return new MQuarryToken(ctx, rs, trxName);
 		return null;
 	}
 }
