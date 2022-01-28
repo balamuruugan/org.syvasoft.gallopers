@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Basaveshwar Stone Crushers
-Bundle-SymbolicName: org.syvasoft.basaveshwar;singleton:=true
+Bundle-Name: Gallopers
+Bundle-SymbolicName: org.syvasoft.gallopers;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.adempiere.base;bundle-version="4.1.0",
